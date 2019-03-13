@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "517591486393",
+    "firebase_url": "https://grappi-f918f.firebaseio.com",
+    "project_id": "grappi-f918f",
+    "storage_bucket": "grappi-f918f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517591486393:android:89bd5526d3679eb3",
+        "android_client_info": {
+          "package_name": "com.bgvofir.grappygis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "517591486393-osgh0apbe0hlpebb5l0tt9tgdi88vve0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbcCeP_Qu817-xWRx44Jb6htkPWEGD24w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">GrappyGIS</string>
+    <string name="title_activity_login">הרשם</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">דואר אלקטרוני</string>
+    <string name="prompt_password">סיסמא</string>
+    <string name="action_sign_in">כניסה</string>
+    <string name="action_sign_in_short">הרשם</string>
+    <string name="error_invalid_email">כתובת דואר לא תקינה</string>
+    <string name="error_invalid_password">סיסמא קצרה מדי</string>
+    <string name="error_incorrect_password">סיסמא לא נכונה</string>
+    <string name="error_field_required">שדה חובה</string>
+    <string name="permission_rationale">הרשאה נדרשת בשביל השלמת הרשמות בדואר אלקטרוני</string>
+    <string name="delete_this_point">למחוק נקודה?</string>
+    <string name="delete_point">מחיקת נקודה</string>
+    <string name="confirm">אישור</string>
+    <string name="cancel">ביטול</string>
+    <string name="add_a_description">הוסיפו תיאור לנקודה</string>
+    <string name="add_photo">הוספת תמונה</string>
+    <string name="take_photo_prompt">האם תרצו לצלם תמונה ממכשירכם ולהוסיף לשכבה?</string>
+    <string name="pic_url_alias">כתובת תמונה</string>
+    <string name="description_alias">תאור</string>
+    <string name="category">סיווג</string>
+    <string name="update_system">עדכן למערכת</string>
+    <string name="add_category">הוסף סיווג</string>
+    <string name="field_mandatory">שדה חובה, לא ניתן להשאיר ריק</string>
+</resources>

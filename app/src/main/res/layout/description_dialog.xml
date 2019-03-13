@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/dark_opacity"
+    android:padding="18dp"
+    android:orientation="vertical">
+
+
+    <android.support.constraint.Guideline
+        android:id="@+id/positiveStart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintGuide_percent="0.1"
+        android:orientation="vertical"
+        />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/positiveEnd"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintGuide_percent="0.35"
+        android:orientation="vertical"
+        />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/negativeStart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintGuide_percent="0.6"
+        android:orientation="vertical"
+        />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/negativeEnd"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintGuide_percent="0.85"
+        android:orientation="vertical"
+        />
+
+    <EditText
+        android:id="@+id/etDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/etCategory"
+        app:layout_constraintStart_toStartOf="@+id/positiveStart"
+        app:layout_constraintEnd_toEndOf="@+id/negativeEnd"
+        android:layout_marginBottom="14dp"
+        android:hint="@string/add_a_description"
+        android:textColorHint="@color/white_transparent"
+        android:inputType="text"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        />
+
+    <EditText
+        android:id="@+id/etCategory"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/isUpdateSwitch"
+        app:layout_constraintStart_toStartOf="@+id/positiveStart"
+        app:layout_constraintEnd_toEndOf="@+id/negativeEnd"
+        android:layout_marginBottom="14dp"
+        android:hint="@string/add_category"
+        android:textColorHint="@color/white_transparent"
+        android:inputType="text"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
+        />
+
+    <Switch
+        android:id="@+id/isUpdateSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/positiveStart"
+        android:text="@string/update_system"
+        android:textColor="@color/white"
+        android:switchPadding="8dp"
+        android:checked="true"
+        app:layout_constraintBottom_toTopOf="@+id/btnConfirm"  />
+
+
+
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:clickable="true"
+        android:text="@string/confirm"
+        app:layout_constraintStart_toStartOf="@+id/positiveStart"
+        app:layout_constraintEnd_toEndOf="@+id/positiveEnd"
+        android:textColor="@color/light_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textStyle="bold"
+        android:focusable="true" />
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:background="@null"
+        android:clickable="true"
+        android:text="@string/cancel"
+        app:layout_constraintStart_toStartOf="@+id/negativeStart"
+        app:layout_constraintEnd_toEndOf="@+id/negativeEnd"
+        android:textColor="@color/light_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:textStyle="bold"
+        android:focusable="true" />
+
+
+
+</android.support.constraint.ConstraintLayout>
