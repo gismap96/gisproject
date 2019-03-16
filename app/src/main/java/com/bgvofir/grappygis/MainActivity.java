@@ -149,6 +149,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
     private ListenableFuture<FeatureQueryResult> selectionResult;
     private String mCurrentCategory;
     private boolean mCurrentIsUpdateSys;
+    private boolean activityAlive;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -382,7 +383,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         progressDialog.show();
 
 
-        StorageReference mmpkRef = storageReference.child("settlements/" + mProjectId + "/mmpk/shfayim_full.mmpk");
+        StorageReference mmpkRef = storageReference.child("settlements/" + mProjectId + "/mmpk/data.mmpk");
         mmpkRef.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
             @Override
             public void onSuccess(StorageMetadata storageMetadata) {
@@ -670,6 +671,8 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
 
     private void createFeatureCollection(float x, float y, String description, String imageUrl, String category, boolean isUpdateSys) {
+        if (!activityAlive) return;
+
         if (mMapView != null) {
             if (mClientFeatureCollection == null || mClientFeatureCollectionLayer == null){
                 mClientFeatureCollection = new FeatureCollection();
@@ -1058,6 +1061,18 @@ public class MainActivity extends FragmentActivity implements LocationListener {
     protected void onDestroy() {
         super.onDestroy();
         mMapView.dispose();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        activityAlive = true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        activityAlive = false;
     }
 
     @Override

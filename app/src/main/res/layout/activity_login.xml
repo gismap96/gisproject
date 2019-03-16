@@ -15,9 +15,19 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="104dp"
         android:src="@drawable/logo_and_text"
+        android:layout_marginTop="60dp"
         />
+
+    <TextView
+        android:id="@+id/tvVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="@string/version_text"
+        android:textColor="@color/colorSecondary"
+        android:textStyle="bold" />
 
     <!-- Login progress -->
     <ProgressBar
@@ -31,7 +41,9 @@
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        >
 
         <LinearLayout
             android:id="@+id/email_login_form"
