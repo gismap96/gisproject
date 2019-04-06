@@ -80,6 +80,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    private TextView mResetPassword;
     private View mProgressView;
     private View mLoginFormView;
     private FirebaseAuth mAuth;
@@ -97,6 +98,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        mResetPassword = findViewById(R.id.resetPassword);
+
         if (mAuth.getCurrentUser() != null){
             showProgress(true);
             mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("isSubscribed").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -112,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         else{
                             showProgress(false);
                             Snackbar snackbar = Snackbar
-                                    .make(findViewById(R.id.loginContainer), "You are not subscribed contact us on blabla@blabla.com to subscribe", Snackbar.LENGTH_LONG);
+                                    .make(findViewById(R.id.loginContainer), getString(R.string.not_subscribed), Snackbar.LENGTH_LONG);
                             snackbar.show();
                             Log.d("Login", "is NOT Subscribed");
                         }
@@ -129,6 +132,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
+
+        mResetPassword.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (mEmailView.getText() == null || !isEmailValid(mEmailView.getText().toString())){
+                    Toast.makeText(LoginActivity.this, R.string.enter_valid_email, Toast.LENGTH_LONG).show();
+                }
+                else{
+                    mAuth.sendPasswordResetEmail(mEmailView.getText().toString())
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(LoginActivity.this,
+                                                getString(R.string.reset_pass_sent), Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        Toast.makeText(LoginActivity.this,
+                                                getString(R.string.vould_not_find_address), Toast.LENGTH_SHORT).show();                                    }
+                                }
+                            });
+                }
+            }
+        });
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -286,7 +314,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private boolean isPasswordValid(String password) {
@@ -409,7 +437,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                             showProgress(false);
                                             Log.d("Login", "is NOT Subscribed");
                                             Snackbar snackbar = Snackbar
-                                                    .make(findViewById(R.id.loginContainer), "You are not subscribed contact us on blabla@blabla.com to subscribe", Snackbar.LENGTH_LONG);
+                                                    .make(findViewById(R.id.loginContainer), R.string.not_subscribed, Snackbar.LENGTH_LONG);
                                             snackbar.show();
                                         }
                                     }
@@ -443,7 +471,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String value = (String) dataSnapshot.getValue();
-                if (value.equals("null")){
+                if (value == null || value.equals("null")){
                     mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("deviceId").setValue(deviceId).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -457,7 +485,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 else{
                     showProgress(false);
                     Snackbar snackbar = Snackbar
-                            .make(findViewById(R.id.loginContainer), "This user is already set for a different device, contact us at blabla@bla.com to add another user", Snackbar.LENGTH_LONG);
+                            .make(findViewById(R.id.loginContainer), R.string.already_subscribed, Snackbar.LENGTH_LONG);
                     snackbar.show();
                 }
             }

@@ -379,6 +379,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         }
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
         progressDialog.setTitle("Downloading...");
         progressDialog.show();
 
@@ -440,7 +441,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
     private void initMap(String mmpkFileURL){
 //        String mmpkFileURL = createMobileMapPackageFilePath("shfayim_full");
-        String unpackedMmpkPath = getUnpackedPath("shfayim_full");
+        String unpackedMmpkPath = getUnpackedPath("data");
         final ListenableFuture<Boolean> directReadSupportedFuture = MobileMapPackage.isDirectReadSupportedAsync(mmpkFileURL);
         directReadSupportedFuture.addDoneListener(new Runnable() {
             @Override public void run() {
@@ -525,7 +526,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                 }
                 else{
                     showLayerData(e, mobileMap);
-                    mobileMap.getOperationalLayers().get(0).getFullExtent();
+//                    mobileMap.getOperationalLayers().get(0).getFullExtent();
                 }
 
 
@@ -804,7 +805,8 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         final boolean[] breakLoop = {false};
         for (int i = 0; i < layers.size() && !breakLoop[0]; i++){
 //            futures.add(layers.get(i).getFeatureTable().queryFeaturesAsync(query));
-
+            if (!layers.get(i).isVisible())
+                continue;
             int finalI = i;
             layers.get(i).getFeatureTable().queryFeaturesAsync(query).addDoneListener(new Runnable() {
                 @Override
@@ -828,41 +830,14 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                         // cycle through selections
                         int counter = 0;
                         Feature feature;
-                        while (iterator.hasNext()) {
+                        while (iterator.hasNext() && !breakLoop[0]) {
                             feature = iterator.next();
-                            /*if (isDeletePointMode){
-                                mClientFeatureCollectionLayer.getLayers().get(0).selectFeature(feature);
-                                selectionResult = mClientFeatureCollectionLayer.getLayers().get(0).getSelectedFeaturesAsync();
-                                selectionResult.addDoneListener(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            FeatureQueryResult selected = selectionResult.get();
-
-                                            while (selected.iterator().hasNext()){
-                                                selected.iterator().next().getFeatureTable().deleteFeaturesAsync(selected);
-                                            }
-                                            mClientFeatureCollectionLayer.getLayers().get(0).clearSelection();
-
-                                        } catch (InterruptedException e1) {
-                                            e1.printStackTrace();
-                                        } catch (ExecutionException e1) {
-                                            e1.printStackTrace();
-                                        }
-                                    }
-                                });
-                                ivDeletePoint.performClick();
-//                                showDeletePointDialog(layers.get(finalI));
-                                breakLoop[0] = true;
-                                return;
-
-                            }*/
-
 
 
                             // create a Map of all available attributes as name value pairs
                             Map<String, Object> attr = feature.getAttributes();
                             Set<String> keys = attr.keySet();
+                            calloutContent.append(getString(R.string.layer) + ": " + layers.get(finalI).getName());
                             for (String key : keys) {
                                 if (isDeletePointMode && key.toLowerCase().contains("custompointhash")){
                                     deletePoint(Integer.parseInt(attr.get(key).toString()));
@@ -892,12 +867,13 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                             }
                             counter++;
                             // center the mapview on selected feature
-                            Envelope envelope = feature.getGeometry().getExtent();
-                            mMapView.setViewpointGeometryAsync(envelope, 200);
+//                            Envelope envelope = feature.getGeometry().getExtent();
+//                            mMapView.setViewpointGeometryAsync(envelope, 200);
                             // show CallOut
                             mCallout.setLocation(clickPoint);
                             mCallout.setContent(calloutContent);
                             mCallout.show();
+                            breakLoop[0] = true;
                         }
                     } catch (Exception e) {
                         Log.e(getResources().getString(R.string.app_name), "Select feature failed: " + e.getMessage());

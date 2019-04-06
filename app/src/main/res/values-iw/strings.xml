@@ -25,4 +25,11 @@
     <string name="add_category">הוסף סיווג</string>
     <string name="field_mandatory">שדה חובה, לא ניתן להשאיר ריק</string>
     <string name="version_text">Beta</string>
+    <string name="reset_password_via_email">איפוס סיסמא בעזרת דואר אלקטרוני</string>
+    <string name="enter_valid_email">אנא הזינו כתובת דואר תקינה</string>
+    <string name="reset_pass_sent">הוראות איפוס סיסמא נשלחו לכתובת המבוקשת</string>
+    <string name="vould_not_find_address">כתובת דואר לא נמצאה במערכת</string>
+    <string name="already_subscribed">משתמש זה רשום במכשיר אחר, לצורך הוספת משתמש צרו קשר ב ofir.grappy@gmail.com</string>
+    <string name="not_subscribed">משתמש לא רשום, אנא צרו קשר ב ofir.grappy@gmail.com</string>
+    <string name="layer">שם שכבה</string>
 </resources>
