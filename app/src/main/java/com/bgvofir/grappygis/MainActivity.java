@@ -391,7 +391,8 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                 long timeModified = storageMetadata.getUpdatedTimeMillis();
                 long lastDownloadTime = mPrefs.getLong(Consts.DOWNLOAD_TIME_KEY, Long.MIN_VALUE);
                 if (timeModified > lastDownloadTime){
-//                        mmpkFile.delete();
+//                    mmpkFile.delete();
+                    deleteMMPKFolderData();
                     mmpkRef.getFile(mmpkFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -411,10 +412,11 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                     }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                            Log.d("MainActivity", "modified download progress " + taskSnapshot.getBytesTransferred());
+//                            Log.d("MainActivity", "modified download progress " + taskSnapshot.getBytesTransferred());
                             double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Downloaded "+(int)progress+"%");
+                            if(progress >= 0)
+                                progressDialog.setMessage("Downloaded "+(int)progress+"%");
                         }
                     });
                 }
@@ -423,6 +425,11 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                     progressDialog.dismiss();
 
                 }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("MainActivity", "modified download failed", e);
             }
         });
 
@@ -889,16 +896,27 @@ public class MainActivity extends FragmentActivity implements LocationListener {
     }
 
     private String getPointLocalFilePath(){
-        return extStorDir.getAbsolutePath() + File.separator +"layers" + File.separator +  "points.json";
+        return extStorDir.getAbsolutePath() + Consts.GRAPPY_FOLDER_NAME + File.separator + mProjectId + File.separator + "layers" + File.separator +  "points.json";
     }
 
     private String createMobileMapPackageFilePath(String fileName) {
-        return extStorDir.getAbsolutePath() + File.separator +"mmpk" + File.separator +  fileName
+        return getMMPKFolderPath() + File.separator +  fileName
                 + FILE_EXTENSION;
     }
 
     private String getUnpackedPath(String fileName) {
-        return extStorDir.getAbsolutePath() + File.separator +"mmpk" + File.separator + "Unpacked" + File.separator + fileName;
+        return getMMPKFolderPath() + File.separator + "Unpacked" + File.separator + fileName;
+    }
+
+    private String getMMPKFolderPath(){
+        return extStorDir.getAbsolutePath() + File.separator +  Consts.GRAPPY_FOLDER_NAME + File.separator + mProjectId + File.separator +"mmpk";
+    }
+
+    private boolean deleteMMPKFolderData(){
+        File mmpkFolder = new File(getMMPKFolderPath());
+        if (!mmpkFolder.exists())
+            return false;
+        return mmpkFolder.delete();
     }
 
     private void toggleLayerList() {
