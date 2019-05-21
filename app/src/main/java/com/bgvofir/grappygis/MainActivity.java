@@ -38,6 +38,7 @@ import android.text.util.Linkify;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -155,7 +156,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         FirebaseApp.initializeApp(this);
 
         storage = FirebaseStorage.getInstance();
@@ -796,7 +797,8 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
         for (int i = 0; i < mobileMap.getOperationalLayers().size(); i++){
             if (mobileMap.getOperationalLayers().get(i) instanceof FeatureLayer){
-                layers.add((FeatureLayer) mobileMap.getOperationalLayers().get(i));
+                if (mobileMap.getOperationalLayers().get(i).isVisible())
+                    layers.add((FeatureLayer) mobileMap.getOperationalLayers().get(i));
             }
         }
         try{
@@ -895,13 +897,13 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
     }
 
-    private String getPointLocalFilePath(){
-        return extStorDir.getAbsolutePath() + Consts.GRAPPY_FOLDER_NAME + File.separator + mProjectId + File.separator + "layers" + File.separator +  "points.json";
-    }
-
     private String createMobileMapPackageFilePath(String fileName) {
         return getMMPKFolderPath() + File.separator +  fileName
                 + FILE_EXTENSION;
+    }
+
+    private String getPointLocalFilePath(){
+        return extStorDir.getAbsolutePath() + File.separator + Consts.GRAPPY_FOLDER_NAME + File.separator + mProjectId + File.separator + "layers" + File.separator +  "points.json";
     }
 
     private String getUnpackedPath(String fileName) {
@@ -997,6 +999,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
+            progressDialog.setCancelable(false);
             StorageReference ref = storageReference.child("settlements/" + mProjectId + "/images/"+ UUID.randomUUID().toString());
             ref.putFile(uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
