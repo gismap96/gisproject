@@ -168,12 +168,19 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         toggledistanceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mIsDistance = !mIsDistance;
-                if (mIsDistance){
+//                mIsDistance = !mIsDistance;
+//                if (mIsDistance){
+//                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+//                }
+//                else{
+//                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+//                }
+                if (MainUpperMenu.INSTANCE.measureLine()) {
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-                }
-                else{
+                    mIsDistance = true;
+                } else {
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                    resetMenuFunctions();
                 }
             }
         });
@@ -220,11 +227,16 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         ivDeletePoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                isDeletePointMode = !isDeletePointMode;
-                if (isDeletePointMode){
+//                isDeletePointMode = !isDeletePointMode;
+//                if (isDeletePointMode){
+//                    ivDeletePoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+//                }
+//                else{
+//                    ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+//                }
+                if (MainUpperMenu.INSTANCE.trashClicked()){
                     ivDeletePoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-                }
-                else{
+                } else {
                     ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                 }
             }
@@ -287,6 +299,13 @@ public class MainActivity extends FragmentActivity implements LocationListener {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private void resetMenuFunctions(){
+        mIsDistance = false;
+        isAddPointMode = false;
+        isDeletePointMode = false;
+        MainUpperMenu.INSTANCE.resetMenu();
     }
 
     private void setClientPoints(){
@@ -439,11 +458,17 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
     private void toggleAddPoint(boolean isOn){
         isAddPointMode = isOn;
-        if (isAddPointMode){
+//        if (isAddPointMode){
+//            addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+//        }
+//        else{
+//            addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+//        }
+        if (MainUpperMenu.INSTANCE.addPointClicked()){
             addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-        }
-        else{
+        } else {
             addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+            resetMenuFunctions();
         }
     }
 
