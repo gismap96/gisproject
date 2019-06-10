@@ -175,12 +175,12 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 //                else{
 //                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 //                }
+                resetMenuFunctions();
                 if (MainUpperMenu.INSTANCE.measureLine()) {
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                     mIsDistance = true;
                 } else {
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-                    resetMenuFunctions();
                 }
             }
         });
@@ -234,11 +234,11 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 //                else{
 //                    ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 //                }
+                resetMenuFunctions();
                 if (MainUpperMenu.INSTANCE.trashClicked()){
                     ivDeletePoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                 } else {
                     ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-                    resetMenuFunctions();
                 }
             }
         });
@@ -307,7 +307,6 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         mIsDistance = false;
         isAddPointMode = false;
         isDeletePointMode = false;
-        MainUpperMenu.INSTANCE.resetMenu();
     }
 
     private void setClientPoints(){
@@ -466,11 +465,12 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 //        else{
 //            addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 //        }
+        resetMenuFunctions();
         if (MainUpperMenu.INSTANCE.addPointClicked()){
             addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
         } else {
             addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-            resetMenuFunctions();
+
         }
     }
 
