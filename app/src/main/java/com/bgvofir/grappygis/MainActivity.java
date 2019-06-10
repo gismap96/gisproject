@@ -238,6 +238,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                     ivDeletePoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                 } else {
                     ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                    resetMenuFunctions();
                 }
             }
         });
