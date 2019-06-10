@@ -303,6 +303,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
     }
 
     private void resetMenuFunctions(){
+        mDistanceOverlay.getGraphics().clear();
         mIsDistance = false;
         isAddPointMode = false;
         isDeletePointMode = false;
