@@ -163,7 +163,8 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         storageReference = storage.getReference();
         mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
         mProjectId = mPrefs.getString(Consts.PROJECT_ID_KEY, "default");
-
+        addPoint = findViewById(R.id.addPoint);
+        ivDeletePoint = findViewById(R.id.deletePoint);
         toggledistanceBtn = findViewById(R.id.toggledistanceBtn);
         toggledistanceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -179,8 +180,6 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                 if (MainUpperMenu.INSTANCE.measureLine()) {
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                     mIsDistance = true;
-                } else {
-                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                 }
             }
         });
@@ -192,7 +191,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
             }
         });
 
-        addPoint = findViewById(R.id.addPoint);
+
         addPoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -223,7 +222,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         });
 
 
-        ivDeletePoint = findViewById(R.id.deletePoint);
+
         ivDeletePoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,8 +236,6 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                 resetMenuFunctions();
                 if (MainUpperMenu.INSTANCE.trashClicked()){
                     ivDeletePoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-                } else {
-                    ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                 }
             }
         });
@@ -307,6 +304,10 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         mIsDistance = false;
         isAddPointMode = false;
         isDeletePointMode = false;
+        addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+
     }
 
     private void setClientPoints(){
