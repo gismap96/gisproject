@@ -15,7 +15,7 @@ object MainUpperMenu{
             resetMenu()
             return false
         }
-        changeSelected(3)
+        changeSelected(1)
         return true
     }
     fun addPointClicked(): Boolean{
@@ -23,7 +23,7 @@ object MainUpperMenu{
             resetMenu()
             return false
         }
-        changeSelected(3)
+        changeSelected(2)
         return true
     }
     fun trashClicked(): Boolean{
