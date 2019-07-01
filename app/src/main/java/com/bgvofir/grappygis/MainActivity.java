@@ -459,7 +459,6 @@ public class MainActivity extends FragmentActivity implements LocationListener {
     }
 
     private void toggleAddPoint(boolean isOn){
-        isAddPointMode = isOn;
 //        if (isAddPointMode){
 //            addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
 //        }
@@ -469,6 +468,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         resetMenuFunctions();
         if (MainUpperMenu.INSTANCE.addPointClicked()){
             addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+            isAddPointMode = isOn;
         } else {
             addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 
