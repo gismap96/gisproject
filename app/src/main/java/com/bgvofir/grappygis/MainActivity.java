@@ -40,6 +40,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -123,6 +124,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
     private String locationProvider;
     private LocationManager locationManager;
     private boolean isAllGranted;
+    private ProgressBar mapProgress;
     LocationDisplay locationDisplay;
     private boolean isAutoPan;
     private boolean isAddPointMode;
@@ -165,6 +167,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         mProjectId = mPrefs.getString(Consts.PROJECT_ID_KEY, "default");
         addPoint = findViewById(R.id.addPoint);
         ivDeletePoint = findViewById(R.id.deletePoint);
+        mapProgress = findViewById(R.id.map_progress);
         toggledistanceBtn = findViewById(R.id.toggledistanceBtn);
         toggledistanceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,7 +367,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         }*/
     }
 
-    private void saveClientPoints(){
+    private void saveClientPoints(Boolean isLast){
         SharedPreferences.Editor editor = mPrefs.edit();
         Set<String> pointsDatStringSet = new HashSet<String>();
 
@@ -392,6 +395,9 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Log.d("FireBase","success add points to firebase");
                         setClientPoints();
+                        if (isLast) {
+                            mapProgress.setVisibility(View.GONE);
+                        }
                     }
                 });
     }
@@ -614,7 +620,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                     public void onClick(DialogInterface dialog, int which) {
                         createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys);
                         mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys));
-                        saveClientPoints();
+                        saveClientPoints(false);
                         toggleAddPoint(false);
                     }
                 })
@@ -635,13 +641,15 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                 .setMessage(R.string.delete_this_point)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        mapProgress.setVisibility(View.VISIBLE);
                         for (int i = 0; i < mClientPoints.size(); i++){
                             if(mClientPoints.get(i).getPointHash() == pointHash){
                                 mClientPoints.remove(i);
                                 mClientFeatureCollection = null;
                                 mMapView.getMap().getOperationalLayers().remove(mClientFeatureCollectionLayer);
-                                saveClientPoints();
 
+                                saveClientPoints(i == mClientPoints.size());
+                                
                                 break;
                             }
                         }
@@ -1055,7 +1063,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                                     Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
                                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
                                         mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys));
-                                        saveClientPoints();
+                                        saveClientPoints(false);
                                         createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys);
                                         mCurrentX = 0;
                                         mCurrentY = 0;
