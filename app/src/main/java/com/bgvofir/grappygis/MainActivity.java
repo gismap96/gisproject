@@ -581,7 +581,6 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         DescriptionDialog descriptionDialog = new DescriptionDialog(this, new DescriptionDialog.IDescriptionDialogListener() {
             @Override
             public void onConfirm(String description, String category, boolean isUpdateSys) {
-                toggleAddPoint(false);
                 showTakePhotoAlertDialog(e, description, category, isUpdateSys);
             }
 
@@ -608,6 +607,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         takePhoto((float) locationPoint.getX(), (float) locationPoint.getY(), description, category, isUpdateSys);
+                        toggleAddPoint(false);
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -615,6 +615,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                         createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys);
                         mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys));
                         saveClientPoints();
+                        toggleAddPoint(false);
                     }
                 })
                 .setIcon(R.drawable.ic_add_photo)
