@@ -233,9 +233,20 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 //                else{
 //                    ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 //                }
+//                resetMenuFunctions();
+//                if (MainUpperMenu.INSTANCE.addPointClicked()){
+//                    addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+//                    isAddPointMode = isOn;
+//                } else {
+//                    addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+//
+//                }
                 resetMenuFunctions();
                 if (MainUpperMenu.INSTANCE.trashClicked()){
                     ivDeletePoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    isDeletePointMode = true;
+                }  else {
+                    ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                 }
             }
         });
