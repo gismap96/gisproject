@@ -472,7 +472,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 //            addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 //        }
         resetMenuFunctions();
-        if (MainUpperMenu.INSTANCE.addPointClicked()){
+        if (MainUpperMenu.INSTANCE.addPointClicked() && isOn){
             addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             isAddPointMode = isOn;
         } else {
@@ -678,15 +678,15 @@ public class MainActivity extends FragmentActivity implements LocationListener {
             Snackbar snackbar = Snackbar
                     .make(findViewById(R.id.mapContainer), getDistanceBetweenTwoPoints(mFirstDistanceClick, secondDistanceClick), Snackbar.LENGTH_LONG);
             Handler clearOverlayHandler = new Handler();
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+//                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             clearOverlayHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mDistanceOverlay.getGraphics().clear();
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                     MainUpperMenu.INSTANCE.resetMenu();
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+//                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 }
             }, 5000);
             snackbar.show();
@@ -890,6 +890,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                                 if (isDeletePointMode && key.toLowerCase().contains("custompointhash")){
                                     deletePoint(Integer.parseInt(attr.get(key).toString()));
                                     breakLoop[0] = true;
+                                    resetMenuFunctions();
                                     return;
                                 }
                                 if(!key.toLowerCase().contains("fid") && !key.toLowerCase().contains("source") && !key.toLowerCase().contains("custompointhash") && !key.toLowerCase().contains("objectid")) {
