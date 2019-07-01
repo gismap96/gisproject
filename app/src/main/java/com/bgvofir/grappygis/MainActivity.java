@@ -678,12 +678,15 @@ public class MainActivity extends FragmentActivity implements LocationListener {
             Snackbar snackbar = Snackbar
                     .make(findViewById(R.id.mapContainer), getDistanceBetweenTwoPoints(mFirstDistanceClick, secondDistanceClick), Snackbar.LENGTH_LONG);
             Handler clearOverlayHandler = new Handler();
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             clearOverlayHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     mDistanceOverlay.getGraphics().clear();
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                     MainUpperMenu.INSTANCE.resetMenu();
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 }
             }, 5000);
             snackbar.show();
