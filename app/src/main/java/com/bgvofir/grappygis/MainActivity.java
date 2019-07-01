@@ -641,7 +641,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                 .setMessage(R.string.delete_this_point)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if (mClientPoints.size() > 0){mapProgress.setVisibility(View.VISIBLE);}
+                        //if (mClientPoints.size() > 0){mapProgress.setVisibility(View.VISIBLE);}
                         for (int i = 0; i < mClientPoints.size(); i++){
                             if(mClientPoints.get(i).getPointHash() == pointHash){
                                 mClientPoints.remove(i);
