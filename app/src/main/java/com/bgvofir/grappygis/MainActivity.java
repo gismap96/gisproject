@@ -176,10 +176,13 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 //                else{
 //                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 //                }
+
                 resetMenuFunctions();
                 if (MainUpperMenu.INSTANCE.measureLine()) {
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                     mIsDistance = true;
+                } else {
+                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                 }
             }
         });
@@ -679,6 +682,8 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                 @Override
                 public void run() {
                     mDistanceOverlay.getGraphics().clear();
+                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                    MainUpperMenu.INSTANCE.resetMenu();
                 }
             }, 5000);
             snackbar.show();
