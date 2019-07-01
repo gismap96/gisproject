@@ -645,11 +645,13 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                                 break;
                             }
                         }
+                        resetMenuFunctions();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         ivDeletePoint.performClick();
+                        resetMenuFunctions();
                     }
                 })
                 .setIcon(R.drawable.ic_trash)
