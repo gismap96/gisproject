@@ -1040,17 +1040,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                     }*/
                 } else {
                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
-//                        mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys));
-//                        saveClientPoints(false);
-//                        createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys);
-//                        mCurrentX = 0;
-//                        mCurrentY = 0;
-//                        mCurrentDescription = null;
-//                        createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys);
-//                        mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys));
-//                        saveClientPoints(false);
-//                        toggleAddPoint(false);
-                        createFeatureCollection((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys);
+                        createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys);
                         mClientPoints.add(new ClientPoint((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys));
                         saveClientPoints(false);
                         toggleAddPoint(false);
