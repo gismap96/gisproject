@@ -1019,7 +1019,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case TAKE_PICTURE:
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK && data != null) {
                     uploadImage(imageUri);
                     /*Uri selectedImage = imageUri;
                     getContentResolver().notifyChange(selectedImage, null);
