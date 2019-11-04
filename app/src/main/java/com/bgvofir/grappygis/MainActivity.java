@@ -967,9 +967,10 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
     private boolean deleteMMPKFolderData(){
         File mmpkFolder = new File(getMMPKFolderPath());
-        if (!mmpkFolder.exists())
+        File unpacked = new File(getUnpackedPath("data"));
+        if (!mmpkFolder.exists()|| !unpacked.exists())
             return false;
-        return mmpkFolder.delete();
+        return mmpkFolder.delete() && unpacked.delete();
     }
 
     private void toggleLayerList() {
