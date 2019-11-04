@@ -834,7 +834,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         final Point clickPoint = mMapView
                 .screenToLocation(new android.graphics.Point(Math.round(e.getX()), Math.round(e.getY())));
         // create a selection tolerance
-        int tolerance = isDeletePointMode ? 20 : 30;
+        int tolerance = isDeletePointMode ? 20 : 20;
         double mapTolerance = tolerance * mMapView.getUnitsPerDensityIndependentPixel();
         // use tolerance to create an envelope to query
         Envelope envelope = new Envelope(clickPoint.getX() - mapTolerance, clickPoint.getY() - mapTolerance,
