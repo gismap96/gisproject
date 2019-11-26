@@ -510,6 +510,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
                     // If the mobile map package file does NOT support direct read
                     // Unpack the mobile map package file into a directory
+                    deleteUnpackedMMPKFolderData("data");
                     File folder = new File(unpackedMmpkPath);
                     boolean success = true;
                     if (!folder.exists()) {
@@ -963,6 +964,13 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
     private String getMMPKFolderPath(){
         return extStorDir.getAbsolutePath() + File.separator +  Consts.GRAPPY_FOLDER_NAME + File.separator + mProjectId + File.separator +"mmpk";
+    }
+
+    private boolean deleteUnpackedMMPKFolderData(String fileName){
+        File mmpkFolder = new File(getUnpackedPath(fileName));
+        if (!mmpkFolder.exists())
+            return false;
+        return mmpkFolder.delete();
     }
 
     private boolean deleteMMPKFolderData(){
