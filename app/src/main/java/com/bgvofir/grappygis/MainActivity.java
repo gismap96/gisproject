@@ -426,7 +426,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                 long lastDownloadTime = mPrefs.getLong(Consts.DOWNLOAD_TIME_KEY, Long.MIN_VALUE);
                 if (timeModified > lastDownloadTime){
 //                    mmpkFile.delete();
-                    System.out.println("did we delete - " + deleteMMPKFolderData());
+                    deleteMMPKFolderData();
                     mmpkRef.getFile(mmpkFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -834,7 +834,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         final Point clickPoint = mMapView
                 .screenToLocation(new android.graphics.Point(Math.round(e.getX()), Math.round(e.getY())));
         // create a selection tolerance
-        int tolerance = isDeletePointMode ? 20 : 5;
+        int tolerance = isDeletePointMode ? 20 : 20;
         double mapTolerance = tolerance * mMapView.getUnitsPerDensityIndependentPixel();
         // use tolerance to create an envelope to query
         Envelope envelope = new Envelope(clickPoint.getX() - mapTolerance, clickPoint.getY() - mapTolerance,
@@ -967,10 +967,10 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
     private boolean deleteMMPKFolderData(){
         File mmpkFolder = new File(getMMPKFolderPath());
-        File unpacked = new File(getUnpackedPath("data"));
-        if (!mmpkFolder.exists()|| !unpacked.exists())
+        if (!mmpkFolder.exists())
             return false;
-        return mmpkFolder.delete() && unpacked.delete();
+        return mmpkFolder.delete();
+
     }
 
     private void toggleLayerList() {
