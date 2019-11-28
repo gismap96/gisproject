@@ -510,7 +510,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
                     // If the mobile map package file does NOT support direct read
                     // Unpack the mobile map package file into a directory
-                    deleteUnpackedMMPKFolderData("data");
+                    //deleteUnpackedMMPKFolderData("data");
                     File folder = new File(unpackedMmpkPath);
                     boolean success = true;
                     if (!folder.exists()) {
