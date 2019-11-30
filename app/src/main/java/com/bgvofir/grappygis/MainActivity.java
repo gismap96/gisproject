@@ -44,6 +44,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bgvofir.grappygis.LayerCalloutDialog.ArrayDump;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.data.Feature;
 import com.esri.arcgisruntime.data.FeatureCollection;
@@ -95,6 +96,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -863,7 +865,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
 
 //        final List<ListenableFuture<FeatureQueryResult>> futures = new ArrayList<>();
         final boolean[] breakLoop = {false};
-        for (int i = 0; i < layers.size() && !breakLoop[0]; i++){
+        for (int i = 0; i < layers.size(); i++){
 //            futures.add(layers.get(i).getFeatureTable().queryFeaturesAsync(query));
             if (!layers.get(i).isVisible())
                 continue;
@@ -877,6 +879,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                     try {
                         //call get on the future to get the result
                         FeatureQueryResult result = layers.get(finalI).getFeatureTable().queryFeaturesAsync(query).get();
+                        Log.d("FeatureLayer", result.toString());
                         // create an Iterator
                         Iterator<Feature> iterator = result.iterator();
                         // create a TextView to display field values
@@ -898,6 +901,21 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                             Map<String, Object> attr = feature.getAttributes();
                             Set<String> keys = attr.keySet();
                             calloutContent.append(getString(R.string.layer) + ": " + layers.get(finalI).getName());
+                            Map<String, Map<String, Object>> testMap = new HashMap<>();
+                            testMap.put(layers.get(finalI).getName(), attr);
+
+
+//                            Set<String> allSets = testMap.keySet();
+//                            for (String current: allSets){
+//                                Object obj = testMap.get(current);
+//                                for (String key : keys) {
+//
+//                                }
+//
+//                            }
+
+
+
                             for (String key : keys) {
                                 if (isDeletePointMode && key.toLowerCase().contains("custompointhash")){
                                     deletePoint(Integer.parseInt(attr.get(key).toString()));
@@ -1028,7 +1046,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case TAKE_PICTURE:
-                if (resultCode == Activity.RESULT_OK && data != null) {
+                if (resultCode == Activity.RESULT_OK) {
                     uploadImage(imageUri);
                     /*Uri selectedImage = imageUri;
                     getContentResolver().notifyChange(selectedImage, null);
@@ -1047,7 +1065,9 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                                 .show();
                         Log.e("Camera", e.toString());
                     }*/
-                } else {
+
+                }
+                else {
                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
                         createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys);
                         mClientPoints.add(new ClientPoint((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys));
