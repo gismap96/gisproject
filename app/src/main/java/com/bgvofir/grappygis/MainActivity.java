@@ -51,17 +51,21 @@ import com.esri.arcgisruntime.data.FeatureCollectionTable;
 import com.esri.arcgisruntime.data.FeatureQueryResult;
 import com.esri.arcgisruntime.data.Field;
 import com.esri.arcgisruntime.data.QueryParameters;
+import com.esri.arcgisruntime.geometry.DatumTransformation;
 import com.esri.arcgisruntime.geometry.Envelope;
+import com.esri.arcgisruntime.geometry.GeometryEngine;
 import com.esri.arcgisruntime.geometry.GeometryType;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.geometry.PointCollection;
 import com.esri.arcgisruntime.geometry.Polyline;
+import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer;
 import com.esri.arcgisruntime.layers.FeatureLayer;
 import com.esri.arcgisruntime.layers.Layer;
 import com.esri.arcgisruntime.loadable.LoadStatus;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.MobileMapPackage;
+import com.esri.arcgisruntime.mapping.Viewpoint;
 import com.esri.arcgisruntime.mapping.view.Callout;
 import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener;
 import com.esri.arcgisruntime.mapping.view.Graphic;
@@ -543,11 +547,18 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                     @Override
                     public void run() {
                         setClientPoints();
+                        setMapListener(mobileMap);
+                        Envelope myExtents = mobileMap.getOperationalLayers().get(0).getFullExtent();
+                        myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
+//                mMapView.setMaxExtent(myExtents);
+                        mMapView.setViewpoint(new Viewpoint(myExtents));
+
                     }
-                },5000);
+                },500);
                 final List<Layer> layerList = mobileMap.getOperationalLayers();
                 mContentAdapter.setLayerList(layerList);
-                setMapListener(mobileMap);
+
+
             } else {
                 //todo If loading failed, deal with failure depending on the cause...
                 Log.e("MainActivity", "some error");
@@ -854,7 +865,9 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         }
         try{
             if (mClientFeatureCollectionLayer != null && mClientFeatureCollectionLayer.getLayers() != null)
-                layers.addAll(mClientFeatureCollectionLayer.getLayers());
+                for (FeatureLayer layer :mClientFeatureCollectionLayer.getLayers()){
+                    layers.add(layer);
+                }
         }
         catch (Exception ex){
             ex.printStackTrace();
@@ -1028,7 +1041,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case TAKE_PICTURE:
-                if (resultCode == Activity.RESULT_OK && data != null) {
+                if (resultCode == Activity.RESULT_OK/* && data != null*/) {
                     uploadImage(imageUri);
                     /*Uri selectedImage = imageUri;
                     getContentResolver().notifyChange(selectedImage, null);
