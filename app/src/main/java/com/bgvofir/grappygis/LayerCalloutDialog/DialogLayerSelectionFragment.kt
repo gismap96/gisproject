@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.view.Window
 
 import com.bgvofir.grappygis.R
+import com.esri.arcgisruntime.internal.jni.id
 import kotlinx.android.synthetic.main.fragment_dialog_layer_selection.*
 
 class DialogLayerSelectionFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>) : Dialog(activity), View.OnClickListener {
@@ -33,7 +34,13 @@ class DialogLayerSelectionFragment(var activity: Activity, internal var adapter:
     }
 
     override fun onClick(v: View?) {
-        dismiss()
+        when(v?.id){
+            R.id.closePopupDialog ->{
+                dismiss()
+            }
+        }
+//        when (v.id == )
+//        dismiss()
     }
 }
 
