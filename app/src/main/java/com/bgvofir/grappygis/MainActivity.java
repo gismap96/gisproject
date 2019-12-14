@@ -44,6 +44,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController;
+import com.bgvofir.grappygis.LayerCalloutControl.LayerAttributeMapGenerator;
+import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter;
+import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerSelectionFragment;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.data.Feature;
 import com.esri.arcgisruntime.data.FeatureCollection;
@@ -51,14 +55,12 @@ import com.esri.arcgisruntime.data.FeatureCollectionTable;
 import com.esri.arcgisruntime.data.FeatureQueryResult;
 import com.esri.arcgisruntime.data.Field;
 import com.esri.arcgisruntime.data.QueryParameters;
-import com.esri.arcgisruntime.geometry.DatumTransformation;
 import com.esri.arcgisruntime.geometry.Envelope;
 import com.esri.arcgisruntime.geometry.GeometryEngine;
 import com.esri.arcgisruntime.geometry.GeometryType;
 import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.geometry.PointCollection;
 import com.esri.arcgisruntime.geometry.Polyline;
-import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer;
 import com.esri.arcgisruntime.layers.FeatureLayer;
 import com.esri.arcgisruntime.layers.Layer;
@@ -70,6 +72,7 @@ import com.esri.arcgisruntime.mapping.view.Callout;
 import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
+import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult;
 import com.esri.arcgisruntime.mapping.view.LocationDisplay;
 import com.esri.arcgisruntime.mapping.view.MapView;
 import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
@@ -93,6 +96,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -114,7 +118,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends FragmentActivity implements LocationListener {
+public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnlayerClickListener {
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
@@ -157,6 +161,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
     private String mCurrentCategory;
     private boolean mCurrentIsUpdateSys;
     private boolean activityAlive;
+    private DialogLayerSelectionFragment dialogLayerSelectionFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -585,7 +590,16 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                     startDescriptionDialog(e);
                 }
                 else{
-                    showLayerData(e, mobileMap);
+                    //showLayerData(e, mobileMap);
+                    android.graphics.Point screenPoint = new android.graphics.Point(Math.round(e.getX()),
+                            Math.round(e.getY()));
+                    FeatureLayerController.INSTANCE.layerClicked(screenPoint,mMapView, MainActivity.this);
+//                    Map<String, String> mMap = ArrayDump.INSTANCE.getItem();
+//                    DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(mMap, MainActivity.this);
+//                    dialogLayerSelectionFragment = new DialogLayerSelectionFragment(MainActivity.this, dialogLayerAdapter);
+//                    dialogLayerSelectionFragment.show();
+
+
 //                    mobileMap.getOperationalLayers().get(0).getFullExtent();
                 }
 
@@ -872,7 +886,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
         catch (Exception ex){
             ex.printStackTrace();
         }
-
+        LayerAttributeMapGenerator.INSTANCE.generate(layers);
 
 //        final List<ListenableFuture<FeatureQueryResult>> futures = new ArrayList<>();
         final boolean[] breakLoop = {false};
@@ -911,6 +925,7 @@ public class MainActivity extends FragmentActivity implements LocationListener {
                             Map<String, Object> attr = feature.getAttributes();
                             Set<String> keys = attr.keySet();
                             calloutContent.append(getString(R.string.layer) + ": " + layers.get(finalI).getName());
+                            LayerAttributeMapGenerator.INSTANCE.generate(layers);
                             for (String key : keys) {
                                 if (isDeletePointMode && key.toLowerCase().contains("custompointhash")){
                                     deletePoint(Integer.parseInt(attr.get(key).toString()));
@@ -1171,4 +1186,29 @@ public class MainActivity extends FragmentActivity implements LocationListener {
     public void onProviderDisabled(String s) {
 
     }
+
+    @Override
+    public void onRowClickListener(@NotNull String layerIndex) {
+        dialogLayerSelectionFragment.dismiss();
+        Toast.makeText(this, "you've selected: " + layerIndex, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLayerClickListener(@NotNull ArrayList<String> layerNames, @NotNull List<IdentifyLayerResult> identifiedLayers) {
+        if (layerNames.size()>0) {
+            DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(layerNames, this);
+            dialogLayerSelectionFragment = new DialogLayerSelectionFragment(MainActivity.this, dialogLayerAdapter);
+            dialogLayerSelectionFragment.show();
+        }
+    }
+
+//    @Override
+//    public void onLayerClickListener(@NotNull ArrayList<String> layerNames) {
+////        Map<String, String> mMap = ArrayDump.INSTANCE.getItem();
+//        if (layerNames.size()>0) {
+//            DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(layerNames, this);
+//            dialogLayerSelectionFragment = new DialogLayerSelectionFragment(MainActivity.this, dialogLayerAdapter);
+//            dialogLayerSelectionFragment.show();
+//        }
+//    }
 }

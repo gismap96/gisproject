@@ -10,21 +10,21 @@ import android.widget.TextView
 import com.bgvofir.grappygis.R
 import kotlinx.android.synthetic.main.row_for_callout_dialog.view.*
 
-class DialogLayerAdapter(val activity: Activity, val layers: Map<String,
-        String>, val onRowClickListener: OnRowClickListener): RecyclerView.Adapter<DialogLayerAdapterViewHolder>(){
+class DialogLayerAdapter(val layerNames: ArrayList<String>,internal var onRowClickListener: OnRowClickListener): RecyclerView.Adapter<DialogLayerAdapter.DialogLayerAdapterViewHolder>(){
 
-    var keyList =  arrayListOf<String>()
-    var valueList =  arrayListOf<String>()
+//    var keyList =  arrayListOf<String>()
+//    var valueList =  arrayListOf<String>()
+//
+//    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+//        super.onAttachedToRecyclerView(recyclerView)
+//        keyList.clear()
+//        valueList.clear()
+//        layers.forEach {
+//            keyList.add(it.key)
+//            valueList.add(it.value)
+//        }
+//    }
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        keyList.clear()
-        valueList.clear()
-        layers.forEach {
-            keyList.add(it.key)
-            valueList.add(it.value)
-        }
-    }
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DialogLayerAdapterViewHolder {
 
         val v = LayoutInflater.from(p0.context).inflate(R.layout.row_for_callout_dialog, p0, false)
@@ -33,29 +33,29 @@ class DialogLayerAdapter(val activity: Activity, val layers: Map<String,
     }
 
     override fun getItemCount(): Int {
-        return layers.size
+        return layerNames.size
     }
 
     override fun onBindViewHolder(p0: DialogLayerAdapterViewHolder, p1: Int) {
-        val mIndex = keyList[p1]
-        val mTitle = valueList[p1]
-        p0.bind(mIndex, mTitle, onRowClickListener)
+//        val mIndex = keyList[p1]
+        val mTitle = layerNames[p1]
+        p0.bind(mTitle, onRowClickListener)
     }
 
+    inner class DialogLayerAdapterViewHolder(v: View): RecyclerView.ViewHolder(v){
+        private var mTextView: TextView = v.text_for_row_callout_dialog
 
-
-}
-class DialogLayerAdapterViewHolder(v: View): RecyclerView.ViewHolder(v){
-    var mTextView: TextView = v.text_for_row_callout_dialog
-
-    fun bind(layerIndex: String, layerTitle: String ,clickListener: OnRowClickListener){
-        mTextView.text = layerTitle
-        itemView.setOnClickListener {
-            clickListener.onItemClicked(layerIndex)
+        fun bind(layerTitle: String, onRowClickListener: OnRowClickListener){
+            mTextView.text = layerTitle
+            itemView.setOnClickListener {
+                onRowClickListener.onRowClickListener(layerTitle)
+            }
         }
     }
-}
 
-interface OnRowClickListener{
-    fun onItemClicked(layerIndex: String)
+    interface OnRowClickListener{
+        fun onRowClickListener(layerIndex: String)
+    }
+
+
 }
