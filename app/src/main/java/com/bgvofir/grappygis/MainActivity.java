@@ -1196,7 +1196,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onLayerClickListener(@NotNull ArrayList<String> layerNames, @NotNull List<IdentifyLayerResult> identifiedLayers) {
         if (layerNames.size()>0) {
-            DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(layerNames, this);
+            DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(this, layerNames, this, identifiedLayers);
             dialogLayerSelectionFragment = new DialogLayerSelectionFragment(MainActivity.this, dialogLayerAdapter);
             dialogLayerSelectionFragment.show();
         }

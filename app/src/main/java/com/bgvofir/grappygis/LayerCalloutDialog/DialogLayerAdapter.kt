@@ -1,16 +1,24 @@
 package com.bgvofir.grappygis.LayerCalloutDialog
 
 import android.app.Activity
+import android.content.Context
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.TextView
-import com.bgvofir.grappygis.R
+import com.esri.arcgisruntime.concurrent.ListenableFuture
+import com.esri.arcgisruntime.layers.LegendInfo
+import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import kotlinx.android.synthetic.main.row_for_callout_dialog.view.*
+import java.util.concurrent.ExecutionException
+import android.R
 
-class DialogLayerAdapter(val layerNames: ArrayList<String>,internal var onRowClickListener: OnRowClickListener): RecyclerView.Adapter<DialogLayerAdapter.DialogLayerAdapterViewHolder>(){
+
+
+class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,internal var onRowClickListener: OnRowClickListener, val identifiedLayers: MutableList<IdentifyLayerResult>): RecyclerView.Adapter<DialogLayerAdapter.DialogLayerAdapterViewHolder>(){
 
 //    var keyList =  arrayListOf<String>()
 //    var valueList =  arrayListOf<String>()
@@ -27,7 +35,7 @@ class DialogLayerAdapter(val layerNames: ArrayList<String>,internal var onRowCli
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DialogLayerAdapterViewHolder {
 
-        val v = LayoutInflater.from(p0.context).inflate(R.layout.row_for_callout_dialog, p0, false)
+        val v = LayoutInflater.from(p0.context).inflate(com.bgvofir.grappygis.R.layout.row_for_callout_dialog, p0, false)
         return DialogLayerAdapterViewHolder(v)
 
     }
@@ -39,14 +47,33 @@ class DialogLayerAdapter(val layerNames: ArrayList<String>,internal var onRowCli
     override fun onBindViewHolder(p0: DialogLayerAdapterViewHolder, p1: Int) {
 //        val mIndex = keyList[p1]
         val mTitle = layerNames[p1]
-        p0.bind(mTitle, onRowClickListener)
+//        p0.bind(mTitle, onRowClickListener)
+
+        p0.bind(mTitle, identifiedLayers[p1], onRowClickListener)
     }
 
     inner class DialogLayerAdapterViewHolder(v: View): RecyclerView.ViewHolder(v){
         private var mTextView: TextView = v.text_for_row_callout_dialog
 
-        fun bind(layerTitle: String, onRowClickListener: OnRowClickListener){
+        fun bind(layerTitle: String, identifiedLayer: IdentifyLayerResult,onRowClickListener: OnRowClickListener){
             mTextView.text = layerTitle
+            //getting legend image
+            var layerLegend = identifiedLayer.layerContent.fetchLegendInfosAsync()
+            layerLegend.addDoneListener{
+                try{
+                    var legendInfo = layerLegend.get()
+                    val legendSymbol = legendInfo[0].symbol
+                    val symbolSwatch = legendSymbol.createSwatchAsync(context, Color.TRANSPARENT)
+                    val symbolBitmap = symbolSwatch.get()
+//                    val swatchImg = drawerDialog.findViewById(layerImageViewId[finalX]) as ImageView
+//                    swatchImg.setImageBitmap(symbolBitmap)
+                } catch (e: InterruptedException){
+
+                } catch (e: ExecutionException){
+
+                }
+            }
+            //end of legend image
             itemView.setOnClickListener {
                 onRowClickListener.onRowClickListener(layerTitle)
             }
