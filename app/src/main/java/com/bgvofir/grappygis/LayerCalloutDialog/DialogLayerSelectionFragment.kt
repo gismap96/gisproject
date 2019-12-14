@@ -25,6 +25,7 @@ class DialogLayerSelectionFragment(var activity: Activity, internal var adapter:
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.fragment_dialog_layer_selection)
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         var recycler = layerCalloutDialogRecyclerview
         var layoutManager = LinearLayoutManager(activity)
         recycler.layoutManager = layoutManager

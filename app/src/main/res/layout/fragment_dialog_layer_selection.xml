@@ -1,46 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-tools:context=".LayerCalloutDialog.DialogLayerSelectionFragment">
-
-<android.support.constraint.Guideline
-    android:id="@+id/glStartDialog"
-    android:layout_width="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    app:layout_constraintGuide_percent="0.1" />
+    tools:context=".LayerCalloutDialog.DialogLayerSelectionFragment">
 
-<android.support.v7.widget.RecyclerView
-    android:id="@+id/layerCalloutDialogRecyclerview"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
-    app:layout_constraintBottom_toTopOf="@+id/closePopupDialog"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
-
-<android.support.constraint.Guideline
-    android:id="@+id/glEndDialog"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    app:layout_constraintGuide_percent="0.9" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/layerCalloutDialogRecyclerview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#CC010b1f"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/closePopupDialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headlineForLayerSelection" />
 
     <Button
         android:id="@+id/closePopupDialog"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:background="#010b1f"
         android:text="סגור"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/glEndDialog"
-        app:layout_constraintStart_toStartOf="@+id/glStartDialog" />
+        android:textAlignment="center"
+        android:textColor="#3fadf8"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layerCalloutDialogRecyclerview" />
+
+    <TextView
+        android:id="@+id/headlineForLayerSelection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#010b1f"
+        android:padding="10dp"
+        android:text="בחר שכבה רצויה"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
