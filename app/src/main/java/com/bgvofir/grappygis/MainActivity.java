@@ -45,7 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController;
-import com.bgvofir.grappygis.LayerCalloutControl.LayerAttributeMapGenerator;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerSelectionFragment;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
@@ -118,7 +117,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnlayerClickListener {
+public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener {
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
@@ -886,7 +885,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         catch (Exception ex){
             ex.printStackTrace();
         }
-        LayerAttributeMapGenerator.INSTANCE.generate(layers);
 
 //        final List<ListenableFuture<FeatureQueryResult>> futures = new ArrayList<>();
         final boolean[] breakLoop = {false};
@@ -925,7 +923,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                             Map<String, Object> attr = feature.getAttributes();
                             Set<String> keys = attr.keySet();
                             calloutContent.append(getString(R.string.layer) + ": " + layers.get(finalI).getName());
-                            LayerAttributeMapGenerator.INSTANCE.generate(layers);
                             for (String key : keys) {
                                 if (isDeletePointMode && key.toLowerCase().contains("custompointhash")){
                                     deletePoint(Integer.parseInt(attr.get(key).toString()));

@@ -15,7 +15,7 @@ import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import kotlinx.android.synthetic.main.row_for_callout_dialog.view.*
 import java.util.concurrent.ExecutionException
 import android.R
-
+import android.widget.ImageView
 
 
 class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,internal var onRowClickListener: OnRowClickListener, val identifiedLayers: MutableList<IdentifyLayerResult>): RecyclerView.Adapter<DialogLayerAdapter.DialogLayerAdapterViewHolder>(){
@@ -54,6 +54,7 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
 
     inner class DialogLayerAdapterViewHolder(v: View): RecyclerView.ViewHolder(v){
         private var mTextView: TextView = v.text_for_row_callout_dialog
+        private var mLayerSelectionDialogLegendImage = v.layerSelectionDialogLegendImage
 
         fun bind(layerTitle: String, identifiedLayer: IdentifyLayerResult,onRowClickListener: OnRowClickListener){
             mTextView.text = layerTitle
@@ -65,8 +66,7 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
                     val legendSymbol = legendInfo[0].symbol
                     val symbolSwatch = legendSymbol.createSwatchAsync(context, Color.TRANSPARENT)
                     val symbolBitmap = symbolSwatch.get()
-//                    val swatchImg = drawerDialog.findViewById(layerImageViewId[finalX]) as ImageView
-//                    swatchImg.setImageBitmap(symbolBitmap)
+                    mLayerSelectionDialogLegendImage.setImageBitmap(symbolBitmap)
                 } catch (e: InterruptedException){
 
                 } catch (e: ExecutionException){

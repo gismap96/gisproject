@@ -1,31 +1,38 @@
 package com.bgvofir.grappygis.LayerCalloutControl
 
-import android.app.Activity
-import android.content.Context
 import android.util.Log
-import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter
-import com.bgvofir.grappygis.MainActivity
-import com.esri.arcgisruntime.geometry.Point
+import com.esri.arcgisruntime.data.ArcGISFeature
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
-import com.esri.arcgisruntime.concurrent.ListenableFuture
-import com.esri.arcgisruntime.mapping.GeoElement
 import com.esri.arcgisruntime.mapping.view.MapView
 import java.util.concurrent.ExecutionException
 
 
 object FeatureLayerController {
 
-    fun layerClicked(point: android.graphics.Point, mMap: MapView, onlayerClickListener: OnlayerClickListener){
+    fun layerClicked(point: android.graphics.Point, mMap: MapView, onLayerClickListener: OnLayerClickListener){
         identifyClickedLayerResults(point,mMap){
             res ->
             var layerNames = ArrayList<String>()
             res.forEach {
                 layerNames.add(it.layerContent.name)
             }
-            onlayerClickListener.onLayerClickListener(layerNames, res)
+            onLayerClickListener.onLayerClickListener(layerNames, res)
         }
     }
 
+    fun layerDetails(forLayer: IdentifyLayerResult){
+        val resultGeoElements = forLayer.elements
+        if (!resultGeoElements.isEmpty()){
+            var mAttributesString = ArrayList<String>()
+            resultGeoElements.forEach {
+                if (it is ArcGISFeature){
+                    val mArcGISFeature = it as? ArcGISFeature
+                    mAttributesString.add(mArcGISFeature?.attributes.toString())
+
+                }
+            }
+        }
+    }
     /** identifies which layers were clicked
      *
      *
@@ -49,7 +56,7 @@ object FeatureLayerController {
         }
     }
 
-    interface OnlayerClickListener{
+    interface OnLayerClickListener{
         fun onLayerClickListener(layerNames: ArrayList<String>, identifiedLayers: MutableList<IdentifyLayerResult>)
     }
 
