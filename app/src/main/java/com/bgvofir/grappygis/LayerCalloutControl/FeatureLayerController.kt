@@ -10,15 +10,26 @@ import java.util.concurrent.ExecutionException
 object FeatureLayerController {
 
     fun layerClicked(point: android.graphics.Point, mMap: MapView, onLayerClickListener: OnLayerClickListener){
-        identifyClickedLayerResults(point,mMap){
-            res ->
-            var layerNames = ArrayList<String>()
-            res.forEach {
-                layerNames.add(it.layerContent.name)
+        identifyClickedLayerResults(point,mMap) { res ->
+
+            if (res.size > 0) {
+                var layerNames = ArrayList<String>()
+//                var cleanList = mutableListOf<IdentifyLayerResult>()
+                res.forEach {
+                    val mLayerName = it.layerContent.name
+                    layerNames.add(mLayerName)
+//                        if (it.layerContent.name != "Feature Collection"){
+//                            layerNames.add(mLayerName)
+//                            cleanList.add(it)
+//
+//                        }
+                }
+                onLayerClickListener.onLayerClickListener(layerNames, res)
             }
-            onLayerClickListener.onLayerClickListener(layerNames, res)
+
         }
     }
+
 
     fun layerDetails(forLayer: IdentifyLayerResult){
         val resultGeoElements = forLayer.elements

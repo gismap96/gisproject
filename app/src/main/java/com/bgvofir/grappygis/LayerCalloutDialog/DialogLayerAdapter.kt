@@ -15,6 +15,7 @@ import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import kotlinx.android.synthetic.main.row_for_callout_dialog.view.*
 import java.util.concurrent.ExecutionException
 import android.R
+import android.support.v4.content.ContextCompat
 import android.widget.ImageView
 
 
@@ -57,21 +58,28 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
         private var mLayerSelectionDialogLegendImage = v.layerSelectionDialogLegendImage
 
         fun bind(layerTitle: String, identifiedLayer: IdentifyLayerResult,onRowClickListener: OnRowClickListener){
-            mTextView.text = layerTitle
+
             //getting legend image
-            var layerLegend = identifiedLayer.layerContent.fetchLegendInfosAsync()
-            layerLegend.addDoneListener{
-                try{
-                    var legendInfo = layerLegend.get()
-                    val legendSymbol = legendInfo[0].symbol
-                    val symbolSwatch = legendSymbol.createSwatchAsync(context, Color.TRANSPARENT)
-                    val symbolBitmap = symbolSwatch.get()
-                    mLayerSelectionDialogLegendImage.setImageBitmap(symbolBitmap)
-                } catch (e: InterruptedException){
+            if (layerTitle != "Feature Collection") {
+                mTextView.text = layerTitle
+                var layerLegend = identifiedLayer.layerContent.fetchLegendInfosAsync()
+                layerLegend.addDoneListener {
+                    try {
+                        var legendInfo = layerLegend.get()
+                        if (legendInfo.size > 0) {
+                            val legendSymbol = legendInfo[0].symbol
+                            val symbolSwatch = legendSymbol.createSwatchAsync(context, Color.TRANSPARENT)
+                            val symbolBitmap = symbolSwatch.get()
+                            mLayerSelectionDialogLegendImage.setImageBitmap(symbolBitmap)
+                        }
+                    } catch (e: InterruptedException) {
 
-                } catch (e: ExecutionException){
+                    } catch (e: ExecutionException) {
 
+                    }
                 }
+            } else {
+                mTextView.text = "שכבה ממשתמש"
             }
             //end of legend image
             itemView.setOnClickListener {
