@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -1185,9 +1186,26 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     @Override
-    public void onRowClickListener(@NotNull String layerIndex) {
+    public void onRowClickListener(@NotNull String layerIndex, @NonNull IdentifyLayerResult layerResult) {
         dialogLayerSelectionFragment.dismiss();
+        ArrayList<String> res = FeatureLayerController.INSTANCE.layerDetails(layerResult);
         Toast.makeText(this, "you've selected: " + layerIndex, Toast.LENGTH_SHORT).show();
+        new AlertDialog.Builder(this)
+                .setTitle("results:")
+                .setMessage(res.toString())
+
+                // Specifying a listener allows you to take an action before dismissing the dialog.
+                // The dialog is automatically dismissed when a dialog button is clicked.
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Continue with delete operation
+                    }
+                })
+
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     @Override

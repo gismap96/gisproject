@@ -31,10 +31,10 @@ object FeatureLayerController {
     }
 
 
-    fun layerDetails(forLayer: IdentifyLayerResult){
+    fun layerDetails(forLayer: IdentifyLayerResult): ArrayList<String>{
         val resultGeoElements = forLayer.elements
+        var mAttributesString = ArrayList<String>()
         if (!resultGeoElements.isEmpty()){
-            var mAttributesString = ArrayList<String>()
             resultGeoElements.forEach {
                 if (it is ArcGISFeature){
                     val mArcGISFeature = it as? ArcGISFeature
@@ -42,7 +42,9 @@ object FeatureLayerController {
 
                 }
             }
+
         }
+        return mAttributesString
     }
     /** identifies which layers were clicked
      *

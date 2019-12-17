@@ -42,12 +42,16 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
     }
 
     override fun getItemCount(): Int {
+        if (layerNames.size > 5){
+            return 5
+        }
         return layerNames.size
     }
 
     override fun onBindViewHolder(p0: DialogLayerAdapterViewHolder, p1: Int) {
 //        val mIndex = keyList[p1]
         val mTitle = layerNames[p1]
+
 //        p0.bind(mTitle, onRowClickListener)
 
         p0.bind(mTitle, identifiedLayers[p1], onRowClickListener)
@@ -83,13 +87,13 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
             }
             //end of legend image
             itemView.setOnClickListener {
-                onRowClickListener.onRowClickListener(layerTitle)
+                onRowClickListener.onRowClickListener(layerTitle, identifiedLayer)
             }
         }
     }
 
     interface OnRowClickListener{
-        fun onRowClickListener(layerIndex: String)
+        fun onRowClickListener(layerIndex: String, layerIdentified: IdentifyLayerResult)
     }
 
 

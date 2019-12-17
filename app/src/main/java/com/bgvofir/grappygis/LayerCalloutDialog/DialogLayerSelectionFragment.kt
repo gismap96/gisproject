@@ -18,6 +18,7 @@ import android.view.Window
 import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.internal.jni.id
 import kotlinx.android.synthetic.main.fragment_dialog_layer_selection.*
+import kotlinx.android.synthetic.main.fragment_dialog_layer_selection.view.*
 
 class DialogLayerSelectionFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>) : Dialog(activity), View.OnClickListener {
 
@@ -28,8 +29,11 @@ class DialogLayerSelectionFragment(var activity: Activity, internal var adapter:
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         var recycler = layerCalloutDialogRecyclerview
         var layoutManager = LinearLayoutManager(activity)
+
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
+
+
 
         closePopupDialog.setOnClickListener(this)
     }
