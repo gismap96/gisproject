@@ -17,13 +17,10 @@ class DialogLayerDetailsAdapter(val context: Context, val displayLayers: ArrayLi
     var elementsColor = mutableMapOf<Int, Boolean>()
     var rowValues = ArrayList<RowValue>()
 
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DialogLayerDetailsAdapterViewHolder {
-        val v = LayoutInflater.from(p0.context).inflate(com.bgvofir.grappygis.R.layout.row_for_layer_details_dialog, p0, false)
-        return DialogLayerDetailsAdapterViewHolder(v)
-    }
-
-    override fun getItemCount(): Int {
+    init{
         var isColored = false
+        elementsColor.clear()
+        rowValues.clear()
         displayLayers.forEach {
             it.forEach {
                 val rowValue = RowValue(it.key, it.value)
@@ -32,6 +29,15 @@ class DialogLayerDetailsAdapter(val context: Context, val displayLayers: ArrayLi
             }
             isColored = !isColored
         }
+    }
+
+    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DialogLayerDetailsAdapterViewHolder {
+        val v = LayoutInflater.from(p0.context).inflate(com.bgvofir.grappygis.R.layout.row_for_layer_details_dialog, p0, false)
+        return DialogLayerDetailsAdapterViewHolder(v)
+    }
+
+
+    override fun getItemCount(): Int {
         return rowValues.size
     }
 
