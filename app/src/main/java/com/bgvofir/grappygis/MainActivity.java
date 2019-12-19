@@ -48,6 +48,8 @@ import android.widget.Toast;
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerSelectionFragment;
+import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsAdapter;
+import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsFragment;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.data.Feature;
 import com.esri.arcgisruntime.data.FeatureCollection;
@@ -1188,24 +1190,29 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onRowClickListener(@NotNull String layerIndex, @NonNull IdentifyLayerResult layerResult) {
         dialogLayerSelectionFragment.dismiss();
-        ArrayList<String> res = FeatureLayerController.INSTANCE.layerDetails(layerResult);
-        Toast.makeText(this, "you've selected: " + layerIndex, Toast.LENGTH_SHORT).show();
-        new AlertDialog.Builder(this)
-                .setTitle("results:")
-                .setMessage(res.toString())
+        ArrayList<Map<String, String>> displayMap = FeatureLayerController.INSTANCE.layerDetails(layerResult);
+        DialogLayerDetailsAdapter dialogLayerDetailsAdapter = new DialogLayerDetailsAdapter(this, displayMap);
+        DialogLayerDetailsFragment dialogLayerDetailsFragment = new DialogLayerDetailsFragment(this, dialogLayerDetailsAdapter);
+        dialogLayerDetailsFragment.show();
 
-                // Specifying a listener allows you to take an action before dismissing the dialog.
-                // The dialog is automatically dismissed when a dialog button is clicked.
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Continue with delete operation
-                    }
-                })
-
-                // A null listener allows the button to dismiss the dialog and take no further action.
-                .setNegativeButton(android.R.string.no, null)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+//        ArrayList<String> res = FeatureLayerController.INSTANCE.layerDetails(layerResult);
+//        Toast.makeText(this, "you've selected: " + layerIndex, Toast.LENGTH_SHORT).show();
+//        new AlertDialog.Builder(this)
+//                .setTitle("results:")
+//                .setMessage(res.toString())
+//
+//                // Specifying a listener allows you to take an action before dismissing the dialog.
+//                // The dialog is automatically dismissed when a dialog button is clicked.
+//                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        // Continue with delete operation
+//                    }
+//                })
+//
+//                // A null listener allows the button to dismiss the dialog and take no further action.
+//                .setNegativeButton(android.R.string.no, null)
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .show();
     }
 
     @Override
@@ -1216,7 +1223,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             dialogLayerSelectionFragment.show();
         }
     }
-
 //    @Override
 //    public void onLayerClickListener(@NotNull ArrayList<String> layerNames) {
 ////        Map<String, String> mMap = ArrayDump.INSTANCE.getItem();

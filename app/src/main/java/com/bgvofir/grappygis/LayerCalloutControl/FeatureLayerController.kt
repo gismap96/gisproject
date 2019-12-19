@@ -1,9 +1,13 @@
 package com.bgvofir.grappygis.LayerCalloutControl
 
+import android.util.JsonReader
 import android.util.Log
 import com.esri.arcgisruntime.data.ArcGISFeature
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import com.esri.arcgisruntime.mapping.view.MapView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.StringReader
 import java.util.concurrent.ExecutionException
 
 
@@ -29,22 +33,42 @@ object FeatureLayerController {
 
         }
     }
+    private fun convertAttributeStringToMap(forString: ArrayList<String>): MutableList<Map<String, String>>{
+        val mapType = object : TypeToken<Map<String, String>>() {}.type
+        var resultMapList = mutableListOf<Map<String, String>>()
+        if (forString.size > 0){
+            forString.forEach {
+                val trimmed = it.trim()
+                val mMap = Gson().fromJson<Map<String, String>>(trimmed, mapType)
+                resultMapList.add(mMap)
+            }
+        }
+        return resultMapList
+    }
 
-
-    fun layerDetails(forLayer: IdentifyLayerResult): ArrayList<String>{
+    fun layerDetails(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
         val resultGeoElements = forLayer.elements
         var mAttributesString = ArrayList<String>()
+        var layersAttributeList = ArrayList<Map<String, String>>()
+
         if (!resultGeoElements.isEmpty()){
             resultGeoElements.forEach {
                 if (it is ArcGISFeature){
                     val mArcGISFeature = it as? ArcGISFeature
                     mAttributesString.add(mArcGISFeature?.attributes.toString())
-
+                    var mTempMap = mutableMapOf<String, String>()
+                    mArcGISFeature?.attributes?.forEach {
+                        if (!it.value.toString().isEmpty() && !it.key.toString().isEmpty()
+                                && !it.key.toString().contains(".FID"))
+                            mTempMap[it.key.toString()] = it.value.toString()
+                    }
+                    layersAttributeList.add(mTempMap)
                 }
             }
 
         }
-        return mAttributesString
+
+        return layersAttributeList
     }
     /** identifies which layers were clicked
      *
