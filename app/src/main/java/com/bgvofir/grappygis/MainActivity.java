@@ -595,7 +595,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     //showLayerData(e, mobileMap);
                     android.graphics.Point screenPoint = new android.graphics.Point(Math.round(e.getX()),
                             Math.round(e.getY()));
-                    FeatureLayerController.INSTANCE.layerClicked(screenPoint,mMapView, MainActivity.this);
+                    FeatureLayerController.INSTANCE.layerClicked(screenPoint, mMapView, MainActivity.this);
 //                    Map<String, String> mMap = ArrayDump.INSTANCE.getItem();
 //                    DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(mMap, MainActivity.this);
 //                    dialogLayerSelectionFragment = new DialogLayerSelectionFragment(MainActivity.this, dialogLayerAdapter);

@@ -15,7 +15,11 @@ import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import kotlinx.android.synthetic.main.row_for_callout_dialog.view.*
 import java.util.concurrent.ExecutionException
 import android.R
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.os.Build
 import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.widget.ImageView
 
 
@@ -84,6 +88,7 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
                 }
             } else {
                 mTextView.text = "שכבה ממשתמש"
+                mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(com.bgvofir.grappygis.R.drawable.ic_star_blue))
             }
             //end of legend image
             itemView.setOnClickListener {
@@ -95,6 +100,22 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
     interface OnRowClickListener{
         fun onRowClickListener(layerIndex: String, layerIdentified: IdentifyLayerResult)
     }
+
+    private fun getBitmapFromVectorDrawable(drawableId: Int): Bitmap {
+        var drawable = ContextCompat.getDrawable(context, drawableId)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = DrawableCompat.wrap(drawable!!).mutate()
+        }
+
+        val bitmap = Bitmap.createBitmap(drawable!!.intrinsicWidth,
+                drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+
+        return bitmap
+    }
+
 
 
 }
