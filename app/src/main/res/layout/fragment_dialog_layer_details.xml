@@ -38,5 +38,15 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragmentDialogLayerDetailsHeadline" />
+        app:layout_constraintTop_toBottomOf="@+id/fragmentDialogLayerDetailsHeadline"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/tmpbtn"
+        />
+    <Button
+        android:id="@+id/tmpbtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="super cool button"
+        />
 </android.support.constraint.ConstraintLayout>
