@@ -4,6 +4,8 @@ package com.bgvofir.grappygis.LayerCalloutDialog
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
@@ -30,6 +32,7 @@ class DialogLayerSelectionFragment(var activity: Activity, internal var adapter:
         var recycler = layerCalloutDialogRecyclerview
         var layoutManager = LinearLayoutManager(activity)
 
+        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
 

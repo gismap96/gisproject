@@ -11,7 +11,8 @@ import android.view.Window
 import kotlinx.android.synthetic.main.fragment_dialog_layer_details.*
 import android.support.v7.widget.DividerItemDecoration
 import android.R
-
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 
 
 class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>): Dialog(activity), View.OnClickListener {
@@ -22,7 +23,7 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(com.bgvofir.grappygis.R.layout.fragment_dialog_layer_details)
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
+        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         var recycler = dialogLayerDetailsRecyclerview
         var layoutManager = LinearLayoutManager(activity)
         recycler.layoutManager = layoutManager
