@@ -1,8 +1,11 @@
 package com.bgvofir.grappygis.LayerCalloutControl
 
+import android.graphics.Point
 import android.util.JsonReader
 import android.util.Log
 import com.esri.arcgisruntime.data.ArcGISFeature
+import com.esri.arcgisruntime.geometry.Envelope
+import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.google.gson.Gson
@@ -12,25 +15,20 @@ import java.util.concurrent.ExecutionException
 
 
 object FeatureLayerController {
+    var point: android.graphics.Point? = null
 
     fun layerClicked(point: android.graphics.Point, mMap: MapView, onLayerClickListener: OnLayerClickListener){
+        this.point = point
         identifyClickedLayerResults(point,mMap) { res ->
 
             if (res.size > 0) {
                 var layerNames = ArrayList<String>()
-//                var cleanList = mutableListOf<IdentifyLayerResult>()
                 res.forEach {
                     val mLayerName = it.layerContent.name
                     layerNames.add(mLayerName)
-//                        if (it.layerContent.name != "Feature Collection"){
-//                            layerNames.add(mLayerName)
-//                            cleanList.add(it)
-//
-//                        }
                 }
                 onLayerClickListener.onLayerClickListener(layerNames, res)
             }
-
         }
     }
     private fun convertAttributeStringToMap(forString: ArrayList<String>): MutableList<Map<String, String>>{
@@ -48,6 +46,9 @@ object FeatureLayerController {
 
     fun layerDetails(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
         val resultGeoElements = forLayer.elements
+        if (forLayer.layerContent.name == "Feature Collection"){
+            featureCollectionDetails(forLayer)
+        }
         var mAttributesString = ArrayList<String>()
         var layersAttributeList = ArrayList<Map<String, String>>()
 
@@ -69,6 +70,10 @@ object FeatureLayerController {
         }
 
         return layersAttributeList
+    }
+
+    private fun featureCollectionDetails(forLayer: IdentifyLayerResult){
+
     }
     /** identifies which layers were clicked
      *
