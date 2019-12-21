@@ -4,7 +4,9 @@ import android.graphics.Point
 import android.util.JsonReader
 import android.util.Log
 import com.esri.arcgisruntime.data.ArcGISFeature
+import com.esri.arcgisruntime.data.Feature
 import com.esri.arcgisruntime.geometry.Envelope
+import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import com.esri.arcgisruntime.mapping.view.MapView
@@ -12,10 +14,19 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.StringReader
 import java.util.concurrent.ExecutionException
+import com.esri.arcgisruntime.data.QueryParameters
+import com.esri.arcgisruntime.data.ServiceFeatureTable
+import com.esri.arcgisruntime.data.FeatureQueryResult
+import com.esri.arcgisruntime.concurrent.ListenableFuture
+
+
+
+
 
 
 object FeatureLayerController {
     var point: android.graphics.Point? = null
+    var tolerance = 10.0
 
     fun layerClicked(point: android.graphics.Point, mMap: MapView, onLayerClickListener: OnLayerClickListener){
         this.point = point
@@ -47,7 +58,8 @@ object FeatureLayerController {
     fun layerDetails(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
         val resultGeoElements = forLayer.elements
         if (forLayer.layerContent.name == "Feature Collection"){
-            featureCollectionDetails(forLayer)
+            //doesn't work here :(
+            return featureCollectionDetails(forLayer)
         }
         var mAttributesString = ArrayList<String>()
         var layersAttributeList = ArrayList<Map<String, String>>()
@@ -72,8 +84,44 @@ object FeatureLayerController {
         return layersAttributeList
     }
 
-    private fun featureCollectionDetails(forLayer: IdentifyLayerResult){
+    private fun featureCollectionDetails(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
+        var resultList = ArrayList<Map<String, String>>()
+        forLayer.sublayerResults.forEach {
+            var mTempMap = mutableMapOf<String, String>()
+            it.elements.forEach {
+                it.attributes.forEach {
+                    if (it.key.contains("Description")){
+                        mTempMap["Description"] = it.value.toString()
+                    }
+                    if (it.key.contains("Category")){
+                        mTempMap["Category"] = it.value.toString()
+                    }
+                    if (it.key.contains("URL") && it.value != null){
+                        mTempMap["URL"] = it.value.toString()
+                    }
+                }
+            }
+            resultList.add(mTempMap)
+        }
 
+        return resultList
+    }
+
+    fun featureCollectionHandle(forPoint : android.graphics.Point, forMap: MapView, identifiedLayer: IdentifyLayerResult){
+        val envelope = Envelope(forPoint.x - tolerance, forPoint.y - tolerance,
+                forPoint.x + tolerance, forPoint.y + tolerance, forMap.spatialReference)
+        var query = QueryParameters()
+        query.geometry = envelope
+        val collection = identifiedLayer.layerContent as FeatureCollectionLayer
+        val future = collection.layers[0].featureTable.queryFeaturesAsync(query)
+        future.addDoneListener{
+            val result = future.get()
+            var mString = mutableListOf<String>()
+            result.iterator().forEach {
+                mString.add(it.attributes.toString())
+            }
+            print(mString)
+        }
     }
     /** identifies which layers were clicked
      *
@@ -83,7 +131,7 @@ object FeatureLayerController {
         val TAG = "ClickedLayerResults"
         var identifyLayerResult: MutableList<IdentifyLayerResult>
         val identifyLayerResultsFuture = mMap
-                .identifyLayersAsync(point, 12.0, false, 5)
+                .identifyLayersAsync(point, tolerance, false, 5)
 
         identifyLayerResultsFuture.addDoneListener {
             try {
@@ -98,8 +146,12 @@ object FeatureLayerController {
         }
     }
 
+    interface OnFeatureCollectionListener{
+        fun onFeatureCollectionListener()
+    }
     interface OnLayerClickListener{
         fun onLayerClickListener(layerNames: ArrayList<String>, identifiedLayers: MutableList<IdentifyLayerResult>)
     }
 
 }
+//                (identifyLayerResult.get(0).layerContent as FeatureCollectionLayer).layers.get(0).featureTable

@@ -164,6 +164,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private boolean mCurrentIsUpdateSys;
     private boolean activityAlive;
     private DialogLayerSelectionFragment dialogLayerSelectionFragment;
+    private android.graphics.Point screenPoint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -593,7 +594,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 }
                 else{
                     //showLayerData(e, mobileMap);
-                    android.graphics.Point screenPoint = new android.graphics.Point(Math.round(e.getX()),
+                    screenPoint = new android.graphics.Point(Math.round(e.getX()),
                             Math.round(e.getY()));
                     FeatureLayerController.INSTANCE.layerClicked(screenPoint, mMapView, MainActivity.this);
 //                    Map<String, String> mMap = ArrayDump.INSTANCE.getItem();
@@ -1192,6 +1193,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         dialogLayerSelectionFragment.dismiss();
         showDetailsDialog(layerResult);
 
+
     }
 
     private void showDetailsDialog(@NonNull IdentifyLayerResult layerResult) {
@@ -1207,9 +1209,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(this, layerNames, this, identifiedLayers);
             dialogLayerSelectionFragment = new DialogLayerSelectionFragment(MainActivity.this, dialogLayerAdapter);
             dialogLayerSelectionFragment.show();
-        } else if (layerNames.size() == 1){
+        } else if ((layerNames.size() == 1)){
             showDetailsDialog(identifiedLayers.get(0));
         }
+//        else {
+//            FeatureLayerController.INSTANCE.featureCollectionHandle(screenPoint, mMapView,identifiedLayers.get(0));
+//        }
     }
 //    @Override
 //    public void onLayerClickListener(@NotNull ArrayList<String> layerNames) {
