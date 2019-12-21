@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter
+import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import kotlinx.android.synthetic.main.fragment_dialog_layer_details.view.*
 import kotlinx.android.synthetic.main.row_for_layer_details_dialog.view.*

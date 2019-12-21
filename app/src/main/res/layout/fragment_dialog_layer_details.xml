@@ -6,47 +6,37 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/fragmentDialogLayerDetailsClose"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="סגור"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/fragmentDialogLayerDetailsHeadline"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="wrap_content"
+        android:background="#010b1f"
         android:gravity="center"
         android:text="כותרת"
-        app:layout_constraintBottom_toBottomOf="@+id/fragmentDialogLayerDetailsClose"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/fragmentDialogLayerDetailsClose"
-        app:layout_constraintTop_toTopOf="@+id/fragmentDialogLayerDetailsClose" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/dialogLayerDetailsRecyclerview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="1dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/fragmentDialogLayerDetailsClose"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragmentDialogLayerDetailsHeadline"
-        app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/tmpbtn"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/fragmentDialogLayerDetailsHeadline" />
+
     <Button
-        android:id="@+id/tmpbtn"
+        android:id="@+id/fragmentDialogLayerDetailsClose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="super cool button"
-        />
+        android:text="סגור"
+        android:background="#E6010b1f"
+        android:textColor="#3fadf8"
+        android:textSize="24sp"
+
+        app:layout_constraintBottom_toBottomOf="parent" />
 </android.support.constraint.ConstraintLayout>

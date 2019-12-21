@@ -11,6 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#CC010b1f"
+
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/closePopupDialog"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,8 +22,8 @@
     <Button
         android:id="@+id/closePopupDialog"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#010b1f"
+        android:layout_height="80dp"
+        android:background="#E6010b1f"
         android:text="סגור"
         android:textAlignment="center"
         android:textColor="#3fadf8"
@@ -33,11 +34,12 @@
         app:layout_constraintTop_toBottomOf="@+id/layerCalloutDialogRecyclerview" />
 
     <TextView
+        android:textStyle="bold"
         android:id="@+id/headlineForLayerSelection"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#010b1f"
-        android:padding="10dp"
+        android:padding="16dp"
         android:text="בחר שכבה רצויה"
         android:textAlignment="center"
         android:textColor="#ffffff"
