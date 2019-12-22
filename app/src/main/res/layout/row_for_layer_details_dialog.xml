@@ -10,13 +10,13 @@
     <TextView
         android:id="@+id/rowLayersDetailsKey"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="מפתח"
+        android:layout_height="0dp"
         android:background="#010b1f"
-        android:textColor="#3fadf8"
-        android:layout_marginEnd="2dp"
+        android:gravity="center"
 
+        android:text="מפתח"
+        android:textColor="#3fadf8"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,11 +32,25 @@
         android:id="@+id/rowLayersDetailsValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="ערך"
+        android:layout_marginStart="4dp"
         android:background="#CC010b1f"
-        android:textColor="#ffffff"
         android:gravity="center"
+        android:text="ערך"
+        android:textColor="#ffffff"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/rowDetailsPreviewImageView"
+        android:layout_width="0dp"
+        android:layout_height="250dp"
+        android:layout_marginStart="4dp"
+        android:background="#CC010b1f"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/arcgisruntime_location_display_acquiring_symbol" />
+
 </android.support.constraint.ConstraintLayout>

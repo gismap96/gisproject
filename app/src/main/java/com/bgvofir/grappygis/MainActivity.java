@@ -351,6 +351,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     for (int i = 0; i < pointsJson.length(); i++){
                         Gson gson = new Gson();
                         ClientPoint clientPoint = gson.fromJson(pointsJson.getJSONObject(i).toString(), ClientPoint.class);
+                        clientPoint.setId(i);
                         mClientPoints.add(clientPoint);
                         createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem());
                     }
@@ -648,7 +649,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys);
-                        mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys));
+                        mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys, mClientPoints.size()));
                         saveClientPoints(false);
                         toggleAddPoint(false);
                     }
@@ -1079,7 +1080,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 } else {
                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
                         createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys);
-                        mClientPoints.add(new ClientPoint((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys));
+                        mClientPoints.add(new ClientPoint((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys, mClientPoints.size()));
                         saveClientPoints(false);
                         toggleAddPoint(false);
                     }
@@ -1107,7 +1108,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                     progressDialog.dismiss();
                                     Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
                                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
-                                        mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys));
+                                        mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys, mClientPoints.size()));
                                         saveClientPoints(false);
                                         createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys);
                                         mCurrentX = 0;
@@ -1205,6 +1206,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     public void onLayerClickListener(@NotNull ArrayList<String> layerNames, @NotNull List<IdentifyLayerResult> identifiedLayers) {
+        if (isDeletePointMode){
+            Integer pointHash = FeatureLayerController.INSTANCE.identifyAttForPointDeletion(identifiedLayers);
+            deletePoint(pointHash);
+            return;
+        }
         if (layerNames.size()>1) {
             DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(this, layerNames, this, identifiedLayers);
             dialogLayerSelectionFragment = new DialogLayerSelectionFragment(MainActivity.this, dialogLayerAdapter);
@@ -1212,17 +1218,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         } else if ((layerNames.size() == 1)){
             showDetailsDialog(identifiedLayers.get(0));
         }
-//        else {
-//            FeatureLayerController.INSTANCE.featureCollectionHandle(screenPoint, mMapView,identifiedLayers.get(0));
-//        }
     }
-//    @Override
-//    public void onLayerClickListener(@NotNull ArrayList<String> layerNames) {
-////        Map<String, String> mMap = ArrayDump.INSTANCE.getItem();
-//        if (layerNames.size()>0) {
-//            DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(layerNames, this);
-//            dialogLayerSelectionFragment = new DialogLayerSelectionFragment(MainActivity.this, dialogLayerAdapter);
-//            dialogLayerSelectionFragment.show();
-//        }
-//    }
+
 }

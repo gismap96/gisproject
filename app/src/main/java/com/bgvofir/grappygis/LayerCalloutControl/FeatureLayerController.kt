@@ -3,6 +3,7 @@ package com.bgvofir.grappygis.LayerCalloutControl
 import android.graphics.Point
 import android.util.JsonReader
 import android.util.Log
+import com.bgvofir.grappygis.ClientPoint
 import com.esri.arcgisruntime.data.ArcGISFeature
 import com.esri.arcgisruntime.data.Feature
 import com.esri.arcgisruntime.geometry.Envelope
@@ -91,20 +92,37 @@ object FeatureLayerController {
             it.elements.forEach {
                 it.attributes.forEach {
                     if (it.key.contains("Description")){
-                        mTempMap["Description"] = it.value.toString()
+                        mTempMap["תאור"] = it.value.toString()
                     }
                     if (it.key.contains("Category")){
-                        mTempMap["Category"] = it.value.toString()
+                        mTempMap["קטגוריה"] = it.value.toString()
                     }
                     if (it.key.contains("URL") && it.value != null){
-                        mTempMap["URL"] = it.value.toString()
+                        mTempMap["תצוגה מקדימה"] = it.value.toString()
                     }
                 }
             }
             resultList.add(mTempMap)
         }
-
+        val set = HashSet<Map<String, String>>(resultList)
+        resultList.clear()
+        resultList.addAll(set)
         return resultList
+    }
+
+    fun identifyAttForPointDeletion(forLayers: List<IdentifyLayerResult>): Int{
+        forLayers.forEach {
+            if (it.layerContent.name.toLowerCase() == "feature collection") {
+                it.sublayerResults[0].elements.forEach {
+                    it.attributes.forEach{
+                        if (it.key.contains("CustomPointHash")){
+                            return it.value as Int
+                        }
+                    }
+                }
+            }
+        }
+        return 0
     }
 
     fun featureCollectionHandle(forPoint : android.graphics.Point, forMap: MapView, identifiedLayer: IdentifyLayerResult){
