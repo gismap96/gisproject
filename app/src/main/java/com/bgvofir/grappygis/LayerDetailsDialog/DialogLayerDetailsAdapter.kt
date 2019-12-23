@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.row_for_layer_details_dialog.view.*
 import java.lang.Exception
 import java.util.ArrayList
 
-class DialogLayerDetailsAdapter(val context: Context, val displayLayers: ArrayList<Map<String, String>>): RecyclerView.Adapter<DialogLayerDetailsAdapter.DialogLayerDetailsAdapterViewHolder>(){
+class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<Map<String, String>>): RecyclerView.Adapter<DialogLayerDetailsAdapter.DialogLayerDetailsAdapterViewHolder>(){
 
     var elementsColor = mutableMapOf<Int, Boolean>()
     var rowValues = ArrayList<RowValue>()

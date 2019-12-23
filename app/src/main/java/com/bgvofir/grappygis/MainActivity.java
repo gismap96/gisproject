@@ -432,6 +432,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
         StorageReference mmpkRef = storageReference.child("settlements/" + mProjectId + "/mmpk/data.mmpk");
+
         mmpkRef.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
             @Override
             public void onSuccess(StorageMetadata storageMetadata) {
@@ -1007,6 +1008,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         File mmpkFolder = new File(getMMPKFolderPath());
         if (!mmpkFolder.exists())
             return false;
+        String mmpkFilePath = createMobileMapPackageFilePath(mProjectId);
+        File mmpkFile = new File(mmpkFilePath);
+        mmpkFile.delete();
         return mmpkFolder.delete();
 
     }
@@ -1200,7 +1204,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private void showDetailsDialog(@NonNull IdentifyLayerResult layerResult) {
         ArrayList<Map<String, String>> displayMap = FeatureLayerController.INSTANCE.layerDetails(layerResult);
         DialogLayerDetailsAdapter dialogLayerDetailsAdapter = new DialogLayerDetailsAdapter(this, displayMap);
-        DialogLayerDetailsFragment dialogLayerDetailsFragment = new DialogLayerDetailsFragment(this, dialogLayerDetailsAdapter);
+        String layerTitle = layerResult.getLayerContent().getName();
+        DialogLayerDetailsFragment dialogLayerDetailsFragment = new DialogLayerDetailsFragment(this, dialogLayerDetailsAdapter, layerTitle);
         dialogLayerDetailsFragment.show();
     }
 

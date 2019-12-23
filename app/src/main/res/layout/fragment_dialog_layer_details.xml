@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/fragmentDialogLayerDetailsHeadline"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:background="#010b1f"
         android:gravity="center"
         android:text="כותרת"
@@ -32,9 +32,9 @@
     <Button
         android:id="@+id/fragmentDialogLayerDetailsClose"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="סגור"
+        android:layout_height="48dp"
         android:background="#E6010b1f"
+        android:text="סגור"
         android:textColor="#3fadf8"
         android:textSize="24sp"
 

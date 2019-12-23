@@ -15,7 +15,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 
 
-class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>): Dialog(activity), View.OnClickListener {
+class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>, var headline: String): Dialog(activity), View.OnClickListener {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +30,11 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
         recycler.adapter = adapter
         recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
 
+        var finalHeadline = headline
+        if (headline == "Feature Collection"){
+            finalHeadline = "שכבה ממשתמש"
+        }
+        fragmentDialogLayerDetailsHeadline.text = finalHeadline
         fragmentDialogLayerDetailsClose.setOnClickListener(this)
     }
 
