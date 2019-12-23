@@ -16,6 +16,7 @@ import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter
 import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import com.squareup.picasso.Picasso
+import io.fabric.sdk.android.services.concurrency.AsyncTask.init
 import kotlinx.android.synthetic.main.fragment_dialog_layer_details.view.*
 import kotlinx.android.synthetic.main.row_for_layer_details_dialog.view.*
 import java.lang.Exception
@@ -25,6 +26,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
 
     var elementsColor = mutableMapOf<Int, Boolean>()
     var rowValues = ArrayList<RowValue>()
+
 
     init{
         var isColored = false
@@ -38,6 +40,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
             }
             isColored = !isColored
         }
+
     }
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DialogLayerDetailsAdapterViewHolder {

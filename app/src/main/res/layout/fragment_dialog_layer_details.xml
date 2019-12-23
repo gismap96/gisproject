@@ -3,19 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+
     android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/backgroundForHeadlineDialogDetails"
+        android:layout_width="0dp"
+        android:background="#010b1f"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/dialogLayerDetailsRecyclerview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/fragmentDialogLayerDetailsHeadline"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:background="#010b1f"
+        android:layout_marginStart="16dp"
         android:gravity="center"
         android:text="כותרת"
         android:textColor="#ffffff"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/layerIconForDetailsDialog"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.v7.widget.RecyclerView
@@ -39,4 +50,14 @@
         android:textSize="24sp"
 
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <ImageView
+        android:id="@+id/layerIconForDetailsDialog"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="32dp"
+        app:layout_constraintBottom_toBottomOf="@+id/backgroundForHeadlineDialogDetails"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/arcgisruntime_location_display_default_symbol" />
 </android.support.constraint.ConstraintLayout>
