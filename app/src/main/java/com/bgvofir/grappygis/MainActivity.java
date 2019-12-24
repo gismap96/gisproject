@@ -50,6 +50,7 @@ import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerSelectionFragment;
 import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsAdapter;
 import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsFragment;
+import com.bgvofir.grappygis.SketchController.SketchEditorController;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.data.Feature;
 import com.esri.arcgisruntime.data.FeatureCollection;
@@ -158,6 +159,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ImageView addPoint;
     private ImageView toggleAutoPanBtn;
     private ImageView ivDeletePoint;
+    private ImageView toggleFreehandBtn;
     private String mProjectId;
     private ListenableFuture<FeatureQueryResult> selectionResult;
     private String mCurrentCategory;
@@ -215,6 +217,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             public void onClick(View view) {
                 toggleAddPoint(true);
 //                takePhoto();
+            }
+        });
+        toggleFreehandBtn = findViewById(R.id.toggleFreehandBtn);
+        toggleFreehandBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //SketchEditorController.INSTANCE.freehandMode(mMapView);
+                SketchEditorController.INSTANCE.polylineMode(mMapView);
             }
         });
         toggleAutoPanBtn = findViewById(R.id.toggleAutoPanBtn);

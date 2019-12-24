@@ -10,24 +10,25 @@ import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
 
 
 object SketchEditorController {
-    var isAttached = false
-    var sketchEdit = SketchEditor()
-
-    fun attachEditor(mMap: MapView){
-        isAttached = true
-    }
-    fun detachEditor(mMap: MapView){
-        isAttached = false
-    }
 
     fun freehandMode(mMap: MapView){
-        if(!isAttached) {
-            isAttached = !isAttached
-        }
-        val mPointSymbol = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.SQUARE, -0x10000, 20f)
-        val mLineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, -0x7800, 4f)
-        val mFillSymbol = SimpleFillSymbol(SimpleFillSymbol.Style.CROSS, 0x40FFA9A9, mLineSymbol)
-        mMap.sketchEditor = sketchEdit
-        sketchEdit.start(SketchCreationMode.FREEHAND_LINE)
+
+//        val mPointSymbol = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.SQUARE, -0x10000, 20f)
+//        val mLineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, -0x7800, 4f)
+//        val mFillSymbol = SimpleFillSymbol(SimpleFillSymbol.Style.CROSS, 0x40FFA9A9, mLineSymbol)
+        var sketchEditor = SketchEditor()
+        mMap.sketchEditor = sketchEditor
+        sketchEditor.start(SketchCreationMode.FREEHAND_LINE)
+    }
+    fun polylineMode(mMap: MapView){
+        var sketchEditor = SketchEditor()
+        mMap.sketchEditor = sketchEditor
+        sketchEditor.start(SketchCreationMode.POLYLINE)
+    }
+
+    fun polygonMode(mMap: MapView){
+        var sketchEditor = SketchEditor()
+        mMap.sketchEditor = sketchEditor
+        sketchEditor.start(SketchCreationMode.POLYGON)
     }
 }
