@@ -87,7 +87,7 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
                     }
                 }
             } else {
-                mTextView.text = "שכבה ממשתמש"
+                mTextView.text = "דקירה ממשתמש"
                 mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(com.bgvofir.grappygis.R.drawable.ic_star_blue))
             }
             //end of legend image
