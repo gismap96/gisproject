@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:id="@+id/headlineForSketchModeSelection"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:background="#010b1f"
+        android:gravity="center"
+        android:text="בחרו סוג סימון"
+        android:textColor="#ffffff"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/sketcherModeSelectionRecyclerView"
+        android:layout_width="0dp"
+        android:background="#CC010b1f"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/closeSketchSelectDialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headlineForSketchModeSelection" />
+
+    <TextView
+        android:id="@+id/closeSketchSelectDialog"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="#E6010b1f"
+        android:gravity="center"
+        android:text="סגור"
+        android:textColor="#3fadf8"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</android.support.constraint.ConstraintLayout>

@@ -1,36 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-    <android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mapContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <!-- MapView -->
+
+    <android.support.constraint.Guideline
+        android:id="@+id/sketchControllerGL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.88" />
+
+    <com.esri.arcgisruntime.mapping.view.MapView
+        android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/mapContainer">
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="198dp" />
 
-        <!-- MapView -->
-        <com.esri.arcgisruntime.mapping.view.MapView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/mapView"/>
+    <android.support.constraint.Guideline
+        android:id="@+id/legendGuideEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.4" />
 
-        <android.support.constraint.Guideline
-            android:id="@+id/legendGuideEnd"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.4"
-            />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/topBarGuide"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.1"
-            />
+    <android.support.constraint.Guideline
+        android:id="@+id/topBarGuide"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.1" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/topBarContainer"
@@ -47,10 +54,10 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_star_blue"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/deletePoint"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_star_blue" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/toggleLegendBtn"
@@ -103,31 +110,28 @@
 
     </android.support.constraint.ConstraintLayout>
 
-        <!-- Layer list -->
-        <android.support.v7.widget.RecyclerView
-            android:visibility="gone"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:id="@+id/mapLayerRecyclerView"
-            app:layout_constraintTop_toBottomOf="@+id/topBarContainer"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/legendGuideEnd"
-            android:background="@color/white_transparent"
-            >
-        </android.support.v7.widget.RecyclerView>
+    <!-- Layer list -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mapLayerRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/white_transparent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/legendGuideEnd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topBarContainer"></android.support.v7.widget.RecyclerView>
 
     <ImageView
         android:id="@+id/toggleAutoPanBtn"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="25dp"
         android:background="@drawable/dark_circle"
-        android:src="@drawable/ic_auto_pan"
         android:padding="8dp"
-        />
+        android:src="@drawable/ic_auto_pan"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ProgressBar
         android:id="@+id/map_progress"
@@ -144,7 +148,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/bottomSketcherControllerBarContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#E6010b1f"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/sketchControllerGL">
+
+        <TextView
+            android:id="@+id/undoSkecherBtn"
+            android:layout_width="56dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="חזור"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/closeSketcherTV"
+            android:layout_width="56dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:text="סגור"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
+
+
+</android.support.constraint.ConstraintLayout>
 
 

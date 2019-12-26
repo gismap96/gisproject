@@ -44,7 +44,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
     }
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DialogLayerDetailsAdapterViewHolder {
-        val v = LayoutInflater.from(p0.context).inflate(com.bgvofir.grappygis.R.layout.row_for_layer_details_dialog, p0, false)
+        val v = LayoutInflater.from(p0.context).inflate(R.layout.row_for_layer_details_dialog, p0, false)
         return DialogLayerDetailsAdapterViewHolder(v)
     }
 

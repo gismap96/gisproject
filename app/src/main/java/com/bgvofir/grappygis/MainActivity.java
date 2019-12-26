@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.transition.TransitionManager;
 import android.support.v4.app.FragmentActivity;
@@ -51,6 +52,9 @@ import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerSelectionFragment;
 import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsAdapter;
 import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsFragment;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
+import com.bgvofir.grappygis.SketchController.SketcherEditorTypes;
+import com.bgvofir.grappygis.SketchController.SketcherSelectionDialogAdapter;
+import com.bgvofir.grappygis.SketchController.SketcherSelectionDialogFragment;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.data.Feature;
 import com.esri.arcgisruntime.data.FeatureCollection;
@@ -121,7 +125,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener {
+public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener {
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
@@ -166,7 +170,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private boolean mCurrentIsUpdateSys;
     private boolean activityAlive;
     private DialogLayerSelectionFragment dialogLayerSelectionFragment;
+    private SketcherSelectionDialogFragment sketcherSelectionDialogFragment;
     private android.graphics.Point screenPoint;
+    private ConstraintLayout bottomSketchBarContainer;
+    private TextView closeSketcherTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,9 +231,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             @Override
             public void onClick(View v) {
                 //SketchEditorController.INSTANCE.freehandMode(mMapView);
-                SketchEditorController.INSTANCE.polylineMode(mMapView);
+                SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this);
+                sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter);
+                sketcherSelectionDialogFragment.show();
             }
         });
+        toggleFreehandBtn.setVisibility(View.GONE);
         toggleAutoPanBtn = findViewById(R.id.toggleAutoPanBtn);
         toggleAutoPanBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -280,8 +290,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
         mCallout = mMapView.getCallout();
 
-
-
         mLayerRecyclerView = (RecyclerView) findViewById(R.id.mapLayerRecyclerView);
         mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mContentAdapter = new MapLayerAdapter(this);
@@ -307,7 +315,15 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     }
                 }).check();
 
-
+        closeSketcherTV = findViewById(R.id.closeSketcherTV);
+        closeSketcherTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
+            }
+        });
+        bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
+        SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
 
     }
 
@@ -1235,4 +1251,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
     }
 
+    @Override
+    public void onSketchSelectionListener(@NotNull SketcherEditorTypes sketcher) {
+        sketcherSelectionDialogFragment.dismiss();
+        SketchEditorController.INSTANCE.startSketching(sketcher, mMapView);
+        SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
+    }
 }
