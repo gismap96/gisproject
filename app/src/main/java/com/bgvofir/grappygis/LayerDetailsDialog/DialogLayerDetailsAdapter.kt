@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter
 import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
@@ -73,7 +74,26 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
         fun bind(key: String, value: String){
             if (key == "תצוגה מקדימה"){
                 valueTextView.visibility = View.GONE
-                Picasso.get().load(value).into(previewImage)
+                keyTextView.visibility = View.GONE
+                Picasso.get().load(value).placeholder(R.drawable.ic_placeholder).into(object: com.squareup.picasso.Target{
+                    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                        previewImage.setImageDrawable(placeHolderDrawable)
+                    }
+
+                    override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+
+                    }
+
+                    override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+
+                        bitmap?.let{
+                            previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
+                            previewImage.setImageBitmap(bitmap)
+
+                        }
+
+                    }
+                })
                 previewImage.setOnClickListener {
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = (Uri.parse(value))

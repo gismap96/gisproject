@@ -45,11 +45,10 @@
         android:id="@+id/rowDetailsPreviewImageView"
         android:layout_width="0dp"
         android:layout_height="250dp"
-        android:layout_marginStart="4dp"
         android:background="#CC010b1f"
-        android:scaleType="centerCrop"
+        android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/arcgisruntime_location_display_acquiring_symbol" />
 

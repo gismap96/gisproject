@@ -177,6 +177,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private android.graphics.Point screenPoint;
     private ConstraintLayout bottomSketchBarContainer;
     private TextView closeSketcherTV;
+    private TextView undoSkecherTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,7 +240,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 sketcherSelectionDialogFragment.show();
             }
         });
-        toggleFreehandBtn.setVisibility(View.GONE);
+//        toggleFreehandBtn.setVisibility(View.GONE);
         toggleAutoPanBtn = findViewById(R.id.toggleAutoPanBtn);
         toggleAutoPanBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -318,6 +319,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     }
                 }).check();
 
+        undoSkecherTV = findViewById(R.id.undoSkecherTV);
+        undoSkecherTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SketchEditorController.INSTANCE.undo();
+            }
+        });
         closeSketcherTV = findViewById(R.id.closeSketcherTV);
         closeSketcherTV.setOnClickListener(new View.OnClickListener() {
             @Override
