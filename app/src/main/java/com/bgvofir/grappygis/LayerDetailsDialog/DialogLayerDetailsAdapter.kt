@@ -87,8 +87,9 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
                     override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
 
                         bitmap?.let{
-                            previewImage.setImageBitmap(bitmap)
                             previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
+                            previewImage.setImageBitmap(bitmap)
+
                         }
 
                     }
