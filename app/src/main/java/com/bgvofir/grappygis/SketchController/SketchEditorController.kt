@@ -93,6 +93,7 @@ object SketchEditorController {
             }
         })
     }
+
     fun startSketching(sketcherEditorTypes: SketcherEditorTypes, mMapView: MapView) {
         sketchEditor.stop()
         this.sketcherEditorTypes = sketcherEditorTypes
@@ -110,5 +111,9 @@ object SketchEditorController {
             }
 
         }
+    }
+
+    fun undo(){
+        sketchEditor.undo()
     }
 }

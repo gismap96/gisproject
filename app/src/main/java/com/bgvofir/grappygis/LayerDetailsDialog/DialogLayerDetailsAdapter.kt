@@ -73,6 +73,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
         fun bind(key: String, value: String){
             if (key == "תצוגה מקדימה"){
                 valueTextView.visibility = View.GONE
+                keyTextView.visibility = View.GONE
                 Picasso.get().load(value).into(previewImage)
                 previewImage.setOnClickListener {
                     val intent = Intent(Intent.ACTION_VIEW)

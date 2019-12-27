@@ -159,14 +159,14 @@
         app:layout_constraintTop_toTopOf="@+id/sketchControllerGL">
 
         <TextView
-            android:id="@+id/undoSkecherBtn"
+            android:id="@+id/undoSkecherTV"
             android:layout_width="56dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="חזור"
             android:gravity="center"
+            android:text="חזור"
             android:textColor="@color/white"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
