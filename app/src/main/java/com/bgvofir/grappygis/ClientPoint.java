@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ClientPoint{
 
-    private int id;
     private float x;
     private float y;
     private String description;
@@ -17,23 +16,14 @@ public class ClientPoint{
     private boolean isUpdateSystem;
     public static final String POINTS_DATA_KEY = "POINTS_DATA";
 
-    public ClientPoint(float x, float y, String description, String imageUrl, String category, boolean isUpdateSystem, int id) {
+    public ClientPoint(float x, float y, String description, String imageUrl, String category, boolean isUpdateSystem) {
         this.x = x;
-        this.id = id;
         this.y = y;
         this.description = description;
         this.imageUrl = imageUrl;
         this.category = category;
         this.isUpdateSystem = isUpdateSystem;
         this.pointHash = createPointHash(x, y, imageUrl, description, category, isUpdateSystem);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public float getX() {

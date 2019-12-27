@@ -388,7 +388,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     for (int i = 0; i < pointsJson.length(); i++){
                         Gson gson = new Gson();
                         ClientPoint clientPoint = gson.fromJson(pointsJson.getJSONObject(i).toString(), ClientPoint.class);
-                        clientPoint.setId(i);
                         mClientPoints.add(clientPoint);
                         createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem());
                     }
@@ -691,7 +690,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys);
-                        mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys, mClientPoints.size()));
+                        mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys));
                         saveClientPoints(false);
                         toggleAddPoint(false);
                     }
@@ -1137,7 +1136,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 } else {
                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
                         createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys);
-                        mClientPoints.add(new ClientPoint((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys, mClientPoints.size()));
+                        mClientPoints.add(new ClientPoint((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys));
                         saveClientPoints(false);
                         toggleAddPoint(false);
                     }
@@ -1151,7 +1150,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             // BitmapFactory options to downsize the image
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
-            o.inSampleSize = 9;
+            o.inSampleSize = 8;
             // factor of downsizing the image
 
             File file = new File(uri.getPath());
@@ -1161,7 +1160,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             BitmapFactory.decodeStream(inputStream, null, o);
             inputStream.close();
 
-            final int REQUIRED_SIZE = 90;
+            final int REQUIRED_SIZE = 80;
 
             int scale = 1;
             while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
@@ -1207,7 +1206,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                     progressDialog.dismiss();
                                     Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
                                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
-                                        mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys, mClientPoints.size()));
+                                        mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys));
                                         saveClientPoints(false);
                                         createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys);
                                         mCurrentX = 0;
