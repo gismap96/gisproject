@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -110,6 +111,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -464,9 +467,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             public void onSuccess(StorageMetadata storageMetadata) {
                 long timeModified = storageMetadata.getUpdatedTimeMillis();
                 long lastDownloadTime = mPrefs.getLong(Consts.DOWNLOAD_TIME_KEY, Long.MIN_VALUE);
+
                 if (timeModified > lastDownloadTime){
 //                    mmpkFile.delete();
-                    deleteMMPKFolderData();
+//                    deleteMMPKFolderData();
+                    if (lastDownloadTime != Long.MIN_VALUE){
+                        deleteMMPKFolderData();
+                    }
                     mmpkRef.getFile(mmpkFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -1023,11 +1030,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         return extStorDir.getAbsolutePath() + File.separator +  Consts.GRAPPY_FOLDER_NAME + File.separator + mProjectId + File.separator +"mmpk";
     }
 
-    private boolean deleteUnpackedMMPKFolderData(String fileName){
-        File mmpkFolder = new File(getUnpackedPath(fileName));
+    private void deleteUnpackedMMPKFolderData(){
+        File mmpkFolder = new File(getUnpackedPath("data"));
         if (!mmpkFolder.exists())
-            return false;
-        return mmpkFolder.delete();
+            return;
+        deleteRecursive(mmpkFolder);
     }
 
     private boolean deleteMMPKFolderData(){
@@ -1036,9 +1043,21 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             return false;
         String mmpkFilePath = createMobileMapPackageFilePath(mProjectId);
         File mmpkFile = new File(mmpkFilePath);
+        deleteUnpackedMMPKFolderData();
         mmpkFile.delete();
         return mmpkFolder.delete();
 
+    }
+
+    private void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+            {
+                child.delete();
+                deleteRecursive(child);
+            }
+
+        fileOrDirectory.delete();
     }
 
     private void toggleLayerList() {
@@ -1118,6 +1137,48 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
     }
 
+    public Uri reduceImageSize(Uri uri){
+        try {
+
+            // BitmapFactory options to downsize the image
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            o.inSampleSize = 9;
+            // factor of downsizing the image
+
+            File file = new File(uri.getPath());
+
+            FileInputStream inputStream = new FileInputStream(file);
+            //Bitmap selectedBitmap = null;
+            BitmapFactory.decodeStream(inputStream, null, o);
+            inputStream.close();
+
+            final int REQUIRED_SIZE = 90;
+
+            int scale = 1;
+            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+                scale *= 2;
+            }
+
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            inputStream = new FileInputStream(file);
+
+            Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
+            inputStream.close();
+
+            // here i override the original image file
+            file.createNewFile();
+            FileOutputStream outputStream = new FileOutputStream(file);
+
+            selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , outputStream);
+            return Uri.fromFile(file);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
     private void uploadImage(Uri uri) {
 
@@ -1128,7 +1189,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             progressDialog.show();
             progressDialog.setCancelable(false);
             StorageReference ref = storageReference.child("settlements/" + mProjectId + "/images/"+ UUID.randomUUID().toString());
-            ref.putFile(uri)
+            ref.putFile(reduceImageSize(uri))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
