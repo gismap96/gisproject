@@ -52,6 +52,7 @@ import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerSelectionFragment;
 import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsAdapter;
 import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsFragment;
+import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes;
 import com.bgvofir.grappygis.SketchController.SketcherSelectionDialogAdapter;
@@ -178,6 +179,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ConstraintLayout bottomSketchBarContainer;
     private TextView closeSketcherTV;
     private TextView undoSkecherTV;
+    private ImageView zift;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -335,6 +337,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         });
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
+        zift = findViewById(R.id.toggleZift);
+        zift.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId);
+            }
+        });
 
     }
 
