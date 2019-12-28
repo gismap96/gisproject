@@ -25,6 +25,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -398,6 +399,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         Gson gson = new Gson();
                         ClientPoint clientPoint = gson.fromJson(pointsJson.getJSONObject(i).toString(), ClientPoint.class);
                         mClientPoints.add(clientPoint);
+                        SystemClock.sleep(100);
                         createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem());
                     }
                 } catch (JSONException e) {
@@ -809,7 +811,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
 
-    private void createFeatureCollection(float x, float y, String description, String imageUrl, String category, boolean isUpdateSys) {
+    private synchronized void createFeatureCollection(float x, float y, String description, String imageUrl, String category, boolean isUpdateSys) {
         if (!activityAlive) return;
 
         if (mMapView != null) {
