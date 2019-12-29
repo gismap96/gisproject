@@ -1,6 +1,12 @@
 package com.bgvofir.grappygis.LegendSidebar
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
+import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.View
+import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController.groupNames
+import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController.legendTitles
 import com.esri.arcgisruntime.layers.Layer
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.google.firebase.storage.FirebaseStorage
@@ -43,6 +49,57 @@ object LegendLayerDisplayController{
         }
 
         return String(bytes)
+    }
+
+    fun animateOpen(layout: RecyclerView){
+        val width = layout.width.toFloat()
+        ObjectAnimator.ofFloat(layout,"translationX", width).apply {
+            duration = 0
+            start()
+        }.addListener(object: Animator.AnimatorListener{
+            override fun onAnimationRepeat(animation: Animator?) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                ObjectAnimator.ofFloat(layout, "translationX", 0f).apply {
+                    duration = 500
+                    start()
+                }
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+            }
+
+            override fun onAnimationStart(animation: Animator?) {
+
+            }
+
+        })
+    }
+
+    fun animateClose(layout: RecyclerView){
+        val width = layout.width.toFloat()
+        ObjectAnimator.ofFloat(layout,"translationX", width).apply{
+            duration = 500
+            start()
+        }.addListener(object: Animator.AnimatorListener{
+            override fun onAnimationRepeat(animation: Animator?) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                layout.visibility = View.GONE
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+
+            }
+
+            override fun onAnimationStart(animation: Animator?) {
+
+            }
+        })
     }
 
     private fun parseJson(json: String){

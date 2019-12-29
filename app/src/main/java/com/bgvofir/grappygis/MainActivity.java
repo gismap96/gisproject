@@ -1081,7 +1081,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     private void toggleLayerList() {
 
-        TransitionManager.beginDelayedTransition(findViewById(R.id.mapContainer));
+        //TransitionManager.beginDelayedTransition(findViewById(R.id.mapContainer));
         if (mLayerRecyclerView.getVisibility() == android.view.View.GONE){
             //final ViewGroup.LayoutParams params = mLayerRecyclerView.getLayoutParams();
 /*            mLayerRecyclerView.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -1089,12 +1089,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
             toggleMenuBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
 
-
-
-            mLayerRecyclerView.requestLayout();
             mLayerRecyclerView.setVisibility(android.view.View.VISIBLE);
+            LegendLayerDisplayController.INSTANCE.animateOpen(mLayerRecyclerView);
+            //mLayerRecyclerView.requestLayout();
+
+
+            
         }else{
-            mLayerRecyclerView.setVisibility(android.view.View.GONE);
+            LegendLayerDisplayController.INSTANCE.animateClose(mLayerRecyclerView);
 /*            mLayerRecyclerView.setLayoutParams(new LinearLayout.LayoutParams(0,
                     ViewGroup.LayoutParams.MATCH_PARENT, 4));*/
             toggleMenuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
