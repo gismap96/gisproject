@@ -53,7 +53,9 @@ import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerSelectionFragment;
 import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsAdapter;
 import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsFragment;
+import com.bgvofir.grappygis.LegendSidebar.LegendGroup;
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController;
+import com.bgvofir.grappygis.LegendSidebar.LegendSidebarAdapter;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes;
 import com.bgvofir.grappygis.SketchController.SketcherSelectionDialogAdapter;
@@ -130,7 +132,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener {
+public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
+, LegendLayerDisplayController.LayerGroupsListener{
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
@@ -299,8 +302,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
         mLayerRecyclerView = (RecyclerView) findViewById(R.id.mapLayerRecyclerView);
         mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mContentAdapter = new MapLayerAdapter(this);
-        mLayerRecyclerView.setAdapter(mContentAdapter);
+//        mContentAdapter = new MapLayerAdapter(this);
+//        mLayerRecyclerView.setAdapter(mContentAdapter);
         extStorDir = Environment.getExternalStorageDirectory();
         Dexter.withActivity(this).withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new BaseMultiplePermissionsListener(){
@@ -339,12 +342,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-        zift.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId);
-            }
-        });
+        zift.setVisibility(View.GONE);
 
     }
 
@@ -617,7 +615,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     }
                 },500);
                 final List<Layer> layerList = mobileMap.getOperationalLayers();
-                mContentAdapter.setLayerList(layerList);
+//                mContentAdapter.setLayerList(layerList);
+                LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+
 
 
             } else {
@@ -1335,5 +1335,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         sketcherSelectionDialogFragment.dismiss();
         SketchEditorController.INSTANCE.startSketching(sketcher, mMapView);
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
+    }
+
+    @Override
+    public void successListener() {
+        List<LegendGroup> legendGroups = LegendLayerDisplayController.INSTANCE.generateLegendGroupList(mMapView);
+        LegendSidebarAdapter adapter = new LegendSidebarAdapter(this, legendGroups);
+        mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mLayerRecyclerView.setAdapter(adapter);
     }
 }

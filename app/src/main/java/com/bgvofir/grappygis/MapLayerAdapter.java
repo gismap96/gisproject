@@ -130,5 +130,7 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
             layerName = (TextView) view.findViewById(R.id.txtLayerName);
             legendItems = (RecyclerView) view.findViewById(R.id.legendRecylerView);
         }
+
+
     }
 }

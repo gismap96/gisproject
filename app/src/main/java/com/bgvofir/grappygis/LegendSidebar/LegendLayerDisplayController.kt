@@ -1,6 +1,8 @@
 package com.bgvofir.grappygis.LegendSidebar
 
 import android.util.Log
+import com.esri.arcgisruntime.layers.Layer
+import com.esri.arcgisruntime.mapping.view.MapView
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.JsonParser
@@ -9,26 +11,26 @@ import java.io.FileInputStream
 
 object LegendLayerDisplayController{
 
+    val TAG = "LayerDisplay"
     val storage = FirebaseStorage.getInstance()
     var localFile = File.createTempFile("mmap", "json")
-    //key = layer name
-    //value = group name
     var legendTitles = mutableMapOf<String, String>()
+    var groupNames = mutableListOf<String>()
 
-    fun fetchMMap(projectID: String){
+    fun fetchMMap(projectID: String, layerListener: LayerGroupsListener){
         val storageReference = storage.reference
         val storageRef = storageReference.child("settlements/$projectID/mmap/data.json")
         storageRef.getFile(localFile).addOnSuccessListener {
-            print("we showed zift! horray")
             val json = generateJson()
             parseJson(json)
+            layerListener.successListener()
         }.addOnFailureListener{
-            print("failed to download file")
+            Log.d(TAG,"failed to download file")
 
         }
     }
 
-    fun generateJson(): String{
+    private fun generateJson(): String{
         val length = localFile.length().toInt()
 
         val bytes = ByteArray(length)
@@ -43,7 +45,7 @@ object LegendLayerDisplayController{
         return String(bytes)
     }
 
-    fun parseJson(json: String){
+    private fun parseJson(json: String){
         legendTitles.clear()
         var parser = JsonParser()
         var element = parser.parse(json)
@@ -54,11 +56,39 @@ object LegendLayerDisplayController{
         operationalLayers.forEach {
             if (it.layerType == "GroupLayer"){
                 val groupTitle = it.title
+                groupNames.add(groupTitle)
                 it.layers?.forEach {
                     legendTitles[it.title] = groupTitle
                 }
             }
         }
+    }
+
+    fun generateLegendGroupList(map: MapView): List<LegendGroup>{
+        val layers = map.map.operationalLayers
+        var legendGroupMap = mutableMapOf<String, MutableList<Layer>>()
+        groupNames.forEach {
+            legendGroupMap[it] = mutableListOf()
+        }
+        legendGroupMap["אחר"] = mutableListOf()
+        layers.forEach {
+            val layerName = it.name
+            if (legendTitles.containsKey(layerName)){
+                val layerGroupName = legendTitles[layerName]
+                legendGroupMap[layerGroupName]?.add(it)
+            } else {
+                legendGroupMap["אחר"]?.add(it)
+            }
+        }
+        var legendGroupList = mutableListOf<LegendGroup>()
+        legendGroupMap.forEach{
+            legendGroupList.add(LegendGroup(it.key, it.value))
+        }
+        return legendGroupList
+    }
+
+    interface LayerGroupsListener{
+        fun successListener()
     }
 }
 class LayerTitle(title: String){
