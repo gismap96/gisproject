@@ -42,6 +42,7 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>):
             legendDetailsRecyclerView.layoutManager = layoutManager
             legendDetailsRecyclerView.adapter = adapter
             legendGroupsCheckBox.setOnClickListener {
+                legendDetailsRecyclerView.visibility = View.GONE
                 if (legendGroupsCheckBox.isChecked){
                     group.layers.forEach {
                         it.isVisible = true
