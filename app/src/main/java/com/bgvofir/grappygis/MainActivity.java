@@ -221,6 +221,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         toggleMenuBtn = findViewById(R.id.toggleLegendBtn);
+        toggleMenuBtn.setVisibility(View.INVISIBLE);
         toggleMenuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1343,5 +1344,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         LegendSidebarAdapter adapter = new LegendSidebarAdapter(this, legendGroups);
         mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mLayerRecyclerView.setAdapter(adapter);
+        toggleMenuBtn.setVisibility(View.VISIBLE);
+
     }
 }
