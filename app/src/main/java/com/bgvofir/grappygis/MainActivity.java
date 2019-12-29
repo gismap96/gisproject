@@ -344,7 +344,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
         zift.setVisibility(View.GONE);
-
+        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
     }
 
     private String getJsonDataFromFile(File file){
