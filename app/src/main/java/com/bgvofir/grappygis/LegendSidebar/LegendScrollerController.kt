@@ -16,4 +16,7 @@ object LegendScrollerController {
         }
         opened = position
     }
+    fun setClosed(){
+        opened = -1
+    }
 }
