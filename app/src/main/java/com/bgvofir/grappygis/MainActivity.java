@@ -35,6 +35,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
@@ -398,7 +399,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         Gson gson = new Gson();
                         ClientPoint clientPoint = gson.fromJson(pointsJson.getJSONObject(i).toString(), ClientPoint.class);
                         mClientPoints.add(clientPoint);
-                        SystemClock.sleep(100);
+                        SystemClock.sleep(50);
                         createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem());
                     }
                 } catch (JSONException e) {
@@ -1343,10 +1344,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void successListener() {
         List<LegendGroup> legendGroups = LegendLayerDisplayController.INSTANCE.generateLegendGroupList(mMapView);
-        LegendSidebarAdapter adapter = new LegendSidebarAdapter(this, legendGroups);
+        LegendSidebarAdapter adapter = new LegendSidebarAdapter(this, legendGroups, mLayerRecyclerView);
         mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mLayerRecyclerView.setAdapter(adapter);
         toggleMenuBtn.setVisibility(View.VISIBLE);
+        DefaultItemAnimator animator = new DefaultItemAnimator() {
+            @Override
+            public boolean canReuseUpdatedViewHolder(RecyclerView.ViewHolder viewHolder) {
+                return true;
+            }
+        };
+        mLayerRecyclerView.setItemAnimator(animator);
 
     }
 }

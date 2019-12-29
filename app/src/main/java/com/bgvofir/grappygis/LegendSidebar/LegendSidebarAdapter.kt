@@ -12,7 +12,7 @@ import com.esri.arcgisruntime.layers.Layer
 import kotlinx.android.synthetic.main.legend_sidebar_group_overlay.view.*
 
 
-class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>): RecyclerView.Adapter<LegendSidebarAdapter.LegendSidebarViewHolder>(){
+class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, val recyclerView: RecyclerView): RecyclerView.Adapter<LegendSidebarAdapter.LegendSidebarViewHolder>(){
 
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): LegendSidebarViewHolder {
@@ -26,6 +26,15 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>):
 
     override fun onBindViewHolder(p0: LegendSidebarViewHolder, p1: Int) {
         p0.bind(layers[p1], context)
+        p0.setIsRecyclable(false)
+        p0.itemView.setOnClickListener {
+            if (p0.legendDetailsRecyclerView.visibility == View.GONE){
+                LegendScrollerController.setOpenedView(p1, recyclerView)
+                p0.legendDetailsRecyclerView.visibility = View.VISIBLE
+            } else {
+                p0.legendDetailsRecyclerView.visibility = View.GONE
+            }
+        }
     }
 
     class LegendSidebarViewHolder(v: View): RecyclerView.ViewHolder(v){
@@ -58,13 +67,7 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>):
                 }
             }
 
-            itemView.setOnClickListener {
-                if (legendDetailsRecyclerView.visibility == View.GONE){
-                    legendDetailsRecyclerView.visibility = View.VISIBLE
-                } else {
-                    legendDetailsRecyclerView.visibility = View.GONE
-                }
-            }
+
 
         }
     }
