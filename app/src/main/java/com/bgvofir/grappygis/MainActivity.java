@@ -57,6 +57,7 @@ import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsFragment;
 import com.bgvofir.grappygis.LegendSidebar.LegendGroup;
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController;
 import com.bgvofir.grappygis.LegendSidebar.LegendSidebarAdapter;
+import com.bgvofir.grappygis.MemoryController.FileMemoryController;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes;
 import com.bgvofir.grappygis.SketchController.SketcherSelectionDialogAdapter;
@@ -463,7 +464,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void downloadMMPK(){
-        String mmpkFilePath = createMobileMapPackageFilePath(mProjectId);
+        String path = createMobileMapPackageFilePath(mProjectId);
+        String mmpkFilePath = path;
+        FileMemoryController.INSTANCE.setPath(path);
         File mmpkFile = new File(mmpkFilePath);
         try {
             mmpkFile.getParentFile().mkdirs();
@@ -489,9 +492,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 if (timeModified > lastDownloadTime){
 //                    mmpkFile.delete();
 //                    deleteMMPKFolderData();
-                    if (lastDownloadTime != Long.MIN_VALUE){
-                        deleteMMPKFolderData();
-                    }
+//                    if (lastDownloadTime != Long.MIN_VALUE){
+//                        deleteMMPKFolderData();
+//                    }
+                    FileMemoryController.INSTANCE.deleteMMPKFolder();
                     mmpkRef.getFile(mmpkFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -597,6 +601,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void loadMmpk(MobileMapPackage mobileMapPackage) {
+        mobileMapPackage.loadAsync();
         mobileMapPackage.addDoneLoadingListener(() -> {
             if (mobileMapPackage.getLoadStatus() == LoadStatus.LOADED) {
                 System.out.println("Number of maps = " + mobileMapPackage.getMaps().size());
@@ -616,8 +621,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
                     }
                 },500);
-                final List<Layer> layerList = mobileMap.getOperationalLayers();
-//                mContentAdapter.setLayerList(layerList);
+//                final List<Layer> layerList = mobileMap.getOperationalLayers();
+////                mContentAdapter.setLayerList(layerList);
                 LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
 
 
@@ -627,7 +632,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 Log.e("MainActivity", "some error");
             }
         });
-        mobileMapPackage.loadAsync();
+
 
     }
 
