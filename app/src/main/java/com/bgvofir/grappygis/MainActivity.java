@@ -121,6 +121,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -186,6 +187,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private TextView closeSketcherTV;
     private TextView undoSkecherTV;
     private ImageView zift;
+    private LegendSidebarAdapter legendAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -403,6 +405,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         SystemClock.sleep(50);
                         createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem());
                     }
+                    LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -466,7 +469,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private void downloadMMPK(){
         String path = createMobileMapPackageFilePath(mProjectId);
         String mmpkFilePath = path;
-        FileMemoryController.INSTANCE.setPath(path);
         File mmpkFile = new File(mmpkFilePath);
         try {
             mmpkFile.getParentFile().mkdirs();
@@ -474,12 +476,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Downloading...");
         progressDialog.show();
-
 
         StorageReference mmpkRef = storageReference.child("settlements/" + mProjectId + "/mmpk/data.mmpk");
 
@@ -495,7 +495,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                    if (lastDownloadTime != Long.MIN_VALUE){
 //                        deleteMMPKFolderData();
 //                    }
-                    FileMemoryController.INSTANCE.deleteMMPKFolder();
+                    FileMemoryController.INSTANCE.deleteMMPKFile(mmpkFile);
+
                     mmpkRef.getFile(mmpkFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -623,7 +624,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 },500);
 //                final List<Layer> layerList = mobileMap.getOperationalLayers();
 ////                mContentAdapter.setLayerList(layerList);
-                LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+
 
 
 
@@ -1349,9 +1350,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void successListener() {
         List<LegendGroup> legendGroups = LegendLayerDisplayController.INSTANCE.generateLegendGroupList(mMapView);
-        LegendSidebarAdapter adapter = new LegendSidebarAdapter(this, legendGroups, mLayerRecyclerView);
+        legendAdapter = new LegendSidebarAdapter(this, legendGroups, mLayerRecyclerView);
         mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mLayerRecyclerView.setAdapter(adapter);
+        mLayerRecyclerView.setAdapter(legendAdapter);
         toggleMenuBtn.setVisibility(View.VISIBLE);
         DefaultItemAnimator animator = new DefaultItemAnimator() {
             @Override

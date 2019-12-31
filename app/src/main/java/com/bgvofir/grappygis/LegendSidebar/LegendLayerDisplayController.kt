@@ -133,6 +133,7 @@ object LegendLayerDisplayController{
             if (legendTitles.containsKey(layerName)){
                 val layerGroupName = legendTitles[layerName]
                 legendGroupMap[layerGroupName]?.add(it)
+                it.isVisible = false
             }
             else if (!layerName.contains(".jpg")){
                 legendGroupMap["אחר"]?.add(it)

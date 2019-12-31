@@ -15,17 +15,27 @@ import kotlinx.android.synthetic.main.legend_sidebar_group_overlay.view.*
 class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, val recyclerView: RecyclerView): RecyclerView.Adapter<LegendSidebarAdapter.LegendSidebarViewHolder>(){
 
 
+    var mLayers = layers.toMutableList()
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): LegendSidebarViewHolder {
         val v = LayoutInflater.from(context).inflate(R.layout.legend_sidebar_group_overlay, p0, false)
         return LegendSidebarViewHolder(v)
     }
 
+    fun addLayerToLast(layer: Layer){
+        val lastGroup = mLayers[mLayers.lastIndex]
+        if (lastGroup.title != "שכבות משתמש"){
+            var toList = mutableListOf<Layer>()
+            toList.add(layer)
+            val mGroup = LegendGroup("שכבות משתמש", toList)
+            mLayers.add(mGroup)
+        }
+    }
     override fun getItemCount(): Int {
-        return layers.count()
+        return mLayers.count()
     }
 
     override fun onBindViewHolder(p0: LegendSidebarViewHolder, p1: Int) {
-        p0.bind(layers[p1], context)
+        p0.bind(mLayers[p1], context)
         p0.setIsRecyclable(false)
         p0.itemView.setOnClickListener {
             if (p0.legendDetailsRecyclerView.visibility == View.GONE){
@@ -40,7 +50,7 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, 
 
     class LegendSidebarViewHolder(v: View): RecyclerView.ViewHolder(v){
         var legendGroupNameTV = v.legendGroupNameTV
-        var legendGroupsCheckBox = v.legendGroupsCheckBox
+//        var legendGroupsCheckBox = v.legendGroupsCheckBox
         var legendDetailsRecyclerView = v.legendDetailsRecyclerView
 
         fun bind(group: LegendGroup, context: Context){
@@ -51,22 +61,23 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, 
             val layoutManager = LinearLayoutManager(context)
             legendDetailsRecyclerView.layoutManager = layoutManager
             legendDetailsRecyclerView.adapter = adapter
-            legendGroupsCheckBox.setOnClickListener {
-                legendDetailsRecyclerView.visibility = View.GONE
-                if (legendGroupsCheckBox.isChecked){
-                    group.layers.forEach {
-                        it.isVisible = true
-                    }
-                    adapter.setLayerList(group.layers)
-                    adapter.notifyDataSetChanged()
-                } else {
-                    group.layers.forEach {
-                        it.isVisible = false
-                    }
-                    adapter.setLayerList(group.layers)
-                    adapter.notifyDataSetChanged()
-                }
-            }
+//            legendGroupsCheckBox.visibility = View.GONE
+//            legendGroupsCheckBox.setOnClickListener {
+//                legendDetailsRecyclerView.visibility = View.GONE
+//                if (legendGroupsCheckBox.isChecked){
+//                    group.layers.forEach {
+//                        it.isVisible = true
+//                    }
+//                    adapter.setLayerList(group.layers)
+//                    adapter.notifyDataSetChanged()
+//                } else {
+//                    group.layers.forEach {
+//                        it.isVisible = false
+//                    }
+//                    adapter.setLayerList(group.layers)
+//                    adapter.notifyDataSetChanged()
+//                }
+//            }
 
 
 

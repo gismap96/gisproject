@@ -62,6 +62,7 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
         final Layer layer = mLayers.get(position);
         holder.layerName.setText(layer.getName());
 
+
         final boolean layerVisible = (layer.isVisible());
         holder.checkBox.setChecked(layerVisible);
 
@@ -108,6 +109,9 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
                 }
             });
 
+        }
+        if (layer.getName().equals("Feature Collection")){
+            holder.layerName.setText("דקירות משתמש");
         }
     }
     /**
