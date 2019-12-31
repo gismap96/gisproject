@@ -48,7 +48,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/toggleFreehandBtn"
+            android:id="@+id/toggleSketcherBtn"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
@@ -68,7 +68,7 @@
             android:layout_marginBottom="8dp"
             android:src="@drawable/ic_star_blue"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/toggleFreehandBtn"
+            app:layout_constraintEnd_toStartOf="@+id/toggleSketcherBtn"
             app:layout_constraintTop_toTopOf="parent" />
         <ImageView
             android:id="@+id/toggleLegendBtn"

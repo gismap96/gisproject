@@ -1,6 +1,7 @@
 package com.bgvofir.grappygis.LegendSidebar
 
 import android.content.Context
+import android.os.SystemClock
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -54,13 +55,13 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, 
         var legendDetailsRecyclerView = v.legendDetailsRecyclerView
 
         fun bind(group: LegendGroup, context: Context){
-            legendDetailsRecyclerView.visibility = View.GONE
             legendGroupNameTV.text = group.title
             val adapter = MapLayerAdapter(context)
             adapter.setLayerList(group.layers)
             val layoutManager = LinearLayoutManager(context)
             legendDetailsRecyclerView.layoutManager = layoutManager
             legendDetailsRecyclerView.adapter = adapter
+            legendDetailsRecyclerView.visibility = View.GONE
 //            legendGroupsCheckBox.visibility = View.GONE
 //            legendGroupsCheckBox.setOnClickListener {
 //                legendDetailsRecyclerView.visibility = View.GONE

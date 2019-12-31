@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,7 +29,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
-import android.support.transition.TransitionManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -38,6 +36,7 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.text.method.ScrollingMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -77,7 +76,6 @@ import com.esri.arcgisruntime.geometry.PointCollection;
 import com.esri.arcgisruntime.geometry.Polyline;
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer;
 import com.esri.arcgisruntime.layers.FeatureLayer;
-import com.esri.arcgisruntime.layers.Layer;
 import com.esri.arcgisruntime.loadable.LoadStatus;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.MobileMapPackage;
@@ -121,7 +119,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -174,7 +171,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ImageView addPoint;
     private ImageView toggleAutoPanBtn;
     private ImageView ivDeletePoint;
-    private ImageView toggleFreehandBtn;
+    private ImageView toggleSketcherBtn;
     private String mProjectId;
     private ListenableFuture<FeatureQueryResult> selectionResult;
     private String mCurrentCategory;
@@ -241,17 +238,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                takePhoto();
             }
         });
-        toggleFreehandBtn = findViewById(R.id.toggleFreehandBtn);
-        toggleFreehandBtn.setOnClickListener(new View.OnClickListener() {
+        toggleSketcherBtn = findViewById(R.id.toggleSketcherBtn);
+        toggleSketcherBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                resetMenuFunctions();
                 //SketchEditorController.INSTANCE.freehandMode(mMapView);
                 SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this);
                 sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter);
                 sketcherSelectionDialogFragment.show();
             }
         });
-//        toggleFreehandBtn.setVisibility(View.GONE);
+//        toggleSketcherBtn.setVisibility(View.GONE);
         toggleAutoPanBtn = findViewById(R.id.toggleAutoPanBtn);
         toggleAutoPanBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -341,7 +339,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         closeSketcherTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
+//                SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
+                resetMenuFunctions();
             }
         });
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
@@ -375,6 +374,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         mIsDistance = false;
         isAddPointMode = false;
         isDeletePointMode = false;
+        SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
         addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
@@ -1354,13 +1354,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mLayerRecyclerView.setAdapter(legendAdapter);
         toggleMenuBtn.setVisibility(View.VISIBLE);
-        DefaultItemAnimator animator = new DefaultItemAnimator() {
-            @Override
-            public boolean canReuseUpdatedViewHolder(RecyclerView.ViewHolder viewHolder) {
-                return true;
-            }
-        };
-        mLayerRecyclerView.setItemAnimator(animator);
+        RecyclerView.ItemAnimator animator = mLayerRecyclerView.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator){
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
 
     }
 }
