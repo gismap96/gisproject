@@ -2,10 +2,18 @@ package com.bgvofir.grappygis.SketchController
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.support.animation.DynamicAnimation
 import android.support.animation.SpringAnimation
 import android.support.constraint.ConstraintLayout
+import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.widget.Toast
+import com.esri.arcgisruntime.geometry.Envelope
+import com.esri.arcgisruntime.geometry.GeometryEngine
+import com.esri.arcgisruntime.geometry.Polygon
+import com.esri.arcgisruntime.mapping.view.Graphic
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.mapping.view.SketchCreationMode
 import com.esri.arcgisruntime.mapping.view.SketchEditor
@@ -20,6 +28,7 @@ object SketchEditorController {
     var sketchEditor = SketchEditor()
     var sketcherEditorTypes = SketcherEditorTypes.POINT
     var layoutHeight = 0
+    val TAG = "sketcherController"
 
 
     fun openSketcherBarContainer(layout: ConstraintLayout){
@@ -65,9 +74,23 @@ object SketchEditorController {
         sketchEditor.start(SketchCreationMode.POLYGON)
     }
 
-    fun resetSketcher(){
-        sketchEditor.stop()
-        sketchEditor = SketchEditor()
+    fun clean(mMapView: MapView){
+        startSketching(sketcherEditorTypes,mMapView)
+    }
+
+    fun area(mMapView: MapView, context: Context){
+        val geometry = sketchEditor.geometry
+        val envelope = geometry.extent
+        val area = GeometryEngine.area(envelope)
+        val unit = mMapView.spatialReference.unit.name
+        val toastMSG1 = "השטח ל"
+        val toastMSG2 = " הוא "
+        val toastMSG3 = " ב "
+        val finalMSG = toastMSG1+sketcherEditorTypes.title+toastMSG2+area.toInt().toString()+toastMSG3+unit
+        val toast = Toast.makeText(context, finalMSG, Toast.LENGTH_LONG)
+        toast.setGravity(Gravity.CENTER, 0, 0)
+        toast.show()
+        Log.d(TAG, "the area for ${sketcherEditorTypes.title} is: $area, unit: $unit")
     }
 
     fun stopSketcher(layout: ConstraintLayout){

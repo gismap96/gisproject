@@ -185,6 +185,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private TextView undoSkecherTV;
     private ImageView zift;
     private LegendSidebarAdapter legendAdapter;
+    private TextView calculatePolygonAreaTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -348,6 +349,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         zift = findViewById(R.id.toggleZift);
         zift.setVisibility(View.GONE);
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+
+        calculatePolygonAreaTV = findViewById(R.id.calculatePolygonAreaTV);
+        calculatePolygonAreaTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SketchEditorController.INSTANCE.area(mMapView, MainActivity.this);
+            }
+        });
     }
 
     private String getJsonDataFromFile(File file){
