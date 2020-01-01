@@ -16,6 +16,7 @@ import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.mapping.view.SketchCreationMode
 import com.esri.arcgisruntime.mapping.view.SketchEditor
 import com.esri.arcgisruntime.symbology.*
+import java.text.DecimalFormat
 
 
 object SketchEditorController {
@@ -86,15 +87,22 @@ object SketchEditorController {
         val geometry = sketchEditor.geometry
         val envelope = geometry.extent
         var area = GeometryEngine.area(envelope)
-        val unit = mMapView.spatialReference.unit.name
+        val unit = mMapView.spatialReference.unit.abbreviation
+        if (unit == "mi"){
+            area *= 1609.344
+        }
         var toastMSG1 = "השטח ל"
 //        if (sketcherEditorTypes == SketcherEditorTypes.POLYLINE){
 //            toastMSG1 = "המרחק ל"
 //            GeometryEngine.length()
 //        }
         val toastMSG2 = " הוא "
-        val toastMSG3 = " ב "
-        val finalMSG = toastMSG1+sketcherEditorTypes.title+toastMSG2+area.toInt().toString()+toastMSG3+unit
+        val toastMSG4 = "ובדונם הוא "
+        val decimalFormat = DecimalFormat("#.00")
+        val dunam = area / 1000.0
+        val toastMSG5 = decimalFormat.format(dunam).toString()
+        val finalMSG = toastMSG1+sketcherEditorTypes.title+toastMSG2+area.toInt().toString()+
+                "m\n" + toastMSG4 +toastMSG5
         val toast = Toast.makeText(context, finalMSG, Toast.LENGTH_LONG)
         toast.setGravity(Gravity.CENTER, 0, 0)
         toast.show()
