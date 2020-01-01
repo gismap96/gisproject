@@ -35,9 +35,11 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
         rowValues.clear()
         displayLayers.forEach {
             it.forEach {
-                val rowValue = RowValue(it.key, it.value)
-                elementsColor[rowValues.size] = isColored
-                rowValues.add(rowValue)
+                if (it.key != "uid") {
+                    val rowValue = RowValue(it.key, it.value)
+                    elementsColor[rowValues.size] = isColored
+                    rowValues.add(rowValue)
+                }
             }
             isColored = !isColored
         }

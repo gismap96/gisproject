@@ -10,17 +10,12 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
-import com.esri.arcgisruntime.geometry.Envelope
-import com.esri.arcgisruntime.geometry.GeometryEngine
-import com.esri.arcgisruntime.geometry.Polygon
+import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.mapping.view.Graphic
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.mapping.view.SketchCreationMode
 import com.esri.arcgisruntime.mapping.view.SketchEditor
-import com.esri.arcgisruntime.symbology.SimpleLineSymbol
-import com.esri.arcgisruntime.symbology.SimpleFillSymbol
-import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
-
+import com.esri.arcgisruntime.symbology.*
 
 
 object SketchEditorController {
@@ -66,6 +61,15 @@ object SketchEditorController {
 
         sketchEditor.start(SketchCreationMode.FREEHAND_LINE)
     }
+
+    fun pointMode(){
+        sketchEditor.start(SketchCreationMode.POINT)
+    }
+    fun savePoint(){
+        val geometry = sketchEditor.geometry
+        sketchEditor.stop()
+        var graphic = Graphic(geometry)
+    }
     fun polylineMode(){
         sketchEditor.start(SketchCreationMode.POLYLINE)
     }
@@ -75,15 +79,19 @@ object SketchEditorController {
     }
 
     fun clean(mMapView: MapView){
-        startSketching(sketcherEditorTypes,mMapView)
+        sketchEditor.clearGeometry()
     }
 
     fun area(mMapView: MapView, context: Context){
         val geometry = sketchEditor.geometry
         val envelope = geometry.extent
-        val area = GeometryEngine.area(envelope)
+        var area = GeometryEngine.area(envelope)
         val unit = mMapView.spatialReference.unit.name
-        val toastMSG1 = "השטח ל"
+        var toastMSG1 = "השטח ל"
+//        if (sketcherEditorTypes == SketcherEditorTypes.POLYLINE){
+//            toastMSG1 = "המרחק ל"
+//            GeometryEngine.length()
+//        }
         val toastMSG2 = " הוא "
         val toastMSG3 = " ב "
         val finalMSG = toastMSG1+sketcherEditorTypes.title+toastMSG2+area.toInt().toString()+toastMSG3+unit
@@ -91,6 +99,7 @@ object SketchEditorController {
         toast.setGravity(Gravity.CENTER, 0, 0)
         toast.show()
         Log.d(TAG, "the area for ${sketcherEditorTypes.title} is: $area, unit: $unit")
+
     }
 
     fun stopSketcher(layout: ConstraintLayout){

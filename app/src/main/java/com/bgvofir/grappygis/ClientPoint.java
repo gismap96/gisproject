@@ -15,6 +15,7 @@ public class ClientPoint{
     private String category;
     private boolean isUpdateSystem;
     public static final String POINTS_DATA_KEY = "POINTS_DATA";
+    public String user;
 
     public ClientPoint(float x, float y, String description, String imageUrl, String category, boolean isUpdateSystem) {
         this.x = x;
@@ -24,6 +25,26 @@ public class ClientPoint{
         this.category = category;
         this.isUpdateSystem = isUpdateSystem;
         this.pointHash = createPointHash(x, y, imageUrl, description, category, isUpdateSystem);
+        this.user = "";
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public ClientPoint(float x, float y, String description, String imageUrl, String category, boolean isUpdateSystem, String user) {
+        this.x = x;
+        this.y = y;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.pointHash = createPointHash(x, y, imageUrl, description, category, isUpdateSystem);
+        this.category = category;
+        this.isUpdateSystem = isUpdateSystem;
+        this.user = user;
     }
 
     public float getX() {

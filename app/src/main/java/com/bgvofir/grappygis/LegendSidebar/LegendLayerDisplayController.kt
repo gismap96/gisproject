@@ -143,6 +143,7 @@ object LegendLayerDisplayController{
         legendGroupMap.forEach{
             legendGroupList.add(LegendGroup(it.key, it.value))
         }
+
         return legendGroupList
     }
 

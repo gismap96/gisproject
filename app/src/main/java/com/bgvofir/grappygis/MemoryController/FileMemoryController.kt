@@ -11,10 +11,9 @@ object FileMemoryController{
     val TAG = "memoryController"
 
     fun deleteMMPKFile(file: File){
-        var del = File(file.toURI().path)
-        del.canonicalFile.delete()
-        if (del.exists()){
-            if(del.delete()){
+        file.canonicalFile.delete()
+        if (file.exists()){
+            if(file.delete()){
                 Log.d(TAG, "deleted")
             } else {
                 Log.d(TAG, "didnt delete")

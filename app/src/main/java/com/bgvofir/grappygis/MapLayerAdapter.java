@@ -111,7 +111,8 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
 
         }
         if (layer.getName().equals("Feature Collection")){
-            holder.layerName.setText("דקירות משתמש");
+            holder.layerName.setText("דקירות שלי");
+
         }
     }
     /**

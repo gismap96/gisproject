@@ -95,6 +95,7 @@ import com.esri.arcgisruntime.symbology.TextSymbol;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -392,7 +393,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     private void setClientPoints(){
         mClientPoints = new ArrayList<>();
-        StorageReference pointsRef = storageReference.child("settlements/" + mProjectId + "/layers/points.json");
+        String username = FirebaseAuth.getInstance().getUid();
+        StorageReference pointsRef = storageReference.child("settlements/" + mProjectId + "/layers/"+ username +".json");
         String pointsFilePath = getPointLocalFilePath();
         File pointsFile = new File(pointsFilePath);
         try {
@@ -412,7 +414,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         ClientPoint clientPoint = gson.fromJson(pointsJson.getJSONObject(i).toString(), ClientPoint.class);
                         mClientPoints.add(clientPoint);
                         SystemClock.sleep(50);
-                        createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem());
+                        createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem(), clientPoint.getUser());
                     }
                     LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
                 } catch (JSONException e) {
@@ -422,6 +424,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
                 Log.d("MainActivity", "points file failed: " + e.getMessage());
             }
         });
@@ -459,9 +462,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         editor.putStringSet(ClientPoint.POINTS_DATA_KEY, pointsDatStringSet);
         editor.apply();
 
-
-
-        StorageReference pointsRef = storageReference.child("settlements/" + mProjectId + "/layers/points.json");
+        String userid = FirebaseAuth.getInstance().getUid();
+        StorageReference pointsRef = storageReference.child("settlements/" + mProjectId + "/layers/"+ userid +".json");
         pointsRef.putBytes(storageArray.toString().getBytes())
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -717,8 +719,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys);
-                        mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys));
+                        String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys, currentuser);
+                        mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys, currentuser));
                         saveClientPoints(false);
                         toggleAddPoint(false);
                     }
@@ -828,7 +831,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
 
-    private synchronized void createFeatureCollection(float x, float y, String description, String imageUrl, String category, boolean isUpdateSys) {
+    private synchronized void createFeatureCollection(float x, float y, String description, String imageUrl, String category, boolean isUpdateSys, String uid) {
         if (!activityAlive) return;
 
         if (mMapView != null) {
@@ -848,6 +851,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             pointFields.add(Field.createString("Category", getString(R.string.category), 255));
             pointFields.add(Field.createString("Update system", getString(R.string.update_system), 50));
             pointFields.add(Field.createInteger("CustomPointHash", "CustomPointHash"));
+            pointFields.add(Field.createString("uid", "uid", 255));
             FeatureCollectionTable pointsTable = new FeatureCollectionTable(pointFields, GeometryType.POINT, mMapView.getSpatialReference());
 //            SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.TRIANGLE, Color.GREEN, 12);
 
@@ -870,6 +874,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             attributes1.put(pointFields.get(2).getName(), category);
             attributes1.put(pointFields.get(3).getName(), isUpdateSys ? "Yes" : "No");
             attributes1.put(pointFields.get(4).getName(), ClientPoint.createPointHash(x, y, imageUrl, description, category, isUpdateSys));
+            attributes1.put(pointFields.get(5).getName(), uid);
             Point point1 = new Point(x, y, mMapView.getSpatialReference());
             features.add(pointsTable.createFeature(attributes1, point1));
             pointsTable.addFeaturesAsync(features);
@@ -1165,8 +1170,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     }*/
                 } else {
                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
-                        createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys);
-                        mClientPoints.add(new ClientPoint((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys));
+                        String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys, currentuser);
+                        mClientPoints.add(new ClientPoint((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys, currentuser));
                         saveClientPoints(false);
                         toggleAddPoint(false);
                     }
@@ -1236,9 +1242,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                     progressDialog.dismiss();
                                     Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
                                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
-                                        mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys));
+                                        String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                        mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys, currentuser));
                                         saveClientPoints(false);
-                                        createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys);
+                                        createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys,currentuser);
                                         mCurrentX = 0;
                                         mCurrentY = 0;
                                         mCurrentDescription = null;

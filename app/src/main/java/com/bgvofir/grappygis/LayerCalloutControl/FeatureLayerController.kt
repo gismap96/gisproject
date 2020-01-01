@@ -19,10 +19,7 @@ import com.esri.arcgisruntime.data.QueryParameters
 import com.esri.arcgisruntime.data.ServiceFeatureTable
 import com.esri.arcgisruntime.data.FeatureQueryResult
 import com.esri.arcgisruntime.concurrent.ListenableFuture
-
-
-
-
+import com.esri.arcgisruntime.layers.Layer
 
 
 object FeatureLayerController {
