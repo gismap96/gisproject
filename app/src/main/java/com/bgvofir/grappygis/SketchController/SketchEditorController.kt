@@ -22,7 +22,7 @@ import java.text.DecimalFormat
 object SketchEditorController {
 
     var sketchEditor = SketchEditor()
-    var sketcherEditorTypes = SketcherEditorTypes.POINT
+    var sketcherEditorTypes = SketcherEditorTypes.POLYLINE
     var layoutHeight = 0
     val TAG = "sketcherController"
 
@@ -141,8 +141,6 @@ object SketchEditorController {
         sketchEditor = sketchEditor
         mMapView.sketchEditor = sketchEditor
         when (sketcherEditorTypes) {
-            SketcherEditorTypes.POINT -> {
-            }
             SketcherEditorTypes.POLYLINE -> {
                 polylineMode()
             }

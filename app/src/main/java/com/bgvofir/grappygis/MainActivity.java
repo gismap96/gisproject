@@ -33,7 +33,6 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -216,8 +215,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
                 resetMenuFunctions();
                 if (MainUpperMenu.INSTANCE.measureLine()) {
-                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-                    mIsDistance = true;
+//                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+//                    mIsDistance = true;
+                SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this);
+                sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter);
+                sketcherSelectionDialogFragment.show();
                 } else {
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                 }
@@ -241,16 +243,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         toggleSketcherBtn = findViewById(R.id.toggleSketcherBtn);
-        toggleSketcherBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                resetMenuFunctions();
-                //SketchEditorController.INSTANCE.freehandMode(mMapView);
-                SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this);
-                sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter);
-                sketcherSelectionDialogFragment.show();
-            }
-        });
+        toggleSketcherBtn.setVisibility(View.GONE);
+//        toggleSketcherBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                resetMenuFunctions();
+//                //SketchEditorController.INSTANCE.freehandMode(mMapView);
+//                SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this);
+//                sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter);
+//                sketcherSelectionDialogFragment.show();
+//            }
+//        });
 //        toggleSketcherBtn.setVisibility(View.GONE);
         toggleAutoPanBtn = findViewById(R.id.toggleAutoPanBtn);
         toggleAutoPanBtn.setOnClickListener(new View.OnClickListener() {
@@ -552,19 +555,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void toggleAddPoint(boolean isOn){
-//        if (isAddPointMode){
-//            addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-//        }
-//        else{
-//            addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-//        }
         resetMenuFunctions();
         if (MainUpperMenu.INSTANCE.addPointClicked() && isOn){
             addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             isAddPointMode = isOn;
         } else {
             addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-
         }
     }
 
@@ -1362,6 +1358,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onSketchSelectionListener(@NotNull SketcherEditorTypes sketcher) {
         sketcherSelectionDialogFragment.dismiss();
+        toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+        if (sketcher == SketcherEditorTypes.DISTANCE){
+            mIsDistance = true;
+            return;
+        }
+
         SketchEditorController.INSTANCE.startSketching(sketcher, mMapView);
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
     }
