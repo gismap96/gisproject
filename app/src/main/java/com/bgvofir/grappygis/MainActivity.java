@@ -855,12 +855,15 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             FeatureCollectionTable pointsTable = new FeatureCollectionTable(pointFields, GeometryType.POINT, mMapView.getSpatialReference());
 //            SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.TRIANGLE, Color.GREEN, 12);
 
-            BitmapDrawable pinStarDrawable = new BitmapDrawable(getResources(), getBitmapFromVectorDrawable(R.drawable.ic_star_blue));
+            BitmapDrawable pinStarDrawable = new BitmapDrawable(getResources(), getBitmapFromVectorDrawable(R.drawable.ic_star_black));
+            if(isUpdateSys){
+                pinStarDrawable = new BitmapDrawable(getResources(), getBitmapFromVectorDrawable(R.drawable.ic_star_blue));
+            }
             final PictureMarkerSymbol pinStarBlueSymbol = new PictureMarkerSymbol(pinStarDrawable);
             //Optionally set the size, if not set the image will be auto sized based on its size in pixels,
             //its appearance would then differ across devices with different resolutions.
-            pinStarBlueSymbol.setHeight(14);
-            pinStarBlueSymbol.setWidth(14);
+            pinStarBlueSymbol.setHeight(20);
+            pinStarBlueSymbol.setWidth(20);
 
 
 
