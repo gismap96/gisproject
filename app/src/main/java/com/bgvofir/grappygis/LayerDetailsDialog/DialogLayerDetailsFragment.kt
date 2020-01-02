@@ -30,7 +30,6 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(com.bgvofir.grappygis.R.layout.fragment_dialog_layer_details)
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         var recycler = dialogLayerDetailsRecyclerview
         var layoutManager = LinearLayoutManager(activity)
         recycler.layoutManager = layoutManager
@@ -61,6 +60,7 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
         }
         fragmentDialogLayerDetailsHeadline.text = finalHeadline
         fragmentDialogLayerDetailsClose.setOnClickListener(this)
+        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
     }
 

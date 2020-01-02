@@ -507,7 +507,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                        deleteMMPKFolderData();
 //                    }
                     FileMemoryController.INSTANCE.deleteMMPKFile(mmpkFile);
-
+                    SystemClock.sleep(2000);
                     mmpkRef.getFile(mmpkFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
