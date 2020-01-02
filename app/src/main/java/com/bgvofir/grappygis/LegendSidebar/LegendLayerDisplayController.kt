@@ -5,6 +5,8 @@ import android.animation.ObjectAnimator
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import android.view.animation.RotateAnimation
+import android.widget.ImageView
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController.groupNames
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController.legendTitles
 import com.esri.arcgisruntime.layers.Layer
@@ -145,6 +147,52 @@ object LegendLayerDisplayController{
         }
 
         return legendGroupList
+    }
+
+    fun openSubArrowEffect(view: ImageView){
+        ObjectAnimator.ofFloat(view, View.ROTATION, 0.0f, -90.0f).apply {
+            duration=500
+            start()
+        }.addListener(object: Animator.AnimatorListener{
+            override fun onAnimationRepeat(animation: Animator?) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                ObjectAnimator.ofFloat(view, View.ROTATION, 0.0f, 0.0f).start()
+                view.setImageResource(com.bgvofir.grappygis.R.drawable.ic_full_black_legend_arrow_down)
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+            }
+
+            override fun onAnimationStart(animation: Animator?) {
+            }
+
+        })
+
+    }
+    fun closeSubArrowEffect(view: ImageView){
+        ObjectAnimator.ofFloat(view, View.ROTATION, 0.0f, 90.0f).apply {
+            duration=500
+            start()
+        }.addListener(object: Animator.AnimatorListener{
+            override fun onAnimationRepeat(animation: Animator?) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                ObjectAnimator.ofFloat(view, View.ROTATION, 0.0f, 0.0f).start()
+                view.setImageResource(com.bgvofir.grappygis.R.drawable.ic_hollow_black_legend_arrow_close)
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+            }
+
+            override fun onAnimationStart(animation: Animator?) {
+            }
+
+        })
     }
 
     interface LayerGroupsListener{

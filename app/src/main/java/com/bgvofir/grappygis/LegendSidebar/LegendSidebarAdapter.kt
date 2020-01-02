@@ -40,10 +40,10 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, 
         p0.setIsRecyclable(false)
         p0.itemView.setOnClickListener {
             if (p0.legendDetailsRecyclerView.visibility == View.GONE){
-                LegendScrollerController.setOpenedView(p1, recyclerView)
+                LegendScrollerController.setOpenedView(p1, recyclerView, p0.legendIconIV)
                 p0.legendDetailsRecyclerView.visibility = View.VISIBLE
             } else {
-                LegendScrollerController.setClosed()
+                LegendScrollerController.setClosed(p0.legendIconIV)
                 p0.legendDetailsRecyclerView.visibility = View.GONE
             }
         }
@@ -53,6 +53,7 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, 
         var legendGroupNameTV = v.legendGroupNameTV
 //        var legendGroupsCheckBox = v.legendGroupsCheckBox
         var legendDetailsRecyclerView = v.legendDetailsRecyclerView
+        var legendIconIV = v.legendIconIV
 
         fun bind(group: LegendGroup, context: Context){
             legendGroupNameTV.text = group.title
