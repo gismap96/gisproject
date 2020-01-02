@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +26,7 @@ import java.util.ArrayList
 
 class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<Map<String, String>>): RecyclerView.Adapter<DialogLayerDetailsAdapter.DialogLayerDetailsAdapterViewHolder>(){
 
+    val TAG = "layerDetails"
     var elementsColor = mutableMapOf<Int, Boolean>()
     var rowValues = ArrayList<RowValue>()
 
@@ -53,6 +55,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
 
 
     override fun getItemCount(): Int {
+        Log.d(TAG, rowValues.size.toString())
         return rowValues.size
     }
 
