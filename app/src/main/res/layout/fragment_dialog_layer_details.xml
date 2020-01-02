@@ -50,7 +50,6 @@
         android:text="סגור"
         android:textColor="#3fadf8"
         android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dialogLayerDetailsRecyclerview"/>
