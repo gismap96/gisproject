@@ -32,7 +32,6 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         var recycler = dialogLayerDetailsRecyclerview
         var layoutManager = LinearLayoutManager(activity)
-        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
         recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
