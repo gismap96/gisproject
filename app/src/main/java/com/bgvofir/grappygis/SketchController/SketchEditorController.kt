@@ -83,6 +83,9 @@ object SketchEditorController {
         sketchEditor.clearGeometry()
     }
 
+    fun toJson(geometry: Geometry){
+        Log.d(TAG, geometry.toJson())
+    }
     fun area(mMapView: MapView, context: Context){
         val geometry = sketchEditor.geometry
         val envelope = geometry.extent
@@ -107,6 +110,7 @@ object SketchEditorController {
         toast.setGravity(Gravity.CENTER, 0, 0)
         toast.show()
         Log.d(TAG, "the area for ${sketcherEditorTypes.title} is: $area, unit: $unit")
+        toJson(geometry)
 
     }
 

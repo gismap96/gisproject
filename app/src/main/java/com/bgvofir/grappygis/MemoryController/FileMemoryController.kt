@@ -1,6 +1,7 @@
 package com.bgvofir.grappygis.MemoryController
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import java.io.File
 import java.nio.file.Files
@@ -9,6 +10,7 @@ object FileMemoryController{
 
     var path = ""
     val TAG = "memoryController"
+    var projectName = ""
 
     fun deleteMMPKFile(file: File){
         file.canonicalFile.delete()
