@@ -35,6 +35,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bgvofir.grappygis.MemoryController.FileMemoryController;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -58,7 +59,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, FileMemoryController.OnUpdateResolved {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -188,11 +189,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if (dataSnapshot.getValue() != null){
                     String value = (String) dataSnapshot.getValue();
                     if (value != null){
+                        FileMemoryController.INSTANCE.setProjectID(value);
                         SharedPreferences.Editor editor = mPrefs.edit();
                         editor.putString(Consts.PROJECT_ID_KEY, value);
                         editor.putString(Consts.UUID, mAuth.getCurrentUser().getUid());
                         editor.apply();
-                        startApp();
+                        FileMemoryController.INSTANCE.checkupUpdate(LoginActivity.this,LoginActivity.this);
+//                        startApp();
 
                     }
                     else{
@@ -399,6 +402,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onUpdateResolved() {
+        startApp();
     }
 
 
