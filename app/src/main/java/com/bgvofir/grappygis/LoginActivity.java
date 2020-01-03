@@ -59,7 +59,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, FileMemoryController.OnUpdateResolved {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -194,8 +194,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         editor.putString(Consts.PROJECT_ID_KEY, value);
                         editor.putString(Consts.UUID, mAuth.getCurrentUser().getUid());
                         editor.apply();
-                        FileMemoryController.INSTANCE.checkupUpdate(LoginActivity.this,LoginActivity.this);
-//                        startApp();
+//                        FileMemoryController.INSTANCE.checkupUpdate(LoginActivity.this,LoginActivity.this);
+                        startApp();
 
                     }
                     else{
@@ -404,10 +404,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
-    @Override
-    public void onUpdateResolved() {
-        startApp();
-    }
+//    @Override
+//    public void onUpdateResolved() {
+//        startApp();
+//    }
 
 
     private interface ProfileQuery {
