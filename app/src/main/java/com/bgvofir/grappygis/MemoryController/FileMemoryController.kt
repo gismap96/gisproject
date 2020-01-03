@@ -34,6 +34,8 @@ object FileMemoryController{
 
     }
 
+
+
 //    fun checkupUpdate(context: Context, callback: OnUpdateResolved){
 //        val mmpkRef = storageRef.child("settlements/$projectID/mmpk/data.mmpk")
 //        mmpkRef.metadata.addOnSuccessListener { meta->
@@ -43,9 +45,10 @@ object FileMemoryController{
 //            if (timeModified > lastDownloadTime){
 //                val extStorDir = Environment.getExternalStorageDirectory()
 //                val path = extStorDir.absolutePath + File.separator + Consts.GRAPPY_FOLDER_NAME +
-//                        File.separator + projectID + File.separator + "mmpk"
+//                        File.separator + projectID + File.separator + "mmpk" +
+//                        File.separator + projectID + ".mmpk"
 //                val file = File(path)
-//                deleteDirectory(file)
+//                deleteMMPKFile(file)
 //                callback.onUpdateResolved()
 //            }
 //        }.addOnFailureListener {
