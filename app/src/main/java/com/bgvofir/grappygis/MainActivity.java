@@ -496,7 +496,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                    String rasterPath = file.getAbsolutePath();
                     Raster raster = new Raster(file.getAbsolutePath() + File.separator + fileName);
                     RasterLayer rasterLayer = new RasterLayer(raster);
-                    mMapView.getMap().getOperationalLayers().add(rasterLayer);
+                    mMapView.getMap().getOperationalLayers().add(0, rasterLayer);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Envelope myExtents = rasterLayer.getFullExtent();
+                            myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
+//                mMapView.setMaxExtent(myExtents);
+                            mMapView.setViewpoint(new Viewpoint(myExtents));
+                        }
+                    }, 200);
+
 //                    setRaster();
                     return true;
                 }
@@ -516,7 +526,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         rasterRef.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
             @Override
             public void onSuccess(StorageMetadata storageMetadata) {
-                if (storageMetadata.getUpdatedTimeMillis() > folderModifiedTime){
+                long lastDownloadTime = mPrefs.getLong(Consts.DOWNLOAD_TIME_KEY, Long.MIN_VALUE);
+                if (storageMetadata.getUpdatedTimeMillis() > lastDownloadTime){
                     downloadRaster();
                 }
                 else{
@@ -537,6 +548,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     File zipFile = new File(getRasterFolderPath() + File.separator + "raster_data.zip");
                     Utils.unzip(zipFile, new File(getRasterFolderPath()));
                     setRaster(getRasterFolderPath());
+                    SharedPreferences.Editor editor = mPrefs.edit();
+                    editor.putLong(Consts.DOWNLOAD_TIME_KEY, System.currentTimeMillis());
                 } catch (Exception e) {
                     e.printStackTrace();
 
@@ -704,10 +717,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         checkForRaster();
                         setClientPoints();
                         setMapListener(mobileMap);
-                        Envelope myExtents = mobileMap.getOperationalLayers().get(0).getFullExtent();
-                        myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
-//                mMapView.setMaxExtent(myExtents);
-                        mMapView.setViewpoint(new Viewpoint(myExtents));
+
 
                     }
                 },500);
