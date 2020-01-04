@@ -14,19 +14,24 @@ import org.json.JSONObject
 object FormatJSONGeometry{
 
 
+    val TAG = "JSONFormat"
     fun polygonToJson(geometry: Geometry){
         val result = JSONObject()
+        result.put("displayFieldName", "meow")
         result.put("fieldAliases", fieldAlisas())
         result.put("geometryType", "esriGeometryPolygon")
         result.put("spatialReference", spatialReference())
-        val fieldsElement = JsonArray()
-        fieldsElement.add(fields("FID","esriFieldTypeOID"))
-        fieldsElement.add(fields("Id", "esriFieldTypeInteger"))
+        val fieldsElement = JSONArray()
+        fieldsElement.put(fields("FID","esriFieldTypeOID"))
+        fieldsElement.put(fields("Id", "esriFieldTypeInteger"))
         result.put("fields", fieldsElement)
-        val features = JsonArray()
+        val features = JSONArray()
         val mFirstFeature = JSONObject()
         mFirstFeature.put("attributes",attributes(0,0))
         mFirstFeature.put("rings", getRingsJsonObject(geometry))
+        features.put(mFirstFeature)
+        result.put("features", features)
+        Log.d(TAG, result.toString())
     }
 
     fun getRingsJsonObject(geometry: Geometry) : JSONArray {
@@ -34,30 +39,30 @@ object FormatJSONGeometry{
         return geometryJson.getJSONArray("rings")
     }
 
-    fun fieldAlisas(): JsonElement{
-        val fa = JsonObject()
-        fa.addProperty("FID", "FID")
-        fa.addProperty("Id", "Id")
+    fun fieldAlisas(): JSONObject{
+        val fa = JSONObject()
+        fa.put("FID", "FID")
+        fa.put("Id", "Id")
         return fa
     }
-    fun spatialReference():JsonElement{
-        val sr = JsonObject()
-        sr.addProperty("wkid", 2039)
-        sr.addProperty("latestWkid", 2039)
+    fun spatialReference():JSONObject{
+        val sr = JSONObject()
+        sr.put("wkid", 2039)
+        sr.put("latestWkid", 2039)
         return sr
     }
 
-    fun fields(twice: String,type: String): JsonElement{
-        val fields = JsonObject()
-        fields.addProperty("name", twice)
-        fields.addProperty("type", type)
-        fields.addProperty("alias", twice)
+    fun fields(twice: String,type: String): JSONObject{
+        val fields = JSONObject()
+        fields.put("name", twice)
+        fields.put("type", type)
+        fields.put("alias", twice)
         return fields
     }
-    fun attributes(fid: Int, id: Int):JsonElement{
-        val att = JsonObject()
-        att.addProperty("FID", fid)
-        att.addProperty("Id", id)
+    fun attributes(fid: Int, id: Int):JSONObject{
+        val att = JSONObject()
+        att.put("FID", fid)
+        att.put("Id", id)
         return att
     }
 //

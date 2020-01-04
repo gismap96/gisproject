@@ -8,6 +8,8 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.support.v4.content.ContextCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -27,19 +29,19 @@ import java.util.ArrayList
 class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<Map<String, String>>): RecyclerView.Adapter<DialogLayerDetailsAdapter.DialogLayerDetailsAdapterViewHolder>(){
 
     val TAG = "layerDetails"
-    var elementsColor = mutableMapOf<Int, Boolean>()
+//    var elementsColor = mutableMapOf<Int, Boolean>()
     var rowValues = ArrayList<RowValue>()
 
 
     init{
         var isColored = false
-        elementsColor.clear()
+//        elementsColor.clear()
         rowValues.clear()
         displayLayers.forEach {
             it.forEach {
                 if (it.key != "uid") {
                     val rowValue = RowValue(it.key, it.value)
-                    elementsColor[rowValues.size] = isColored
+                    //elementsColor[rowValues.size] = isColored
                     rowValues.add(rowValue)
                 }
             }
@@ -60,13 +62,21 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
     }
 
     override fun onBindViewHolder(p0: DialogLayerDetailsAdapterViewHolder, p1: Int) {
-        elementsColor[p1]?.let {
-            p0.bind(rowValues[p1].key, rowValues[p1].value)
-            if (it){
-                p0.itemView.setBackgroundColor(Color.GRAY)
-            } else {
-                p0.itemView.setBackgroundColor(Color.WHITE)
-            }
+//        elementsColor[p1]?.let {
+//            p0.bind(rowValues[p1].key, rowValues[p1].value)
+//            if (it){
+//                p0.itemView.setBackgroundColor(Color.GRAY)
+//            } else {
+//                p0.itemView.setBackgroundColor(Color.WHITE)
+//            }
+//        }
+        p0.bind(rowValues[p1].key, rowValues[p1].value)
+        if (rowValues[p1].key == "FID"){
+            p0.itemView.setBackgroundColor(Color.WHITE)
+            p0.itemView.rowLayersDetailsValue.setBackgroundColor(Color.WHITE)
+            p0.itemView.rowLayersDetailsValue.setTextColor(ResourcesCompat.getColor(context.resources, R.color.dark_blue, null))
+            p0.itemView.rowLayersDetailsKey.setBackgroundColor(Color.WHITE)
+            p0.itemView.rowLayersDetailsKey.setTextColor(ResourcesCompat.getColor(context.resources, R.color.dark_blue, null))
         }
     }
 

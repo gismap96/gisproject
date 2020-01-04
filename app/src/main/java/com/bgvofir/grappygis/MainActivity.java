@@ -496,7 +496,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                    String rasterPath = file.getAbsolutePath();
                     Raster raster = new Raster(file.getAbsolutePath() + File.separator + fileName);
                     RasterLayer rasterLayer = new RasterLayer(raster);
-                    mMapView.getMap().getOperationalLayers().add(rasterLayer);
+                    mMapView.getMap().getOperationalLayers().add(0, rasterLayer);
 //                    setRaster();
                     return true;
                 }
