@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
+import com.bgvofir.grappygis.FormatGeometry.FormatJSONGeometry
 import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.mapping.view.Graphic
 import com.esri.arcgisruntime.mapping.view.MapView
@@ -84,7 +85,8 @@ object SketchEditorController {
     }
 
     fun toJson(geometry: Geometry){
-        Log.d(TAG, geometry.toJson())
+        FormatJSONGeometry.polygonToJson(geometry)
+        Log.d(TAG, geometry.toString())
     }
     fun area(mMapView: MapView, context: Context){
         val geometry = sketchEditor.geometry
@@ -110,6 +112,7 @@ object SketchEditorController {
         toast.setGravity(Gravity.CENTER, 0, 0)
         toast.show()
         Log.d(TAG, "the area for ${sketcherEditorTypes.title} is: $area, unit: $unit")
+        Log.d(TAG, "json ${geometry.toJson()}")
         toJson(geometry)
 
     }

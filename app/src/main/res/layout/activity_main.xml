@@ -94,23 +94,23 @@
 
         <ImageView
             android:id="@+id/addPoint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginEnd="12dp"
-            android:src="@drawable/ic_add_point"
+            android:src="@drawable/ic_hollow_plus_star"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/toggledistanceBtn"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/deletePoint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginEnd="12dp"
             android:src="@drawable/ic_trash_stars"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/addPoint"
             app:layout_constraintEnd_toStartOf="@+id/addPoint"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/addPoint" />
 
         <android.support.constraint.Guideline
             android:id="@+id/glForLegendSidebar"
