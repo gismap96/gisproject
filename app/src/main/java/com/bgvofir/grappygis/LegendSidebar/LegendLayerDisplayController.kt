@@ -126,10 +126,12 @@ object LegendLayerDisplayController{
     fun generateLegendGroupList(map: MapView): List<LegendGroup>{
         val layers = map.map.operationalLayers
         var legendGroupMap = mutableMapOf<String, MutableList<Layer>>()
+        legendGroupMap["אחר"] = mutableListOf()
         groupNames.forEach {
             legendGroupMap[it] = mutableListOf()
         }
-        legendGroupMap["אחר"] = mutableListOf()
+
+        Log.d(TAG, legendTitles.toString())
         layers.forEach {
             val layerName = it.name
             if (legendTitles.containsKey(layerName)){
@@ -145,13 +147,17 @@ object LegendLayerDisplayController{
         legendGroupMap.forEach{
             legendGroupList.add(LegendGroup(it.key, it.value))
         }
+        legendGroupList.reverse()
+        legendGroupList.forEach {
+            it.layers = it.layers.reversed()
+        }
 
         return legendGroupList
     }
 
     fun openSubArrowEffect(view: ImageView){
         ObjectAnimator.ofFloat(view, View.ROTATION, 0.0f, -90.0f).apply {
-            duration=500
+            duration=300
             start()
         }.addListener(object: Animator.AnimatorListener{
             override fun onAnimationRepeat(animation: Animator?) {
@@ -174,7 +180,7 @@ object LegendLayerDisplayController{
     }
     fun closeSubArrowEffect(view: ImageView){
         ObjectAnimator.ofFloat(view, View.ROTATION, 0.0f, 90.0f).apply {
-            duration=500
+            duration=300
             start()
         }.addListener(object: Animator.AnimatorListener{
             override fun onAnimationRepeat(animation: Animator?) {
