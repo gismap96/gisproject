@@ -497,6 +497,16 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     Raster raster = new Raster(file.getAbsolutePath() + File.separator + fileName);
                     RasterLayer rasterLayer = new RasterLayer(raster);
                     mMapView.getMap().getOperationalLayers().add(0, rasterLayer);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Envelope myExtents = rasterLayer.getFullExtent();
+                            myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
+//                mMapView.setMaxExtent(myExtents);
+                            mMapView.setViewpoint(new Viewpoint(myExtents));
+                        }
+                    }, 200);
+
 //                    setRaster();
                     return true;
                 }
