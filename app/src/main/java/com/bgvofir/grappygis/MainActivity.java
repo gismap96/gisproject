@@ -55,7 +55,6 @@ import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsFragment;
 import com.bgvofir.grappygis.LegendSidebar.LegendGroup;
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController;
 import com.bgvofir.grappygis.LegendSidebar.LegendSidebarAdapter;
-import com.bgvofir.grappygis.MemoryController.FileMemoryController;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes;
 import com.bgvofir.grappygis.SketchController.SketcherSelectionDialogAdapter;
@@ -75,6 +74,7 @@ import com.esri.arcgisruntime.geometry.PointCollection;
 import com.esri.arcgisruntime.geometry.Polyline;
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer;
 import com.esri.arcgisruntime.layers.FeatureLayer;
+import com.esri.arcgisruntime.layers.RasterLayer;
 import com.esri.arcgisruntime.loadable.LoadStatus;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.MobileMapPackage;
@@ -86,6 +86,7 @@ import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult;
 import com.esri.arcgisruntime.mapping.view.LocationDisplay;
 import com.esri.arcgisruntime.mapping.view.MapView;
+import com.esri.arcgisruntime.raster.Raster;
 import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
@@ -118,6 +119,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -480,6 +482,74 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 });
     }
 
+    /**
+     * Get the raster file by extension (for example: .jpg)
+     * @param folderPath path to folder
+     * @return abs path to file
+     */
+    private void setRaster(String folderPath){
+        File dir = new File(folderPath);
+        dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String fileName) {
+                if (fileName.endsWith(".jpg") || fileName.endsWith(".tif") || fileName.endsWith(".ecw")){
+//                    String rasterPath = file.getAbsolutePath();
+                    Raster raster = new Raster(file.getAbsolutePath() + File.separator + fileName);
+                    RasterLayer rasterLayer = new RasterLayer(raster);
+                    mMapView.getMap().getOperationalLayers().add(rasterLayer);
+//                    setRaster();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private void checkForRaster(){
+        File rasterFolderFile = new File(getRasterFolderPath());
+        if (!rasterFolderFile.exists()) {
+            downloadRaster();
+            return;
+        }
+        final long folderModifiedTime = rasterFolderFile.lastModified();
+        StorageReference rasterRef = storageReference.child("settlements/" + mProjectId + "/raster/raster_data.zip");
+        rasterRef.getMetadata().addOnSuccessListener(new OnSuccessListener<StorageMetadata>() {
+            @Override
+            public void onSuccess(StorageMetadata storageMetadata) {
+                if (storageMetadata.getUpdatedTimeMillis() > folderModifiedTime){
+                    downloadRaster();
+                }
+                else{
+                    setRaster(getRasterFolderPath());
+                }
+            }
+        });
+    }
+
+    private void downloadRaster(){
+        StorageReference rasterRef = storageReference.child("settlements/" + mProjectId + "/raster/raster_data.zip");
+        File rasterFolderFile = new File(getRasterFolderPath() + File.separator + "raster_data.zip");
+        rasterFolderFile.getParentFile().mkdirs();
+        rasterRef.getFile(rasterFolderFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                try {
+                    File zipFile = new File(getRasterFolderPath() + File.separator + "raster_data.zip");
+                    Utils.unzip(zipFile, new File(getRasterFolderPath()));
+                    setRaster(getRasterFolderPath());
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("MainActivity", "DownloadRaster failed: " + e.getMessage());
+            }
+        });
+    }
+
     private void downloadMMPK(){
         String path = createMobileMapPackageFilePath(mProjectId);
         String mmpkFilePath = path;
@@ -505,12 +575,22 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
                 if (timeModified > lastDownloadTime){
 //                    mmpkFile.delete();
-//                    deleteMMPKFolderData();
-//                    if (lastDownloadTime != Long.MIN_VALUE){
+
+                    if (lastDownloadTime != Long.MIN_VALUE){
 //                        deleteMMPKFolderData();
-//                    }
-                    FileMemoryController.INSTANCE.deleteMMPKFile(mmpkFile);
-                    SystemClock.sleep(2000);
+                        deleteMMPKFolderData();
+                        String path = createMobileMapPackageFilePath(mProjectId);
+                        String mmpkFilePath = path;
+                        File mmpkFile = new File(mmpkFilePath);
+                        try {
+                            mmpkFile.getParentFile().mkdirs();
+                            mmpkFile.createNewFile();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+//                    FileMemoryController.INSTANCE.deleteMMPKFile(mmpkFile);
+//                    SystemClock.sleep(2000);
                     mmpkRef.getFile(mmpkFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -620,6 +700,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 h.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+//                        setRaster();
+                        checkForRaster();
                         setClientPoints();
                         setMapListener(mobileMap);
                         Envelope myExtents = mobileMap.getOperationalLayers().get(0).getFullExtent();
@@ -1061,6 +1143,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         return extStorDir.getAbsolutePath() + File.separator + Consts.GRAPPY_FOLDER_NAME + File.separator + mProjectId + File.separator + "layers" + File.separator +  "points.json";
     }
 
+    private String getRasterFolderPath(){
+        return extStorDir.getAbsolutePath() + File.separator + Consts.GRAPPY_FOLDER_NAME + File.separator + mProjectId + File.separator + "raster_data";
+    }
+
     private String getUnpackedPath(String fileName) {
         return getMMPKFolderPath() + File.separator + "Unpacked" + File.separator + fileName;
     }
@@ -1070,21 +1156,22 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void deleteUnpackedMMPKFolderData(){
-        File mmpkFolder = new File(getUnpackedPath("data"));
+        File mmpkFolder = new File(getMMPKFolderPath() + File.separator + "Unpacked");
         if (!mmpkFolder.exists())
             return;
         deleteRecursive(mmpkFolder);
     }
 
-    private boolean deleteMMPKFolderData(){
-        File mmpkFolder = new File(getMMPKFolderPath());
+    private void deleteMMPKFolderData(){
+        /*File mmpkFolder = new File(getMMPKFolderPath());
         if (!mmpkFolder.exists())
             return false;
         String mmpkFilePath = createMobileMapPackageFilePath(mProjectId);
         File mmpkFile = new File(mmpkFilePath);
         deleteUnpackedMMPKFolderData();
         mmpkFile.delete();
-        return mmpkFolder.delete();
+        return mmpkFolder.delete();*/
+        deleteRecursive(new File(getMMPKFolderPath()));
 
     }
 
