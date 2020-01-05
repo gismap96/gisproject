@@ -39,6 +39,7 @@ import android.support.v7.widget.SimpleItemAnimator;
 import android.text.method.ScrollingMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -219,7 +220,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 if (MainUpperMenu.INSTANCE.measureLine()) {
 //                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
 //                    mIsDistance = true;
-                SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this);
+                SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this, MainActivity.this);
                 sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter);
                 sketcherSelectionDialogFragment.show();
                 } else {
@@ -360,7 +361,16 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         calculatePolygonAreaTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SketchEditorController.INSTANCE.area(mMapView, MainActivity.this);
+                switch (SketchEditorController.INSTANCE.getSketcherEditorTypes()){
+                    case POLYGON:
+                        SketchEditorController.INSTANCE.polygonArea(mMapView, MainActivity.this);
+                        break;
+                    case POLYLINE:
+                        Toast toast = Toast.makeText(MainActivity.this, "בבנייה, יגיע בקרוב", Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+                }
+
             }
         });
     }

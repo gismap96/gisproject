@@ -139,7 +139,7 @@ object LegendLayerDisplayController{
                 legendGroupMap[layerGroupName]?.add(it)
                 it.isVisible = false
             }
-            else if (!layerName.contains(".jpg")){
+            else if (layerName.trim().isNotEmpty()){
                 legendGroupMap["אחר"]?.add(it)
             }
         }

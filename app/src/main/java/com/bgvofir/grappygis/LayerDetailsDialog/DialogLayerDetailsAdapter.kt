@@ -116,11 +116,12 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
                 }
 
             } else {
-                valueTextView.text = value
+                val newValue = value.replace("_"," ")
+                valueTextView.text = newValue
                 previewImage.visibility = View.GONE
             }
-
-            keyTextView.text = key
+            val newKey = key.replace("_", " ")
+            keyTextView.text = newKey
 
         }
     }

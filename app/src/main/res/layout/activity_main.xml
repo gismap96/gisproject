@@ -70,6 +70,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/toggleSketcherBtn"
             app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/toggleLegendBtn"
             android:layout_width="0dp"
@@ -84,32 +85,38 @@
 
         <ImageView
             android:id="@+id/toggledistanceBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginEnd="12dp"
+            android:padding="8dp"
             android:src="@drawable/ic_distance"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/measurementsGL"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/addPoint"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="12dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:padding="8dp"
             android:src="@drawable/ic_hollow_plus_star"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/toggledistanceBtn"
+            app:layout_constraintStart_toStartOf="@+id/addStarGL"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/deletePoint"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="12dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="8dp"
+            android:layout_marginEnd="8dp"
             android:src="@drawable/ic_trash_stars"
             app:layout_constraintBottom_toBottomOf="@+id/addPoint"
             app:layout_constraintEnd_toStartOf="@+id/addPoint"
+            app:layout_constraintStart_toStartOf="@+id/trashGL"
             app:layout_constraintTop_toTopOf="@+id/addPoint" />
 
         <android.support.constraint.Guideline
@@ -118,6 +125,27 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.2" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/measurementsGL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.88" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/addStarGL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.76" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/trashGL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.64" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -176,13 +204,13 @@
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:paddingEnd="16dp"
-            android:paddingStart="16dp"
             android:layout_marginBottom="8dp"
-            android:textSize="24sp"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
             android:text="חישוב שטח"
+            android:textColor="@color/white"
+            android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/closeSketcherTV"
             app:layout_constraintTop_toTopOf="parent" />
