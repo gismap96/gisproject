@@ -1468,11 +1468,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     public void onSketchSelectionListener(@NotNull SketcherEditorTypes sketcher) {
         sketcherSelectionDialogFragment.dismiss();
         toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-        if (sketcher == SketcherEditorTypes.DISTANCE){
-            mIsDistance = true;
-            return;
+//        if (sketcher == SketcherEditorTypes.DISTANCE){
+//            mIsDistance = true;
+//            return;
+//        }
+        switch (sketcher){
+            case POLYGON:
+                calculatePolygonAreaTV.setText("חישוב שטח");
+                break;
+            case POLYLINE:
+                calculatePolygonAreaTV.setText("חישוב אורך");
+                break;
         }
-
         SketchEditorController.INSTANCE.startSketching(sketcher, mMapView);
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
     }

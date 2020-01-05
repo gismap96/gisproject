@@ -33,8 +33,8 @@ class SketcherSelectionDialogAdapter(var context: Context,var sketchSelectionCli
         fun bind(headline: String, type: SketcherEditorTypes, context: Context){
             headlineTV.text = headline
             when (type){
-                SketcherEditorTypes.DISTANCE ->
-                    sketcherIconSelectionIV.background = (ContextCompat.getDrawable(context, R.drawable.ic_distance))
+//                SketcherEditorTypes.DISTANCE ->
+//                    sketcherIconSelectionIV.background = (ContextCompat.getDrawable(context, R.drawable.ic_distance))
                 SketcherEditorTypes.POLYLINE ->
                     sketcherIconSelectionIV.background = ContextCompat.getDrawable(context, R.drawable.ic_line_measurement)
                 SketcherEditorTypes.POLYGON ->
