@@ -562,7 +562,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private void downloadRaster(){
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setTitle("הורדה ראשנית, ההורדה יכולה לקחת מספר דקות, נא לא לכבות את המכשיר");
+        progressDialog.setTitle("הורדה ראשונית, ההורדה יכולה לקחת מספר דקות, נא לא לכבות את המכשיר");
         progressDialog.show();
         StorageReference rasterRef = storageReference.child("settlements/" + mProjectId + "/raster/raster_data.zip");
         File rasterFolderFile = new File(getRasterFolderPath() + File.separator + "raster_data.zip");
