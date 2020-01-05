@@ -601,7 +601,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setTitle("הורדה ראשנית, זה עלול לקחת מספר דקות, נא לא לכבות");
+        progressDialog.setTitle("הורדה ראשנית, ההורדה יכולה לקחת מספר דקות, נא לא לכבות את המכשיר");
         progressDialog.show();
 
         StorageReference mmpkRef = storageReference.child("settlements/" + mProjectId + "/mmpk/data.mmpk");
