@@ -189,6 +189,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ImageView zift;
     private LegendSidebarAdapter legendAdapter;
     private TextView calculatePolygonAreaTV;
+    private boolean displayLegendFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +198,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         FirebaseApp.initializeApp(this);
 
+        displayLegendFlag = false;
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
@@ -433,7 +435,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         SystemClock.sleep(50);
                         createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem(), clientPoint.getUser());
                     }
-                    LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+                    if (displayLegendFlag) {
+                        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+                    } else {
+                        displayLegendFlag = true;
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -516,6 +522,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                             myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
 //                mMapView.setMaxExtent(myExtents);
                             mMapView.setViewpoint(new Viewpoint(myExtents));
+                            if (displayLegendFlag){
+                                LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+                            } else {
+                                displayLegendFlag = true;
+                            }
                         }
                     }, 200);
 
@@ -549,6 +560,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void downloadRaster(){
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Downloading...");
+        progressDialog.show();
         StorageReference rasterRef = storageReference.child("settlements/" + mProjectId + "/raster/raster_data.zip");
         File rasterFolderFile = new File(getRasterFolderPath() + File.separator + "raster_data.zip");
         rasterFolderFile.getParentFile().mkdirs();
@@ -563,6 +578,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     e.printStackTrace();
 
                 }
+
+                progressDialog.dismiss();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -584,7 +601,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setTitle("Downloading...");
+        progressDialog.setTitle("הורדה ראשנית, זה עלול לקחת מספר דקות, נא לא לכבות");
         progressDialog.show();
 
         StorageReference mmpkRef = storageReference.child("settlements/" + mProjectId + "/mmpk/data.mmpk");
