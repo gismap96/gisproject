@@ -114,7 +114,23 @@ object SketchEditorController {
         Log.d(TAG, "the polygonArea for ${sketcherEditorTypes.title} is: $area, unit: $unit")
         Log.d(TAG, "json ${geometry.toJson()}")
         toJson(geometry)
+    }
 
+    fun polylineDistance(mMapView: MapView, context: Context){
+        val geometry = sketchEditor.geometry
+        val line = geometry as Polyline
+        var distance = GeometryEngine.length(line)
+        val decimalFormat = DecimalFormat("#.00")
+        val toastMsg1 = "מרחק הפוליליין הוא "
+        val toastMsg2 = "m"
+        val unit = mMapView.spatialReference.unit.abbreviation
+        if (unit == "mi"){
+            distance *= 1609.344
+        }
+        val formattedDistance = decimalFormat.format(distance).toString()
+        val toast = Toast.makeText(context, toastMsg1+ formattedDistance+ toastMsg2, Toast.LENGTH_LONG)
+        toast.setGravity(Gravity.CENTER, 0, 0)
+        toast.show()
     }
 
     fun stopSketcher(layout: ConstraintLayout){
