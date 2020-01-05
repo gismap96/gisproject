@@ -38,6 +38,14 @@ object LegendLayerDisplayController{
         }
     }
 
+    fun showLayersFromUser(mMap: MapView){
+        val layers = mMap.map.operationalLayers
+        layers.forEach {
+            if (it.name == "Feature Collection")
+                it.isVisible = true
+        }
+    }
+
     private fun generateJson(): String{
         val length = localFile.length().toInt()
 

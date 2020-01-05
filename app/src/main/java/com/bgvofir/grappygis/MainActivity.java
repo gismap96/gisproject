@@ -131,6 +131,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -689,6 +690,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         if (MainUpperMenu.INSTANCE.addPointClicked() && isOn){
             addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             isAddPointMode = isOn;
+            LegendLayerDisplayController.INSTANCE.showLayersFromUser(mMapView);
+            Objects.requireNonNull(mLayerRecyclerView.getAdapter()).notifyDataSetChanged();
         } else {
             addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         }
