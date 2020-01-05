@@ -586,6 +586,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             public void onFailure(@NonNull Exception e) {
                 Log.e("MainActivity", "DownloadRaster failed: " + e.getMessage());
             }
+        }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                        .getTotalByteCount());
+                if(progress >= 0) {
+                    String msg1 = "הורדה ראשנית, ההורדה יכולה לקחת מספר דקות, נא לא לכבות את המכשיר";
+                    String msg2 = "\n";
+                    progressDialog.setMessage(msg1+ msg2 + (int) progress + "%");
+                }
+            }
         });
     }
 
