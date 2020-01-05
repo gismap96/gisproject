@@ -30,7 +30,7 @@
     <string name="enter_valid_email">Please enter a valid email</string>
     <string name="reset_pass_sent">Reset password instructions were sent to your email.</string>
     <string name="vould_not_find_address">Could not find this email address</string>
-    <string name="already_subscribed">This user is already set for a different device, contact us at ofir.grappy@gmail.com to add another user</string>
-    <string name="not_subscribed">You are not subscribed contact us on ofir.grappy@gmail.com to subscribe</string>
+    <string name="already_subscribed">This user is already set for a different device, contact us to add another user</string>
+    <string name="not_subscribed">You are not subscribed contact us on to subscribe</string>
     <string name="layer">Layer</string>
 </resources>
