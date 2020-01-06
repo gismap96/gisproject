@@ -196,6 +196,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private LegendSidebarAdapter legendAdapter;
     private TextView calculatePolygonAreaTV;
     private boolean displayLegendFlag;
+    private TextView cleanSketcherTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -266,6 +267,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //            }
 //        });
 //        toggleSketcherBtn.setVisibility(View.GONE);
+        cleanSketcherTV = findViewById(R.id.cleanSketcherTV);
+        cleanSketcherTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SketchEditorController.INSTANCE.clean(mMapView);
+            }
+        });
         toggleAutoPanBtn = findViewById(R.id.toggleAutoPanBtn);
         toggleAutoPanBtn.setOnClickListener(new View.OnClickListener() {
 
