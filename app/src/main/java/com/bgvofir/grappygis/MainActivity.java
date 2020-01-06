@@ -48,6 +48,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bgvofir.grappygis.GeoViewController.GeoViewController;
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerSelectionFragment;
@@ -82,11 +83,14 @@ import com.esri.arcgisruntime.mapping.MobileMapPackage;
 import com.esri.arcgisruntime.mapping.Viewpoint;
 import com.esri.arcgisruntime.mapping.view.Callout;
 import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener;
+import com.esri.arcgisruntime.mapping.view.GeoView;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult;
 import com.esri.arcgisruntime.mapping.view.LocationDisplay;
 import com.esri.arcgisruntime.mapping.view.MapView;
+import com.esri.arcgisruntime.mapping.view.NavigationChangedEvent;
+import com.esri.arcgisruntime.mapping.view.NavigationChangedListener;
 import com.esri.arcgisruntime.raster.Raster;
 import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
@@ -309,6 +313,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         mDistanceOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(mDistanceOverlay);
         locationDisplay = mMapView.getLocationDisplay();
+        mMapView.addNavigationChangedListener(new NavigationChangedListener() {
+            @Override
+            public void navigationChanged(NavigationChangedEvent navigationChangedEvent) {
+                GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView);
+            }
+        });
 
 //        ArcGISMap map = new ArcGISMap(Basemap.Type.TOPOGRAPHIC, 34.056295, -117.195800, 16);
 
@@ -686,12 +696,15 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void toggleAddPoint(boolean isOn){
+        if (mLayerRecyclerView.getAdapter() == null){
+            return;
+        }
         resetMenuFunctions();
         if (MainUpperMenu.INSTANCE.addPointClicked() && isOn){
             addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
             isAddPointMode = isOn;
             LegendLayerDisplayController.INSTANCE.showLayersFromUser(mMapView);
-            Objects.requireNonNull(mLayerRecyclerView.getAdapter()).notifyDataSetChanged();
+            mLayerRecyclerView.getAdapter().notifyDataSetChanged();
         } else {
             addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         }
@@ -842,13 +855,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         builder.setTitle(R.string.add_photo)
                 .setMessage(R.string.take_photo_prompt)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                .setPositiveButton("עבור לצילום", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         takePhoto((float) locationPoint.getX(), (float) locationPoint.getY(), description, category, isUpdateSys);
                         toggleAddPoint(false);
                     }
                 })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                .setNegativeButton("לא תודה", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
                         createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys, currentuser);
@@ -1367,7 +1380,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         if(uri != null)
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("Uploading...");
+            progressDialog.setTitle("רק רגע, מעלה תמונה...");
             progressDialog.show();
             progressDialog.setCancelable(false);
             StorageReference ref = storageReference.child("settlements/" + mProjectId + "/images/"+ UUID.randomUUID().toString());
@@ -1379,6 +1392,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     progressDialog.dismiss();
+                                    GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
                                     Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
                                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
                                         String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -1406,7 +1420,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            String msg1 = "עד עכשיו:";
+                            progressDialog.setMessage(msg1+(int)progress+"%");
                         }
                     });
         }
@@ -1423,6 +1438,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     protected void onResume(){
         super.onResume();
         mMapView.resume();
+        GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
     }
 
     @Override

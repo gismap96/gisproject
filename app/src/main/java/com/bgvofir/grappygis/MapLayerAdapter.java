@@ -1,6 +1,7 @@
 package com.bgvofir.grappygis;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
@@ -112,6 +114,7 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
         }
         if (layer.getName().equals("Feature Collection")){
             holder.layerName.setText("דקירות שלי");
+            holder.iconForClientPointIV.setVisibility(View.VISIBLE);
 
         }
     }
@@ -128,12 +131,14 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
         public final TextView layerName;
         public final CheckBox checkBox;
         public final RecyclerView legendItems;
+        public ImageView iconForClientPointIV;
 
         public MapLayerViewHolder(final View view){
             super(view);
             checkBox = (CheckBox) view.findViewById(R.id.cbLayer) ;
             layerName = (TextView) view.findViewById(R.id.txtLayerName);
             legendItems = (RecyclerView) view.findViewById(R.id.legendRecylerView);
+            iconForClientPointIV = view.findViewById(R.id.iconForClientPointIV);
         }
 
 
