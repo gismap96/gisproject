@@ -17,9 +17,9 @@ object LegendScrollerController {
                 val mView = recyclerView.findViewHolderForAdapterPosition(opened) as LegendSidebarAdapter.LegendSidebarViewHolder
                 mView.legendDetailsRecyclerView.visibility = View.GONE
                 LegendLayerDisplayController.closeSubArrowEffect(mView.legendIconIV)
+            }else {
+                return false
             }
-        } else {
-            return false
         }
         LegendLayerDisplayController.openSubArrowEffect(view)
         opened = position
