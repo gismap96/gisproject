@@ -8,7 +8,7 @@
     <color name="white">#FFFFFF</color>
     <color name="dark_opacity">#CC010B1F</color>
     <color name="black">#000000</color>
-    <color name="white_transparent">#BFFFFFFF</color>
+    <color name="white_transparent">#99FFFFFF</color>
     <color name="light_blue">#0096FC</color>
     <color name="dark_blue">#010B1F</color>
 </resources>
