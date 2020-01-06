@@ -4,9 +4,11 @@ import android.content.Context
 import android.os.SystemClock
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.bgvofir.grappygis.MapLayerAdapter
 import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.layers.Layer
@@ -16,6 +18,7 @@ import kotlinx.android.synthetic.main.legend_sidebar_group_overlay.view.*
 class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, val recyclerView: RecyclerView): RecyclerView.Adapter<LegendSidebarAdapter.LegendSidebarViewHolder>(){
 
 
+    val TAG = "Sidebaradapter"
     var mLayers = layers.toMutableList()
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): LegendSidebarViewHolder {
         val v = LayoutInflater.from(context).inflate(R.layout.legend_sidebar_group_overlay, p0, false)
@@ -42,6 +45,9 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, 
             if (p0.legendDetailsRecyclerView.visibility == View.GONE){
                 if (LegendScrollerController.setOpenedView(p1, recyclerView, p0.legendIconIV)) {
                     p0.legendDetailsRecyclerView.visibility = View.VISIBLE
+                } else {
+                    Toast.makeText(context, "התוכנה אינה תומכת בסרגל הזה", Toast.LENGTH_LONG).show()
+                    Log.d(TAG, "error in opening sublayers")
                 }
             } else {
                 LegendScrollerController.setClosed(p0.legendIconIV)
