@@ -40,8 +40,9 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, 
         p0.setIsRecyclable(false)
         p0.itemView.setOnClickListener {
             if (p0.legendDetailsRecyclerView.visibility == View.GONE){
-                LegendScrollerController.setOpenedView(p1, recyclerView, p0.legendIconIV)
-                p0.legendDetailsRecyclerView.visibility = View.VISIBLE
+                if (LegendScrollerController.setOpenedView(p1, recyclerView, p0.legendIconIV)) {
+                    p0.legendDetailsRecyclerView.visibility = View.VISIBLE
+                }
             } else {
                 LegendScrollerController.setClosed(p0.legendIconIV)
                 p0.legendDetailsRecyclerView.visibility = View.GONE
