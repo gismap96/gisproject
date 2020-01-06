@@ -38,6 +38,12 @@ object LegendLayerDisplayController{
         }
     }
 
+    fun makeLayersInvisible(mMap: MapView){
+        val layers = mMap.map.operationalLayers
+        layers.forEach {
+            it.isVisible = false
+        }
+    }
     fun showLayersFromUser(mMap: MapView){
         val layers = mMap.map.operationalLayers
         layers.forEach {
@@ -145,7 +151,6 @@ object LegendLayerDisplayController{
             if (legendTitles.containsKey(layerName)){
                 val layerGroupName = legendTitles[layerName]
                 legendGroupMap[layerGroupName]?.add(it)
-                it.isVisible = false
             }
             else if (layerName.trim().isNotEmpty()){
                 legendGroupMap["אחר"]?.add(it)

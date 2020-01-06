@@ -772,6 +772,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 // In this case the first map in the array is obtained
                 ArcGISMap mobileMap = mobileMapPackage.getMaps().get(0);
                 mMapView.setMap(mobileMap);
+                LegendLayerDisplayController.INSTANCE.makeLayersInvisible(mMapView);
                 Handler h = new Handler();
                 h.postDelayed(new Runnable() {
                     @Override
