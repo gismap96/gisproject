@@ -773,6 +773,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 ArcGISMap mobileMap = mobileMapPackage.getMaps().get(0);
                 mMapView.setMap(mobileMap);
                 LegendLayerDisplayController.INSTANCE.makeLayersInvisible(mMapView);
+                GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
                 Handler h = new Handler();
                 h.postDelayed(new Runnable() {
                     @Override
