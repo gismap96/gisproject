@@ -368,13 +368,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-//        zift.setVisibility(View.GONE);
-        zift.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FormatJSONCollectionFeature.INSTANCE.pointToJson(mClientFeatureCollection, mProjectId);
-            }
-        });
+        zift.setVisibility(View.GONE);
+
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         calculatePolygonAreaTV = findViewById(R.id.calculatePolygonAreaTV);
