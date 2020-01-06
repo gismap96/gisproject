@@ -48,6 +48,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bgvofir.grappygis.FormatGeometry.FormatJSONCollectionFeature;
 import com.bgvofir.grappygis.GeoViewController.GeoViewController;
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter;
@@ -367,7 +368,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-        zift.setVisibility(View.GONE);
+//        zift.setVisibility(View.GONE);
+        zift.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FormatJSONCollectionFeature.INSTANCE.pointToJson(mClientFeatureCollection, mProjectId);
+            }
+        });
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         calculatePolygonAreaTV = findViewById(R.id.calculatePolygonAreaTV);
@@ -1025,6 +1032,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             Point point1 = new Point(x, y, mMapView.getSpatialReference());
             features.add(pointsTable.createFeature(attributes1, point1));
             pointsTable.addFeaturesAsync(features);
+
 
 //            saveClientPoints();
         }
