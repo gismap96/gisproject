@@ -21,7 +21,6 @@
     <string name="take_photo_prompt">Would you like to take a photo and connect it to this entry?</string>
     <string name="description_alias">Description</string>
     <string name="pic_url_alias">URL</string>
-    <string name="category">Category</string>
     <string name="add_category">Add category</string>
     <string name="field_mandatory">This field is mandatory</string>
     <string name="update_system">Update system</string>
@@ -48,4 +47,5 @@
     <string name="close">close</string>
     <string name="client_point">User Pin</string>
     <string name="description">description</string>
+    <string name="category">Category</string>
 </resources>

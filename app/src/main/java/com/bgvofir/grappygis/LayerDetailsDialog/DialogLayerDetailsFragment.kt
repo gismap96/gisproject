@@ -38,7 +38,7 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
 
         var finalHeadline = headline
         if (headline == "Feature Collection"){
-            finalHeadline = "דקירה ממשתמש"
+            finalHeadline = context.resources.getString(com.bgvofir.grappygis.R.string.client_point)
             layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(com.bgvofir.grappygis.R.drawable.ic_star_blue))
         } else {
             var layerLegend = identifiedLayer.layerContent.fetchLegendInfosAsync()

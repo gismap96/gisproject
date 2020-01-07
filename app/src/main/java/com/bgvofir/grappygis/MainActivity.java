@@ -1539,10 +1539,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //        }
         switch (sketcher){
             case POLYGON:
-                calculatePolygonAreaTV.setText("חישוב שטח");
+                calculatePolygonAreaTV.setText(getString(R.string.measure_polygon_area));
                 break;
             case POLYLINE:
-                calculatePolygonAreaTV.setText("חישוב אורך");
+                calculatePolygonAreaTV.setText(getString(R.string.measure_track));
                 break;
         }
         SketchEditorController.INSTANCE.startSketching(sketcher, mMapView);

@@ -20,7 +20,7 @@
     <string name="take_photo_prompt">האם תרצו לצלם תמונה ממכשירכם ולהוסיף לשכבה?</string>
     <string name="pic_url_alias">כתובת תמונה</string>
     <string name="description_alias">תאור</string>
-    <string name="category">סיווג</string>
+
     <string name="update_system">עדכן למערכת</string>
     <string name="add_category">הוסף סיווג</string>
     <string name="field_mandatory">שדה חובה, לא ניתן להשאיר ריק</string>
@@ -47,4 +47,5 @@
     <string name="close">סגור</string>
     <string name="client_point">דקירה ממשתמש</string>
     <string name="description">תאור</string>
+    <string name="category">סיווג</string>
 </resources>
