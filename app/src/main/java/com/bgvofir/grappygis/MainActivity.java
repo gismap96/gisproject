@@ -193,6 +193,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private TextView closeSketcherTV;
     private TextView undoSkecherTV;
     private ImageView zift;
+    private Viewpoint mViewPoint;
     private LegendSidebarAdapter legendAdapter;
     private TextView calculatePolygonAreaTV;
     private boolean displayLegendFlag;
@@ -765,6 +766,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void loadMmpk(MobileMapPackage mobileMapPackage) {
+
         mobileMapPackage.loadAsync();
         mobileMapPackage.addDoneLoadingListener(() -> {
             if (mobileMapPackage.getLoadStatus() == LoadStatus.LOADED) {
@@ -1390,6 +1392,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     private void uploadImage(Uri uri) {
 
+        mViewPoint = mMapView.getCurrentViewpoint(Viewpoint.Type.CENTER_AND_SCALE);
         if(uri != null)
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
@@ -1405,8 +1408,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     progressDialog.dismiss();
-                                    GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
-                                    Toast.makeText(MainActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                                    mMapView.setViewpointAsync(mViewPoint);
+                                    Toast.makeText(MainActivity.this, "עלה בהצלחה", Toast.LENGTH_SHORT).show();
                                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
                                         String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                         mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys, currentuser));
