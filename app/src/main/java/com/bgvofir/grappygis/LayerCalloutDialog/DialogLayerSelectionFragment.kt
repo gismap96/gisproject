@@ -35,6 +35,7 @@ class DialogLayerSelectionFragment(var activity: Activity, internal var adapter:
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
+        window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
 
 
 

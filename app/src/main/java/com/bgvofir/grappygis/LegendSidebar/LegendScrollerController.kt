@@ -18,6 +18,7 @@ object LegendScrollerController {
                 mView.legendDetailsRecyclerView.visibility = View.GONE
                 LegendLayerDisplayController.closeSubArrowEffect(mView.legendIconIV)
             }else {
+                opened = -1
                 return false
             }
         }

@@ -46,4 +46,6 @@
     <string name="choose_a_layer">Choose a layer</string>
     <string name="choose_a_measurement_tool">Select measurement tool</string>
     <string name="close">close</string>
+    <string name="client_point">User Pin</string>
+    <string name="description">description</string>
 </resources>

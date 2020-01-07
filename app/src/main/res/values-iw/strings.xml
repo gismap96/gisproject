@@ -45,4 +45,6 @@
     <string name="choose_a_layer">בחר שכבה רצויה</string>
     <string name="choose_a_measurement_tool">בחרו כלי מדידה</string>
     <string name="close">סגור</string>
+    <string name="client_point">דקירה ממשתמש</string>
+    <string name="description">תאור</string>
 </resources>
