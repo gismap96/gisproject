@@ -37,6 +37,13 @@ object FormatJSONGeometry{
         Log.d(TAG, result.toString())
     }
 
+    fun polylineToJSON(geometry: Geometry){
+        val result = JSONObject()
+        result.put("displayFieldName", "meow")
+        result.put("fieldAliases", fieldAlisas())
+        result.put("geometryType", "esriGeometryPolyline")
+    }
+
     fun getRingsJsonObject(geometry: Geometry) : JSONArray {
         var geometryJson = JSONObject(geometry.toJson())
         return geometryJson.getJSONArray("rings")
