@@ -198,6 +198,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private TextView calculatePolygonAreaTV;
     private boolean displayLegendFlag;
     private TextView cleanSketcherTV;
+    private ImageView setNorthBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,6 +216,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         ivDeletePoint = findViewById(R.id.deletePoint);
         mapProgress = findViewById(R.id.map_progress);
         toggledistanceBtn = findViewById(R.id.toggledistanceBtn);
+        setNorthBtn = findViewById(R.id.setNorthBtn);
+        setNorthBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rotateMap(0);
+            }
+        });
         toggledistanceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -529,25 +537,37 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
      */
     private void setRaster(String folderPath){
         File dir = new File(folderPath);
-        dir.listFiles(new FilenameFilter() {
+        final boolean[] didZoom = {false};
+        File[] ap = dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File file, String fileName) {
                 if (fileName.endsWith(".jpg") || fileName.endsWith(".tif") || fileName.endsWith(".ecw")){
 //                    String rasterPath = file.getAbsolutePath();
                     Raster raster = new Raster(file.getAbsolutePath() + File.separator + fileName);
                     RasterLayer rasterLayer = new RasterLayer(raster);
+                    rasterLayer.setName(fileName);
+
+
+
                     mMapView.getMap().getOperationalLayers().add(0, rasterLayer);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Envelope myExtents = rasterLayer.getFullExtent();
-                            myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
+                            if (!didZoom[0]){
+                                Envelope myExtents = rasterLayer.getFullExtent();
+                                if (myExtents != null){
+                                    myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
 //                mMapView.setMaxExtent(myExtents);
-                            mMapView.setViewpoint(new Viewpoint(myExtents));
+                                    mMapView.setViewpoint(new Viewpoint(myExtents));
+                                    didZoom[0] = true;
+                                }
+                                
+
                             if (displayLegendFlag){
                                 LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
                             } else {
                                 displayLegendFlag = true;
+                            }
                             }
                         }
                     }, 200);
@@ -1503,6 +1523,16 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         showDetailsDialog(layerResult);
 
 
+    }
+
+    /**
+     *
+     * @param angle - 0 = north
+     */
+    private void rotateMap(int angle){
+        if (mMapView != null) {
+            mMapView.setViewpointRotationAsync(angle);
+        }
     }
 
     private void showDetailsDialog(@NonNull IdentifyLayerResult layerResult) {
