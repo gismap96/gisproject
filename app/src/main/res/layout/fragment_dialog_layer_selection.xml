@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:background="#010b1f"
         android:padding="16dp"
-        android:text="בחר שכבה רצויה"
+        android:text="@string/choose_a_layer"
         android:textAlignment="center"
         android:textColor="#ffffff"
         android:textSize="24sp"

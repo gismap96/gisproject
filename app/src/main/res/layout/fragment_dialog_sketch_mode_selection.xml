@@ -12,7 +12,7 @@
         android:layout_height="48dp"
         android:background="#010b1f"
         android:gravity="center"
-        android:text="בחרו כלי מדידה"
+        android:text="@string/choose_a_measurement_tool"
         android:textColor="#ffffff"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"

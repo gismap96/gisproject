@@ -43,4 +43,6 @@
     <string name="progress">progress: </string>
     <string name="measure_track">measure track distance</string>
     <string name="measure_polygon_area">measure polygon area</string>
+    <string name="choose_a_layer">Choose a layer</string>
+    <string name="choose_a_measurement_tool">Select measurement tool</string>
 </resources>

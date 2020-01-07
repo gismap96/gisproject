@@ -42,4 +42,6 @@
     <string name="progress">עד עכשיו: </string>
     <string name="measure_track">מדידת אורך מסלול</string>
     <string name="measure_polygon_area">מדידת שטח פוליגון</string>
+    <string name="choose_a_layer">בחר שכבה רצויה</string>
+    <string name="choose_a_measurement_tool">בחרו כלי מדידה</string>
 </resources>
