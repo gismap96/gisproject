@@ -5,6 +5,7 @@ public class Consts {
     public final static String UUID = "UUID";
     public final static String PREFS_NAME = "SHARED_PREFS";
     public final static String DOWNLOAD_TIME_KEY = "DOWNLOAD_TIME";
+    public final static String DOWNLOAD_RASTER_TIME_KEY = "DOWNLOAD_RASTER_TIME";
     public final static String GRAPPY_FOLDER_NAME = "Grappy_GIS";
 
 

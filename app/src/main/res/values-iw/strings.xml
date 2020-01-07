@@ -21,6 +21,8 @@
     <string name="pic_url_alias">כתובת תמונה</string>
     <string name="description_alias">תאור</string>
 
+    <string name="orthophoto">אורטופוטו</string>
+
     <string name="update_system">עדכן למערכת</string>
     <string name="add_category">הוסף סיווג</string>
     <string name="field_mandatory">שדה חובה, לא ניתן להשאיר ריק</string>
