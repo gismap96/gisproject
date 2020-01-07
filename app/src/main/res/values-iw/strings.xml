@@ -32,4 +32,14 @@
     <string name="already_subscribed">משתמש זה רשום במכשיר אחר, לצורך הוספת משתמש צרו קשר ב ofir.grappy@gmail.com</string>
     <string name="not_subscribed">משתמש לא רשום, אנא צרו קשר עימנו</string>
     <string name="layer">שם שכבה</string>
+    <string name="loading_point_image">רק רגע, מעלה תמונה…</string>
+    <string name="initial_download_message">הורדה ראשונית, ההורדה יכולה לקחת מספר דקות, נא לא לכבות את המכשיר</string>
+    <string name="please_wait">נא להמתין…</string>
+    <string name="commencing_download">מבצע הורדה</string>
+    <string name="continue_to_photo">המשך לצילום</string>
+    <string name="no_thank_you">לא תודה</string>
+    <string name="uploaded">עלה בהצלחה</string>
+    <string name="progress">עד עכשיו: </string>
+    <string name="measure_track">מדידת אורך מסלול</string>
+    <string name="measure_polygon_area">מדידת שטח פוליגון</string>
 </resources>

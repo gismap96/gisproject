@@ -584,7 +584,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private void downloadRaster(){
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setTitle("הורדה ראשונית, ההורדה יכולה לקחת מספר דקות, נא לא לכבות את המכשיר");
+        progressDialog.setTitle(getString(R.string.initial_download_message));
         progressDialog.show();
         StorageReference rasterRef = storageReference.child("settlements/" + mProjectId + "/raster/raster_data.zip");
         File rasterFolderFile = new File(getRasterFolderPath() + File.separator + "raster_data.zip");
@@ -614,9 +614,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                         .getTotalByteCount());
                 if(progress >= 0) {
-                    String msg1 = "נא להמתין";
-                    String msg2 = "\n";
-                    progressDialog.setMessage(msg1+ msg2 + (int) progress + "%");
+                    String msg1 = getString(R.string.please_wait) + "\n";
+                    progressDialog.setMessage(msg1+ (int) progress + "%");
                 }
             }
         });
@@ -634,7 +633,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
-        progressDialog.setTitle("מבצע הורדה");
+        progressDialog.setTitle(getString(R.string.commencing_download));
         progressDialog.show();
 
         StorageReference mmpkRef = storageReference.child("settlements/" + mProjectId + "/mmpk/data.mmpk");
@@ -869,13 +868,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         builder.setTitle(R.string.add_photo)
                 .setMessage(R.string.take_photo_prompt)
-                .setPositiveButton("עבור לצילום", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.continue_to_photo), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         takePhoto((float) locationPoint.getX(), (float) locationPoint.getY(), description, category, isUpdateSys);
                         toggleAddPoint(false);
                     }
                 })
-                .setNegativeButton("לא תודה", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.no_thank_you), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
                         createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys, currentuser);
@@ -1397,7 +1396,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         if(uri != null)
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle("רק רגע, מעלה תמונה...");
+            progressDialog.setTitle(getString(R.string.loading_point_image));
             progressDialog.show();
             progressDialog.setCancelable(false);
             StorageReference ref = storageReference.child("settlements/" + mProjectId + "/images/"+ UUID.randomUUID().toString());
@@ -1412,7 +1411,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                     if (mViewPoint != null) {
                                         mMapView.setViewpointAsync(mViewPoint);
                                     }
-                                    Toast.makeText(MainActivity.this, "עלה בהצלחה", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this, getString(R.string.uploaded), Toast.LENGTH_SHORT).show();
                                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
                                         String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                         mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys, currentuser));
@@ -1439,7 +1438,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                             double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                                     .getTotalByteCount());
-                            String msg1 = "עד עכשיו:";
+                            String msg1 = getString(R.string.progress);
                             progressDialog.setMessage(msg1+(int)progress+"%");
                         }
                     });

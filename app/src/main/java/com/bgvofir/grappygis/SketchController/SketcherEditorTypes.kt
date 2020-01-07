@@ -1,10 +1,10 @@
 package com.bgvofir.grappygis.SketchController
 
-import java.util.ArrayList
+import com.bgvofir.grappygis.R
 
-enum class SketcherEditorTypes(val title: String){
+enum class SketcherEditorTypes(val title: Int){
     //POINT("נקודה"),
 //    DISTANCE("מרחק בין 2 נקודות"),
-    POLYLINE("מדידת אורך מסלול"),
-    POLYGON("מדידת שטח פוליגון");
+    POLYLINE(R.string.measure_track),
+    POLYGON(R.string.measure_polygon_area);
 }

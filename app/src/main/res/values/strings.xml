@@ -33,4 +33,14 @@
     <string name="already_subscribed">This user is already set for a different device, contact us to add another user</string>
     <string name="not_subscribed">You are not subscribed contact us on to subscribe</string>
     <string name="layer">Layer</string>
+    <string name="loading_point_image">Uploading image</string>
+    <string name="initial_download_message">Initializing the app, this may take a few moments</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="commencing_download">Downloading</string>
+    <string name="continue_to_photo">take a photo</string>
+    <string name="no_thank_you">no thank you</string>
+    <string name="uploaded">Uploaded</string>
+    <string name="progress">progress: </string>
+    <string name="measure_track">measure track distance</string>
+    <string name="measure_polygon_area">measure polygon area</string>
 </resources>
