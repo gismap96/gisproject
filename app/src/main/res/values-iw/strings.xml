@@ -44,4 +44,5 @@
     <string name="measure_polygon_area">מדידת שטח פוליגון</string>
     <string name="choose_a_layer">בחר שכבה רצויה</string>
     <string name="choose_a_measurement_tool">בחרו כלי מדידה</string>
+    <string name="close">סגור</string>
 </resources>

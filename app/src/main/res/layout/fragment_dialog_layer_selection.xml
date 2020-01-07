@@ -24,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:background="#E6010b1f"
-        android:text="סגור"
+        android:text="@string/close"
         android:textAlignment="center"
         android:textColor="#3fadf8"
         android:textSize="24sp"

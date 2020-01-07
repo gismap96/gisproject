@@ -35,7 +35,7 @@
         android:layout_height="80dp"
         android:background="#E6010b1f"
         android:gravity="center"
-        android:text="סגור"
+        android:text="@string/close"
         android:textColor="#3fadf8"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
