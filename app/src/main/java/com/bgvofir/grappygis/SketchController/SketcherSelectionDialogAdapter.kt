@@ -30,8 +30,8 @@ class SketcherSelectionDialogAdapter(var context: Context,var sketchSelectionCli
 
         var sketcherIconSelectionIV = view.sketcherIconSelectionIV
         var headlineTV = view.sketcherNameSelectionTV
-        fun bind(headline: String, type: SketcherEditorTypes, context: Context){
-            headlineTV.text = headline
+        fun bind(headline: Int, type: SketcherEditorTypes, context: Context){
+            headlineTV.text = context.getString(headline)
             when (type){
 //                SketcherEditorTypes.DISTANCE ->
 //                    sketcherIconSelectionIV.background = (ContextCompat.getDrawable(context, R.drawable.ic_distance))
