@@ -1296,6 +1296,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
     public void takePhoto(float x, float y, String description, String category, boolean isUpdateSys) {
+        mViewPoint = mMapView.getCurrentViewpoint(Viewpoint.Type.CENTER_AND_SCALE);
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -1392,7 +1393,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     private void uploadImage(Uri uri) {
 
-        mViewPoint = mMapView.getCurrentViewpoint(Viewpoint.Type.CENTER_AND_SCALE);
+
         if(uri != null)
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
@@ -1408,7 +1409,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     progressDialog.dismiss();
-                                    mMapView.setViewpointAsync(mViewPoint);
+                                    if (mViewPoint != null) {
+                                        mMapView.setViewpointAsync(mViewPoint);
+                                    }
                                     Toast.makeText(MainActivity.this, "עלה בהצלחה", Toast.LENGTH_SHORT).show();
                                     if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
                                         String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
