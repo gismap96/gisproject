@@ -10,8 +10,11 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."
-    </string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+
+    <string name="orthophoto">Orthophoto</string>
+
+
     <string name="delete_this_point">Are you sure you want to delete this point?</string>
     <string name="delete_point">Delete point</string>
     <string name="confirm">Confirm</string>

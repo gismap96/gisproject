@@ -561,7 +561,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                     mMapView.setViewpoint(new Viewpoint(myExtents));
                                     didZoom[0] = true;
                                 }
-                                
+
 
                             if (displayLegendFlag){
                                 LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);

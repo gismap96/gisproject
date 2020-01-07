@@ -2,13 +2,13 @@ package com.bgvofir.grappygis.LegendSidebar
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.content.Context
+import android.content.res.Resources
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
-import android.view.animation.RotateAnimation
 import android.widget.ImageView
-import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController.groupNames
-import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController.legendTitles
+import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.layers.Layer
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.google.firebase.storage.FirebaseStorage
@@ -24,6 +24,7 @@ object LegendLayerDisplayController{
     var localFile = File.createTempFile("mmap", "json")
     var legendTitles = mutableMapOf<String, String>()
     var groupNames = mutableListOf<String>()
+
 
     fun fetchMMap(projectID: String, layerListener: LayerGroupsListener){
         val storageReference = storage.reference
@@ -138,9 +139,11 @@ object LegendLayerDisplayController{
     }
 
     fun generateLegendGroupList(map: MapView): List<LegendGroup>{
+        var orthophotoName = map.context.getString(R.string.orthophoto)
         val layers = map.map.operationalLayers
         var legendGroupMap = mutableMapOf<String, MutableList<Layer>>()
         legendGroupMap["אחר"] = mutableListOf()
+        legendGroupMap[orthophotoName] = mutableListOf()
         groupNames.forEach {
             legendGroupMap[it] = mutableListOf()
         }
@@ -151,6 +154,9 @@ object LegendLayerDisplayController{
             if (legendTitles.containsKey(layerName)){
                 val layerGroupName = legendTitles[layerName]
                 legendGroupMap[layerGroupName]?.add(it)
+            }
+            else if (layerName.contains(".jpg") || layerName.contains(".tif") || layerName.contains(".ecw")){
+                legendGroupMap[orthophotoName]?.add(it)
             }
             else if (layerName.trim().isNotEmpty()){
                 legendGroupMap["אחר"]?.add(it)
