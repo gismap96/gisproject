@@ -1,6 +1,5 @@
 package com.bgvofir.grappygis.GeoViewController
 
-import android.nfc.Tag
 import android.util.Log
 import com.esri.arcgisruntime.mapping.Viewpoint
 import com.esri.arcgisruntime.mapping.view.MapView

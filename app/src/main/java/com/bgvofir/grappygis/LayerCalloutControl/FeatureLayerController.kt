@@ -4,8 +4,8 @@ import android.graphics.Point
 import android.util.JsonReader
 import android.util.Log
 import com.bgvofir.grappygis.ClientPoint
-import com.esri.arcgisruntime.data.ArcGISFeature
-import com.esri.arcgisruntime.data.Feature
+import com.bgvofir.grappygis.R
+import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
 import com.esri.arcgisruntime.geometry.Envelope
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.layers.FeatureLayer
@@ -15,11 +15,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.StringReader
 import java.util.concurrent.ExecutionException
-import com.esri.arcgisruntime.data.QueryParameters
-import com.esri.arcgisruntime.data.ServiceFeatureTable
-import com.esri.arcgisruntime.data.FeatureQueryResult
 import com.esri.arcgisruntime.concurrent.ListenableFuture
+import com.esri.arcgisruntime.data.*
+import com.esri.arcgisruntime.geometry.Geometry
+import com.esri.arcgisruntime.geometry.GeometryType
 import com.esri.arcgisruntime.layers.Layer
+import com.esri.arcgisruntime.symbology.SimpleLineSymbol
+import com.esri.arcgisruntime.symbology.SimpleRenderer
 
 
 object FeatureLayerController {
@@ -166,6 +168,23 @@ object FeatureLayerController {
     }
     interface OnLayerClickListener{
         fun onLayerClickListener(layerNames: ArrayList<String>, identifiedLayers: MutableList<IdentifyLayerResult>)
+    }
+
+    fun createServiceFeatureTable(geometry: Geometry, mMap: MapView, name: String, sketcherEditorTypes: SketcherEditorTypes){
+        var table = FeatureCollection()
+        var layer = FeatureCollectionLayer(table)
+        layer.name = name
+        var fieldsArray = mutableListOf<Field>()
+        var geometryType = GeometryType.POLYLINE
+        when (sketcherEditorTypes){
+            SketcherEditorTypes.POLYLINE -> geometryType = GeometryType.POLYLINE
+            SketcherEditorTypes.POLYGON ->  geometryType = GeometryType.POLYGON
+        }
+        var polylineTable = FeatureCollectionTable(fieldsArray, geometryType, mMap.spatialReference)
+        val linesymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, R.color.dark_blue, 4f)
+        val renderer = SimpleRenderer(linesymbol)
+        polylineTable.renderer = renderer
+        
     }
 
 }
