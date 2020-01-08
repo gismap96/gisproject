@@ -131,6 +131,7 @@ object SketchEditorController {
         val toast = Toast.makeText(context, toastMsg1+ formattedDistance+ toastMsg2, Toast.LENGTH_LONG)
         toast.setGravity(Gravity.CENTER, 0, 0)
         toast.show()
+        FormatJSONGeometry.polylineToJSON(geometry)
     }
 
     fun stopSketcher(layout: ConstraintLayout){

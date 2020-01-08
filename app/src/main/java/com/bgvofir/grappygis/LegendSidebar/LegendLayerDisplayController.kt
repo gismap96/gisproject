@@ -2,8 +2,6 @@ package com.bgvofir.grappygis.LegendSidebar
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.content.Context
-import android.content.res.Resources
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
@@ -22,7 +20,7 @@ object LegendLayerDisplayController{
     val TAG = "LayerDisplay"
     val storage = FirebaseStorage.getInstance()
     var localFile = File.createTempFile("mmap", "json")
-    var legendTitles = mutableMapOf<String, String>()
+    var legendIds = mutableMapOf<String, String>()
     var groupNames = mutableListOf<String>()
 
 
@@ -120,7 +118,7 @@ object LegendLayerDisplayController{
     }
 
     private fun parseJson(json: String){
-        legendTitles.clear()
+        legendIds.clear()
         var parser = JsonParser()
         var element = parser.parse(json)
         val mapElement = element.asJsonObject.get("map")
@@ -132,7 +130,7 @@ object LegendLayerDisplayController{
                 val groupTitle = it.title
                 groupNames.add(groupTitle)
                 it.layers?.forEach {
-                    legendTitles[it.title] = groupTitle
+                    legendIds[it.id] = groupTitle
                 }
             }
         }
@@ -148,15 +146,16 @@ object LegendLayerDisplayController{
             legendGroupMap[it] = mutableListOf()
         }
 
-        Log.d(TAG, legendTitles.toString())
+        Log.d(TAG, legendIds.toString())
         layers.forEach {
             val layerName = it.name
-            if (legendTitles.containsKey(layerName)){
-                val layerGroupName = legendTitles[layerName]
-                legendGroupMap[layerGroupName]?.add(it)
-            }
-            else if (layerName.contains(".jpg") || layerName.contains(".tif") || layerName.contains(".ecw")){
+            val layerid = it.id
+            if (layerName.contains(".jpg") || layerName.contains(".tif") || layerName.contains(".ecw")){
                 legendGroupMap[orthophotoName]?.add(it)
+            } else
+            if (legendIds.containsKey(layerid)){
+                val layerGroupName = legendIds[layerid]
+                legendGroupMap[layerGroupName]?.add(it)
             }
             else if (layerName.trim().isNotEmpty()){
                 legendGroupMap["אחר"]?.add(it)
@@ -224,13 +223,14 @@ object LegendLayerDisplayController{
         fun successListener()
     }
 }
-class LayerTitle(title: String){
-    var title = title
+class LayerID(id: String){
+    var id = id
 }
 
-class OperationalLayer(title: String, layerType: String, layers: Array<LayerTitle>?){
+class OperationalLayer(title: String, layerType: String, layers: Array<LayerID>?, id: String){
 
     var layers = layers
     var title = title
     var layerType = layerType
+    var id = id
 }

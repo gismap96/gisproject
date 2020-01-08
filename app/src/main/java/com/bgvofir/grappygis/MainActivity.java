@@ -398,9 +398,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         SketchEditorController.INSTANCE.polygonArea(mMapView, MainActivity.this);
                         break;
                     case POLYLINE:
-//                        Toast toast = Toast.makeText(MainActivity.this, "בבנייה, יגיע בקרוב", Toast.LENGTH_SHORT);
-//                        toast.setGravity(Gravity.CENTER, 0, 0);
-//                        toast.show();
                         SketchEditorController.INSTANCE.polylineDistance(mMapView, MainActivity.this);
                         break;
                 }

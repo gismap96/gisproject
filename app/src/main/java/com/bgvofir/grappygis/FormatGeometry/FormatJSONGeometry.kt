@@ -42,6 +42,21 @@ object FormatJSONGeometry{
         result.put("displayFieldName", "meow")
         result.put("fieldAliases", fieldAlisas())
         result.put("geometryType", "esriGeometryPolyline")
+        result.put("spatialReference", spatialReference())
+        val fieldsElement = JSONArray()
+        fieldsElement.put(fields("FID","esriFieldTypeOID"))
+        fieldsElement.put(fields("Id", "esriFieldTypeInteger"))
+        result.put("fields", fieldsElement)
+        var features = JSONArray()
+        var mFirstFeature = JSONObject()
+        mFirstFeature.put("attributes",attributes(0,0))
+        var geometryJSONObject = JSONObject()
+        geometryJSONObject.put("paths", getPaths(geometry))
+        mFirstFeature.put("geometry", geometryJSONObject)
+
+        features.put(mFirstFeature)
+        result.put("features", features)
+        Log.d(TAG, result.toString())
     }
 
     fun getRingsJsonObject(geometry: Geometry) : JSONArray {
@@ -49,6 +64,10 @@ object FormatJSONGeometry{
         return geometryJson.getJSONArray("rings")
     }
 
+    fun getPaths(geometry: Geometry): JSONArray{
+        var geometryJson = JSONObject(geometry.toJson())
+        return geometryJson.getJSONArray("paths")
+    }
     fun fieldAlisas(): JSONObject{
         val fa = JSONObject()
         fa.put("FID", "FID")
