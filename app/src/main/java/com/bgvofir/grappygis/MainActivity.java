@@ -60,6 +60,7 @@ import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController;
 import com.bgvofir.grappygis.LegendSidebar.LegendSidebarAdapter;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes;
+import com.bgvofir.grappygis.SketchController.SketcherSaveDialogFragment;
 import com.bgvofir.grappygis.SketchController.SketcherSelectionDialogAdapter;
 import com.bgvofir.grappygis.SketchController.SketcherSelectionDialogFragment;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
@@ -70,6 +71,7 @@ import com.esri.arcgisruntime.data.FeatureQueryResult;
 import com.esri.arcgisruntime.data.Field;
 import com.esri.arcgisruntime.data.QueryParameters;
 import com.esri.arcgisruntime.geometry.Envelope;
+import com.esri.arcgisruntime.geometry.Geometry;
 import com.esri.arcgisruntime.geometry.GeometryEngine;
 import com.esri.arcgisruntime.geometry.GeometryType;
 import com.esri.arcgisruntime.geometry.Point;
@@ -385,7 +387,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-        zift.setVisibility(View.GONE);
+//        zift.setVisibility(View.GONE);
+        zift.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView);
+                layerAttributes.show();
+            }
+        });
 
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 

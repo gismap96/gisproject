@@ -1,10 +1,12 @@
 package com.bgvofir.grappygis.LayerCalloutControl
 
+import android.graphics.Color
 import android.graphics.Point
 import android.util.JsonReader
 import android.util.Log
 import com.bgvofir.grappygis.ClientPoint
 import com.bgvofir.grappygis.R
+import com.bgvofir.grappygis.SketchController.SketchEditorController
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
 import com.esri.arcgisruntime.geometry.Envelope
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer
@@ -19,14 +21,18 @@ import com.esri.arcgisruntime.concurrent.ListenableFuture
 import com.esri.arcgisruntime.data.*
 import com.esri.arcgisruntime.geometry.Geometry
 import com.esri.arcgisruntime.geometry.GeometryType
+import com.esri.arcgisruntime.geometry.PolylineBuilder
 import com.esri.arcgisruntime.layers.Layer
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol
 import com.esri.arcgisruntime.symbology.SimpleRenderer
+import java.io.ObjectInput
 
 
 object FeatureLayerController {
     var point: android.graphics.Point? = null
     var tolerance = 10.0
+    var localPolylineFeatureCollectionLayer: FeatureCollectionLayer? = null
+    var localPolylineFeaturecollection: FeatureCollection? = null
 
     fun layerClicked(point: android.graphics.Point, mMap: MapView, onLayerClickListener: OnLayerClickListener){
         this.point = point
@@ -61,8 +67,12 @@ object FeatureLayerController {
             //doesn't work here :(
             return featureCollectionDetails(forLayer)
         }
+        if (forLayer.layerContent.name.contains("\$\$##")){
+            return parseFeatureCollection(forLayer)
+        }
         var mAttributesString = ArrayList<String>()
         var layersAttributeList = ArrayList<Map<String, String>>()
+        var mAliasesMap = mutableMapOf<String, String>() // <name, alias>
 
         if (!resultGeoElements.isEmpty()){
             resultGeoElements.forEach {
@@ -70,11 +80,26 @@ object FeatureLayerController {
                     val mArcGISFeature = it as? ArcGISFeature
                     mAttributesString.add(mArcGISFeature?.attributes.toString())
                     var mTempMap = mutableMapOf<String, String>()
+                    mArcGISFeature?.featureTable?.fields?.forEach {
+                        if (!it.alias.isEmpty()){
+                            mAliasesMap[it.name] = it.alias
+                        }
+                    }
                     mArcGISFeature?.attributes?.forEach {
                         if (!it.value.toString().isEmpty() && !it.key.toString().isEmpty()
-                                && !it.key.toString().contains(".FID"))
-                            mTempMap[it.key.toString()] = it.value.toString()
+                                && !it.key.toString().contains(".FID")){
+                            val alias = mAliasesMap[it.key]
+                            val attribute = it
+                            mTempMap[it.key] = attribute.value.toString()
+                            alias?.let{
+                                mTempMap[alias] = attribute.value.toString()
+                            }
+
+
+                        }
+
                     }
+
                     layersAttributeList.add(mTempMap)
                 }
             }
@@ -82,6 +107,22 @@ object FeatureLayerController {
         }
 
         return layersAttributeList
+    }
+    private fun parseFeatureCollection(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
+        var resultList = ArrayList<Map<String, String>>()
+        forLayer.sublayerResults.forEach {
+            var mTempMap = mutableMapOf<String, String>()
+            it.elements.forEach {
+                it.attributes.forEach {
+                    mTempMap[it.key] = it.value.toString()
+                }
+            }
+            resultList.add(mTempMap)
+        }
+        val set = HashSet<Map<String, String>>(resultList)
+        resultList.clear()
+        resultList.addAll(set)
+        return resultList
     }
 
     private fun featureCollectionDetails(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
@@ -149,7 +190,6 @@ object FeatureLayerController {
         var identifyLayerResult: MutableList<IdentifyLayerResult>
         val identifyLayerResultsFuture = mMap
                 .identifyLayersAsync(point, tolerance, false, 5)
-
         identifyLayerResultsFuture.addDoneListener {
             try {
                 identifyLayerResult = identifyLayerResultsFuture.get()
@@ -170,21 +210,32 @@ object FeatureLayerController {
         fun onLayerClickListener(layerNames: ArrayList<String>, identifiedLayers: MutableList<IdentifyLayerResult>)
     }
 
-    fun createServiceFeatureTable(geometry: Geometry, mMap: MapView, name: String, sketcherEditorTypes: SketcherEditorTypes){
-        var table = FeatureCollection()
-        var layer = FeatureCollectionLayer(table)
-        layer.name = name
+    fun addGeometryToMap(geometry: Geometry, mMap: MapView, name: String, sketcherEditorTypes: SketcherEditorTypes){
+
+        if (localPolylineFeatureCollectionLayer == null || localPolylineFeaturecollection == null){
+            localPolylineFeaturecollection = FeatureCollection()
+            localPolylineFeatureCollectionLayer = FeatureCollectionLayer(localPolylineFeaturecollection)
+            localPolylineFeatureCollectionLayer?.name = "$name\$\$##"
+            mMap.map.operationalLayers.add(localPolylineFeatureCollectionLayer!!)
+        }
         var fieldsArray = mutableListOf<Field>()
+        fieldsArray.add(Field.createString("category","סיווג",50))
         var geometryType = GeometryType.POLYLINE
         when (sketcherEditorTypes){
             SketcherEditorTypes.POLYLINE -> geometryType = GeometryType.POLYLINE
             SketcherEditorTypes.POLYGON ->  geometryType = GeometryType.POLYGON
         }
         var polylineTable = FeatureCollectionTable(fieldsArray, geometryType, mMap.spatialReference)
-        val linesymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, R.color.dark_blue, 4f)
+        val linesymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.WHITE, 4f)
         val renderer = SimpleRenderer(linesymbol)
         polylineTable.renderer = renderer
-        
+        localPolylineFeaturecollection!!.tables.add(polylineTable)
+        var attributes = hashMapOf<String, Any>()
+        attributes.put(fieldsArray[0].name, "meow?")
+        val feature = polylineTable.createFeature(attributes,geometry) as Feature
+        polylineTable.addFeatureAsync(feature)
+
+        SketchEditorController.clean(mMap)
     }
 
 }

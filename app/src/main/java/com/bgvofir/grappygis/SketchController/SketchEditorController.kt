@@ -28,6 +28,9 @@ object SketchEditorController {
     val TAG = "sketcherController"
 
 
+    fun getGeometry():Geometry{
+        return sketchEditor.geometry
+    }
     fun openSketcherBarContainer(layout: ConstraintLayout){
         layout.visibility = View.VISIBLE
         ObjectAnimator.ofFloat(layout,"translationY", 200f).apply {

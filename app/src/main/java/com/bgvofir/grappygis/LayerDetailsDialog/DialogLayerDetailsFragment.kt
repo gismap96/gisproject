@@ -36,7 +36,7 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
         recycler.adapter = adapter
         recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
 
-        var finalHeadline = headline
+        var finalHeadline = headline.replace("\$\$##", "")
         if (headline == "Feature Collection"){
             finalHeadline = context.resources.getString(com.bgvofir.grappygis.R.string.client_point)
             layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(com.bgvofir.grappygis.R.drawable.ic_star_blue))

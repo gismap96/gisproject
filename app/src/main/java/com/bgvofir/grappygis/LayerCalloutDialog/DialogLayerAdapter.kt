@@ -67,9 +67,10 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
 
         fun bind(layerTitle: String, identifiedLayer: IdentifyLayerResult,onRowClickListener: OnRowClickListener){
 
+            val newTitle = layerTitle.replace("\$\$##", "")
             //getting legend image
-            if (layerTitle != "Feature Collection") {
-                mTextView.text = layerTitle
+            if (newTitle != "Feature Collection") {
+                mTextView.text = newTitle
                 var layerLegend = identifiedLayer.layerContent.fetchLegendInfosAsync()
                 layerLegend.addDoneListener {
                     try {
