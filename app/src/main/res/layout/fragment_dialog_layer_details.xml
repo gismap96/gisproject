@@ -35,7 +35,6 @@
         android:id="@+id/dialogLayerDetailsRecyclerview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="1dp"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/fragmentDialogLayerDetailsClose"
         app:layout_constraintEnd_toEndOf="parent"
