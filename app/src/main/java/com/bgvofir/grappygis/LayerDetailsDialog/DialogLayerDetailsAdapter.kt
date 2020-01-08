@@ -105,7 +105,6 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
                         bitmap?.let{
                             previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
                             previewImage.setImageBitmap(bitmap)
-                            notifyItemChanged(itemNum)
 
                         }
 
