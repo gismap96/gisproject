@@ -90,7 +90,9 @@ object FeatureLayerController {
                                 && !it.key.toString().contains(".FID")){
                             val alias = mAliasesMap[it.key]
                             val attribute = it
-                            mTempMap[it.key] = attribute.value.toString()
+                            if (alias == null){
+                                mTempMap[it.key] = attribute.value.toString()
+                            }
                             alias?.let{
                                 mTempMap[alias] = attribute.value.toString()
                             }
