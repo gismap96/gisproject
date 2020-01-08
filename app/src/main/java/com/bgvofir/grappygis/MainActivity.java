@@ -94,6 +94,9 @@ import com.esri.arcgisruntime.mapping.view.LocationDisplay;
 import com.esri.arcgisruntime.mapping.view.MapView;
 import com.esri.arcgisruntime.mapping.view.NavigationChangedEvent;
 import com.esri.arcgisruntime.mapping.view.NavigationChangedListener;
+import com.esri.arcgisruntime.mapping.view.SketchEditor;
+import com.esri.arcgisruntime.mapping.view.SketchGeometryChangedEvent;
+import com.esri.arcgisruntime.mapping.view.SketchGeometryChangedListener;
 import com.esri.arcgisruntime.raster.Raster;
 import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
@@ -201,6 +204,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private boolean displayLegendFlag;
     private TextView cleanSketcherTV;
     private ImageView setNorthBtn;
+    private SketchEditor mSketcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -399,20 +403,20 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         calculatePolygonAreaTV = findViewById(R.id.calculatePolygonAreaTV);
-        calculatePolygonAreaTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (SketchEditorController.INSTANCE.getSketcherEditorTypes()){
-                    case POLYGON:
-                        SketchEditorController.INSTANCE.polygonArea(mMapView, MainActivity.this);
-                        break;
-                    case POLYLINE:
-                        SketchEditorController.INSTANCE.polylineDistance(mMapView, MainActivity.this);
-                        break;
-                }
-
-            }
-        });
+//        calculatePolygonAreaTV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                switch (SketchEditorController.INSTANCE.getSketcherEditorTypes()){
+//                    case POLYGON:
+//                        SketchEditorController.INSTANCE.polygonArea(mMapView, MainActivity.this);
+//                        break;
+//                    case POLYLINE:
+//                        SketchEditorController.INSTANCE.polylineDistance(mMapView, MainActivity.this);
+//                        break;
+//                }
+//
+//            }
+//        });
     }
 
     private String getJsonDataFromFile(File file){
@@ -1583,6 +1587,22 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         SketchEditorController.INSTANCE.startSketching(sketcher, mMapView);
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
+        mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
+        mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
+            @Override
+            public void geometryChanged(SketchGeometryChangedEvent sketchGeometryChangedEvent) {
+                switch (sketcher){
+                    case POLYLINE:
+                        String distance = SketchEditorController.INSTANCE.polylineDistance(mMapView);
+                        calculatePolygonAreaTV.setText(distance);
+                        break;
+                    case POLYGON:
+                        String area = SketchEditorController.INSTANCE.polygonArea(mMapView);
+                        calculatePolygonAreaTV.setText(area);
+                        break;
+                }
+            }
+        });
     }
 
     @Override

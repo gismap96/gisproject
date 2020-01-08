@@ -8,14 +8,13 @@ import android.support.animation.SpringAnimation
 import android.support.constraint.ConstraintLayout
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import com.bgvofir.grappygis.FormatGeometry.FormatJSONGeometry
+import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.geometry.*
-import com.esri.arcgisruntime.mapping.view.Graphic
-import com.esri.arcgisruntime.mapping.view.MapView
-import com.esri.arcgisruntime.mapping.view.SketchCreationMode
-import com.esri.arcgisruntime.mapping.view.SketchEditor
+import com.esri.arcgisruntime.mapping.view.*
 import com.esri.arcgisruntime.symbology.*
 import java.text.DecimalFormat
 
@@ -26,7 +25,12 @@ object SketchEditorController {
     var sketcherEditorTypes = SketcherEditorTypes.POLYLINE
     var layoutHeight = 0
     val TAG = "sketcherController"
-
+    var distance = 0.0
+    var area = 0.0
+    var dunam = 0.0
+    var formatArea = ""
+    var formatDunam = ""
+    var formatDistance = ""
 
     fun getGeometry():Geometry{
         return sketchEditor.geometry
@@ -91,50 +95,45 @@ object SketchEditorController {
         FormatJSONGeometry.polygonToJson(geometry)
         Log.d(TAG, geometry.toString())
     }
-    fun polygonArea(mMapView: MapView, context: Context){
+    fun polygonArea(mMapView: MapView): String{
         val geometry = sketchEditor.geometry
         val envelope = geometry.extent
-        var area = GeometryEngine.area(envelope)
+        area = GeometryEngine.area(envelope)
         val unit = mMapView.spatialReference.unit.abbreviation
         if (unit == "mi"){
             area *= 1609.344
         }
-        var toastMSG1 = "השטח ל"
-//        if (sketcherEditorTypes == SketcherEditorTypes.POLYLINE){
-//            toastMSG1 = "המרחק ל"
-//            GeometryEngine.length()
-//        }
-        val toastMSG2 = " הוא "
-        val toastMSG4 = "ובדונם הוא "
         val decimalFormat = DecimalFormat("#.00")
-        val dunam = area / 1000.0
-        val toastMSG5 = decimalFormat.format(dunam).toString()
-        val finalMSG = toastMSG1+sketcherEditorTypes.title+toastMSG2+area.toInt().toString()+
-                "m\n" + toastMSG4 +toastMSG5
-        val toast = Toast.makeText(context, finalMSG, Toast.LENGTH_LONG)
-        toast.setGravity(Gravity.CENTER, 0, 0)
-        toast.show()
-        Log.d(TAG, "the polygonArea for ${sketcherEditorTypes.title} is: $area, unit: $unit")
-        Log.d(TAG, "json ${geometry.toJson()}")
-        toJson(geometry)
+        val formatArea = decimalFormat.format(area).toString()
+        dunam = area / 1000.0
+        formatDunam = decimalFormat.format(dunam).toString()
+        val msg1 = "m"
+        val msg2 = "דונם"
+        val finalmsg = "$msg2 $formatDunam"
+        return finalmsg
+        //val toast = Toast.makeText(context, finalMSG, Toast.LENGTH_LONG)
+        //toast.setGravity(Gravity.CENTER, 0, 0)
+        //toast.show()
+        //Log.d(TAG, "the polygonArea for ${sketcherEditorTypes.title} is: $area, unit: $unit")
+        //Log.d(TAG, "json ${geometry.toJson()}")
+      //  toJson(geometry)
     }
 
-    fun polylineDistance(mMapView: MapView, context: Context){
+    fun polylineDistance(mMapView: MapView): String{
         val geometry = sketchEditor.geometry
         val line = geometry as Polyline
-        var distance = GeometryEngine.length(line)
+        distance = GeometryEngine.length(line)
         val decimalFormat = DecimalFormat("#.00")
-        val toastMsg1 = "מרחק הפוליליין הוא "
-        val toastMsg2 = "m"
         val unit = mMapView.spatialReference.unit.abbreviation
         if (unit == "mi"){
             distance *= 1609.344
         }
-        val formattedDistance = decimalFormat.format(distance).toString()
-        val toast = Toast.makeText(context, toastMsg1+ formattedDistance+ toastMsg2, Toast.LENGTH_LONG)
-        toast.setGravity(Gravity.CENTER, 0, 0)
-        toast.show()
-        FormatJSONGeometry.polylineToJSON(geometry)
+         val formatDistance = decimalFormat.format(distance).toString() +"m"
+        return formatDistance
+//        val toast = Toast.makeText(context, toastMsg1+ formattedDistance+ toastMsg2, Toast.LENGTH_LONG)
+//        toast.setGravity(Gravity.CENTER, 0, 0)
+//        toast.show()
+//        FormatJSONGeometry.polylineToJSON(geometry)
     }
 
     fun stopSketcher(layout: ConstraintLayout){
@@ -174,7 +173,6 @@ object SketchEditorController {
             SketcherEditorTypes.POLYGON -> {
                 polygonMode()
             }
-
         }
     }
 

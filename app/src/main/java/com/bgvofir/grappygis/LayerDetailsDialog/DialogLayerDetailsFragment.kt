@@ -25,13 +25,18 @@ import java.util.concurrent.ExecutionException
 class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>, var headline: String, val identifiedLayer: IdentifyLayerResult): Dialog(activity), View.OnClickListener {
 
 
+
+
+    override fun onStart() {
+        super.onStart()
+        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        //requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(com.bgvofir.grappygis.R.layout.fragment_dialog_layer_details)
-        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        var recycler = dialogLayerDetailsRecyclerview
         var layoutManager = LinearLayoutManager(activity)
+        var recycler = dialogLayerDetailsRecyclerview
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
         recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
@@ -78,6 +83,7 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
 
         return bitmap
     }
+
 
     override fun onClick(v: View?) {
         when(v?.id){

@@ -70,7 +70,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
 //                p0.itemView.setBackgroundColor(Color.WHITE)
 //            }
 //        }
-        p0.bind(rowValues[p1].key, rowValues[p1].value)
+        p0.bind(rowValues[p1].key, rowValues[p1].value, p1)
         if (rowValues[p1].key == "FID"){
             p0.itemView.setBackgroundColor(Color.WHITE)
             p0.itemView.rowLayersDetailsValue.setBackgroundColor(Color.WHITE)
@@ -86,10 +86,11 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
         private var valueTextView = v.rowLayersDetailsValue
         private var previewImage = v.rowDetailsPreviewImageView
 
-        fun bind(key: String, value: String){
+        fun bind(key: String, value: String, itemNum: Int){
             if (key == "תצוגה מקדימה"){
                 valueTextView.visibility = View.GONE
                 keyTextView.visibility = View.GONE
+                previewImage.visibility = View.VISIBLE
                 Picasso.get().load(value).placeholder(R.drawable.ic_placeholder).into(object: com.squareup.picasso.Target{
                     override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
                         previewImage.setImageDrawable(placeHolderDrawable)
@@ -104,6 +105,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
                         bitmap?.let{
                             previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
                             previewImage.setImageBitmap(bitmap)
+                            notifyItemChanged(itemNum)
 
                         }
 
@@ -118,7 +120,6 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
             } else {
                 val newValue = value.replace("_"," ")
                 valueTextView.text = newValue
-                previewImage.visibility = View.GONE
             }
             val newKey = key.replace("_", " ")
             keyTextView.text = newKey

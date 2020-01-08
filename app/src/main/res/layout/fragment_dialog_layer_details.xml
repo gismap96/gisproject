@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:layout_marginEnd="8dp"
-    android:layout_marginStart="8dp"
+    android:layout_margin="8dp"
     android:layout_height="wrap_content">
 
     <TextView
@@ -38,22 +36,24 @@
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/fragmentDialogLayerDetailsClose"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragmentDialogLayerDetailsHeadline" />
 
     <Button
         android:id="@+id/fragmentDialogLayerDetailsClose"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
 
         android:background="#E6010b1f"
+        android:padding="8dp"
         android:text="@string/close"
         android:textColor="#3fadf8"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialogLayerDetailsRecyclerview"/>
+        app:layout_constraintTop_toBottomOf="@+id/dialogLayerDetailsRecyclerview" />
 
     <ImageView
         android:id="@+id/layerIconForDetailsDialog"
