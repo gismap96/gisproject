@@ -391,14 +391,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-//        zift.setVisibility(View.GONE);
-        zift.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView);
-                layerAttributes.show();
-            }
-        });
+        zift.setVisibility(View.GONE);
+//        zift.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView);
+//                layerAttributes.show();
+//            }
+//        });
 
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
