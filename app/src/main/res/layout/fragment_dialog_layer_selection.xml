@@ -13,7 +13,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="#CC010b1f"
-
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/closePopupDialog"
         app:layout_constraintEnd_toEndOf="parent"
