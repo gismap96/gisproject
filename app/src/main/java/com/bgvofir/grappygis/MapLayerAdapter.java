@@ -63,8 +63,7 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
     @Override public void onBindViewHolder(final MapLayerViewHolder holder, final int position) {
         final Layer layer = mLayers.get(position);
         holder.layerName.setText(layer.getName());
-
-
+        Log.d(TAG, layer.getName());
         final boolean layerVisible = (layer.isVisible());
         holder.checkBox.setChecked(layerVisible);
 

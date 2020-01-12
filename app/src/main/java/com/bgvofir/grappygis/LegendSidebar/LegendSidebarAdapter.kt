@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.bgvofir.grappygis.MapLayerAdapter
 import com.bgvofir.grappygis.R
+import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.layers.Layer
 import kotlinx.android.synthetic.main.legend_sidebar_group_overlay.view.*
 

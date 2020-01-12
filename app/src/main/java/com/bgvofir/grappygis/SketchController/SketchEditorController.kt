@@ -32,7 +32,7 @@ object SketchEditorController {
     var formatDunam = ""
     var formatDistance = ""
 
-    fun getGeometry():Geometry{
+    fun getGeometry():Geometry?{
         return sketchEditor.geometry
     }
     fun openSketcherBarContainer(layout: ConstraintLayout){
@@ -95,6 +95,39 @@ object SketchEditorController {
         FormatJSONGeometry.polygonToJson(geometry)
         Log.d(TAG, geometry.toString())
     }
+
+    fun wertexOriginal(unit: String):Double{
+        val geometry = sketchEditor.geometry
+        if (geometry.isEmpty) return 0.0
+        val lastSection = mutableListOf<Point>()
+        if (geometry.geometryType == GeometryType.POLYLINE) {
+            val polyline = geometry as Polyline
+            val lastPart = polyline.parts.last()
+            val points = lastPart.points.toList()
+            val pointsCount = points.count()
+            if (pointsCount < 2) return 0.0
+            lastSection.add(points[pointsCount-2])
+            lastSection.add(points.last())
+        }  else if (geometry.geometryType == GeometryType.POLYGON){
+            val polyline = geometry as Polygon
+            val lastPart = polyline.parts.last()
+            val points = lastPart.points.toList()
+            val pointsCount = points.count()
+            if (pointsCount < 2) return 0.0
+            lastSection.add(points[pointsCount-2])
+            lastSection.add(points.last())
+        } else {
+            return 0.0
+        }
+        val pointsCollection = PointCollection(lastSection)
+        val partToCalculate = Part(pointsCollection)
+        val newPolyline = Polyline(partToCalculate)
+        var length = GeometryEngine.length(newPolyline)
+        if (unit == "mi"){
+            length *= 1609.344
+        }
+        return length
+    }
     fun polygonArea(mMapView: MapView): String{
         val geometry = sketchEditor.geometry
         val envelope = geometry.extent
@@ -109,7 +142,9 @@ object SketchEditorController {
         formatDunam = decimalFormat.format(dunam).toString()
         val msg1 = "m"
         val msg2 = "דונם"
-        val finalmsg = "$msg2 $formatDunam"
+        val sectionLength = decimalFormat.format(wertexOriginal(unit))
+        val msg3 = "מקטע "
+        val finalmsg = "$msg2 $formatDunam\n $msg3${sectionLength}m"
         return finalmsg
         //val toast = Toast.makeText(context, finalMSG, Toast.LENGTH_LONG)
         //toast.setGravity(Gravity.CENTER, 0, 0)
@@ -128,7 +163,11 @@ object SketchEditorController {
         if (unit == "mi"){
             distance *= 1609.344
         }
-         val formatDistance = decimalFormat.format(distance).toString() +"m"
+        val section = wertexOriginal(unit)
+
+        val msg2 = " ומקטע "
+        val formatDistance = decimalFormat.format(distance).toString() +"m\n" + msg2 +
+                decimalFormat.format(section) + "m"
         return formatDistance
 //        val toast = Toast.makeText(context, toastMsg1+ formattedDistance+ toastMsg2, Toast.LENGTH_LONG)
 //        toast.setGravity(Gravity.CENTER, 0, 0)

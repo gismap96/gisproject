@@ -31,10 +31,9 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/dialogLayerDetailsRecyclerview"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constrainedHeight="true"
-        app:layout_constraintBottom_toTopOf="@+id/fragmentDialogLayerDetailsClose"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

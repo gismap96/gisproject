@@ -48,7 +48,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bgvofir.grappygis.FormatGeometry.FormatJSONCollectionFeature;
 import com.bgvofir.grappygis.GeoViewController.GeoViewController;
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController;
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter;
@@ -86,7 +85,6 @@ import com.esri.arcgisruntime.mapping.MobileMapPackage;
 import com.esri.arcgisruntime.mapping.Viewpoint;
 import com.esri.arcgisruntime.mapping.view.Callout;
 import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener;
-import com.esri.arcgisruntime.mapping.view.GeoView;
 import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult;
@@ -141,7 +139,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -185,7 +182,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ImageView addPoint;
     private ImageView toggleAutoPanBtn;
     private ImageView ivDeletePoint;
-    private ImageView toggleSketcherBtn;
+    private ImageView zift2;
     private String mProjectId;
     private ListenableFuture<FeatureQueryResult> selectionResult;
     private String mCurrentCategory;
@@ -269,19 +266,23 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                takePhoto();
             }
         });
-        toggleSketcherBtn = findViewById(R.id.toggleSketcherBtn);
-        toggleSketcherBtn.setVisibility(View.GONE);
-//        toggleSketcherBtn.setOnClickListener(new View.OnClickListener() {
+        zift2 = findViewById(R.id.zift2);
+        zift2.setVisibility(View.GONE);
+//        zift2.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                resetMenuFunctions();
-//                //SketchEditorController.INSTANCE.freehandMode(mMapView);
-//                SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this);
-//                sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter);
-//                sketcherSelectionDialogFragment.show();
+//                Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
+//                if (geometry == null){
+//                    Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
+//                    toast.setGravity(Gravity.CENTER,0,0);
+//                    toast.show();
+//                    return;
+//                }
+//                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true);
+//                layerAttributes.show();
 //            }
 //        });
-//        toggleSketcherBtn.setVisibility(View.GONE);
+//        zift2.setVisibility(View.GONE);
         cleanSketcherTV = findViewById(R.id.cleanSketcherTV);
         cleanSketcherTV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -392,31 +393,26 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
         zift.setVisibility(View.GONE);
-//        zift.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView);
-//                layerAttributes.show();
+//        zift.setOnClickListener(v -> {
+//            Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
+//            if (geometry == null){
+//                Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
+//                toast.setGravity(Gravity.CENTER,0,0);
+//                toast.show();
+//                return;
 //            }
+//            SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, false);
+//            layerAttributes.show();
 //        });
-
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         calculatePolygonAreaTV = findViewById(R.id.calculatePolygonAreaTV);
-//        calculatePolygonAreaTV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                switch (SketchEditorController.INSTANCE.getSketcherEditorTypes()){
-//                    case POLYGON:
-//                        SketchEditorController.INSTANCE.polygonArea(mMapView, MainActivity.this);
-//                        break;
-//                    case POLYLINE:
-//                        SketchEditorController.INSTANCE.polylineDistance(mMapView, MainActivity.this);
-//                        break;
-//                }
-//
-//            }
-//        });
+        calculatePolygonAreaTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FeatureLayerController.INSTANCE.setColor();
+            }
+        });
     }
 
     private String getJsonDataFromFile(File file){
@@ -1487,6 +1483,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         super.onResume();
         mMapView.resume();
         GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
+
     }
 
     @Override

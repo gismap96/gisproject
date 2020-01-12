@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.graphics.Point
 import android.util.JsonReader
 import android.util.Log
+import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
+import com.bgvofir.grappygis.ClientFeatureLayers.GrappiField
 import com.bgvofir.grappygis.ClientPoint
 import com.bgvofir.grappygis.R
 import com.bgvofir.grappygis.SketchController.SketchEditorController
@@ -26,13 +28,16 @@ import com.esri.arcgisruntime.layers.Layer
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol
 import com.esri.arcgisruntime.symbology.SimpleRenderer
 import java.io.ObjectInput
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 
 object FeatureLayerController {
     var point: android.graphics.Point? = null
     var tolerance = 10.0
-    var localPolylineFeatureCollectionLayer: FeatureCollectionLayer? = null
-    var localPolylineFeaturecollection: FeatureCollection? = null
+    var clientFeatureCollection: ClientFeatureCollectionLayer? = null
+    var collection2: ClientFeatureCollectionLayer? = null
 
     fun layerClicked(point: android.graphics.Point, mMap: MapView, onLayerClickListener: OnLayerClickListener){
         this.point = point
@@ -46,6 +51,12 @@ object FeatureLayerController {
                 }
                 onLayerClickListener.onLayerClickListener(layerNames, res)
             }
+        }
+    }
+
+    fun setColor(){
+        clientFeatureCollection?.let{
+            it.setColor()
         }
     }
     private fun convertAttributeStringToMap(forString: ArrayList<String>): MutableList<Map<String, String>>{
@@ -113,6 +124,7 @@ object FeatureLayerController {
     private fun parseFeatureCollection(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
         var resultList = ArrayList<Map<String, String>>()
         forLayer.sublayerResults.forEach {
+
             var mTempMap = mutableMapOf<String, String>()
             it.elements.forEach {
                 it.attributes.forEach {
@@ -124,6 +136,7 @@ object FeatureLayerController {
         val set = HashSet<Map<String, String>>(resultList)
         resultList.clear()
         resultList.addAll(set)
+
         return resultList
     }
 
@@ -212,31 +225,61 @@ object FeatureLayerController {
         fun onLayerClickListener(layerNames: ArrayList<String>, identifiedLayers: MutableList<IdentifyLayerResult>)
     }
 
-    fun addGeometryToMap(geometry: Geometry, mMap: MapView, name: String, sketcherEditorTypes: SketcherEditorTypes){
-
-        if (localPolylineFeatureCollectionLayer == null || localPolylineFeaturecollection == null){
-            localPolylineFeaturecollection = FeatureCollection()
-            localPolylineFeatureCollectionLayer = FeatureCollectionLayer(localPolylineFeaturecollection)
-            localPolylineFeatureCollectionLayer?.name = "$name\$\$##"
-            mMap.map.operationalLayers.add(localPolylineFeatureCollectionLayer!!)
+    fun addNewGeometry(geometry: Geometry, mMap: MapView, category: String){
+        if (collection2 == null) {
+            val id = UUID.randomUUID().toString()
+            val fields = mutableListOf<GrappiField>()
+            fields.add(GrappiField("category", "esriFieldTypeString", "סיווג", 255))
+            collection2 = ClientFeatureCollectionLayer("סתם קו לבן", id, fields, mMap.spatialReference)
+            mMap.map.operationalLayers.add(collection2!!.layer)
         }
-        var fieldsArray = mutableListOf<Field>()
-        fieldsArray.add(Field.createString("category","סיווג",50))
-        var geometryType = GeometryType.POLYLINE
-        when (sketcherEditorTypes){
-            SketcherEditorTypes.POLYLINE -> geometryType = GeometryType.POLYLINE
-            SketcherEditorTypes.POLYGON ->  geometryType = GeometryType.POLYGON
-        }
-        var polylineTable = FeatureCollectionTable(fieldsArray, geometryType, mMap.spatialReference)
-        val linesymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.WHITE, 4f)
-        val renderer = SimpleRenderer(linesymbol)
-        polylineTable.renderer = renderer
-        localPolylineFeaturecollection!!.tables.add(polylineTable)
         var attributes = hashMapOf<String, Any>()
-        attributes.put(fieldsArray[0].name, "meow?")
-        val feature = polylineTable.createFeature(attributes,geometry) as Feature
-        polylineTable.addFeatureAsync(feature)
+        attributes.put("category", category)
+        collection2!!.createFeature(attributes, geometry)
+        SketchEditorController.clean(mMap)
+    }
+    fun addGeometryToMap(geometry: Geometry, mMap: MapView, name: String, sketcherEditorTypes: SketcherEditorTypes, category:String){
 
+        if (clientFeatureCollection == null) {
+            val id = UUID.randomUUID().toString()
+            val fields = mutableListOf<GrappiField>()
+            fields.add(GrappiField("category", "esriFieldTypeString", "סיווג", 255))
+            clientFeatureCollection = ClientFeatureCollectionLayer("קו ירוק מגניב", id, fields, mMap.spatialReference)
+            mMap.map.operationalLayers.add(clientFeatureCollection!!.layer)
+        }
+        var attributes = hashMapOf<String, Any>()
+        attributes.put("category", category)
+
+
+
+
+
+//        if (localPolylineFeatureCollectionLayer == null || localPolylineFeaturecollection == null){
+//            localPolylineFeaturecollection = FeatureCollection()
+//            localPolylineFeatureCollectionLayer = FeatureCollectionLayer(localPolylineFeaturecollection)
+//            localPolylineFeatureCollectionLayer?.name = "$name\$\$##"
+//            mMap.map.operationalLayers.add(localPolylineFeatureCollectionLayer!!)
+//        }
+//        var fieldsArray = mutableListOf<Field>()
+//        fieldsArray.add(Field.createString("category","סיווג",50))
+//        var geometryType = GeometryType.POLYLINE
+//        when (sketcherEditorTypes){
+//            SketcherEditorTypes.POLYLINE -> geometryType = GeometryType.POLYLINE
+//            SketcherEditorTypes.POLYGON ->  geometryType = GeometryType.POLYGON
+//        }
+//        var polylineTable = FeatureCollectionTable(fieldsArray, geometryType, mMap.spatialReference)
+//        val lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.WHITE, 4f)
+//        val renderer = SimpleRenderer(lineSymbol)
+//        polylineTable.renderer = renderer
+//        localPolylineFeaturecollection!!.tables.add(polylineTable)
+//        var attributes = hashMapOf<String, Any>()
+//        attributes.put(fieldsArray[0].name, category)
+//        val feature = polylineTable.createFeature(attributes,geometry) as Feature
+//        polylineTable.addFeatureAsync(feature)
+
+
+
+        clientFeatureCollection!!.createFeature(attributes, geometry)
         SketchEditorController.clean(mMap)
     }
 

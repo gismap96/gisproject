@@ -10,14 +10,17 @@
     android:gravity="end"
 
     >
+
     <ImageView
+        android:id="@+id/imgSymbol"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:id="@+id/imgSymbol"/>
+        android:visibility="visible" />
+
     <TextView
+        android:id="@+id/txtLegend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtLegend"
         android:gravity="start"
-        />
+        android:visibility="visible" />
 </LinearLayout>

@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
+import com.esri.arcgisruntime.layers.FeatureLayer;
 import com.esri.arcgisruntime.layers.LegendInfo;
 import com.esri.arcgisruntime.symbology.Symbol;
 
@@ -61,7 +62,7 @@ public class MapLegendAdapter extends RecyclerView.Adapter<MapLegendAdapter.MapL
    */
   @Override public void onBindViewHolder(final MapLegendViewHodler holder, final int position) {
     final LegendInfo legendInfo = mLegendInfoList.get(position);
-    holder.legendName.setText(legendInfo.getName());
+    holder.legendName.setText(legendInfo.getName().trim());
     final Symbol symbol = legendInfo.getSymbol();
 
     final TypedValue a = new TypedValue();
@@ -77,8 +78,8 @@ public class MapLegendAdapter extends RecyclerView.Adapter<MapLegendAdapter.MapL
       @Override public void run() {
         try {
           final Bitmap bitmap = future.get();
-
           holder.legendSymbol.setImageBitmap(bitmap);
+          Bitmap emptyBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
         } catch (ExecutionException | InterruptedException e) {
           Log.e(TAG, e.getMessage());
         }
