@@ -77,6 +77,14 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
             p0.itemView.rowLayersDetailsValue.setTextColor(ResourcesCompat.getColor(context.resources, R.color.dark_blue, null))
             p0.itemView.rowLayersDetailsKey.setBackgroundColor(Color.WHITE)
             p0.itemView.rowLayersDetailsKey.setTextColor(ResourcesCompat.getColor(context.resources, R.color.dark_blue, null))
+        } else {
+            val backgroundColor = ResourcesCompat.getColor(context.resources, R.color.details_dialog_background, null)
+            val keyTextColor = ResourcesCompat.getColor(context.resources, R.color.details_dialog_key_text_color, null)
+            val white = Color.WHITE
+            p0.itemView.rowLayersDetailsValue.setBackgroundColor(backgroundColor)
+            p0.itemView.rowLayersDetailsValue.setTextColor(white)
+            p0.itemView.rowLayersDetailsKey.setBackgroundColor(backgroundColor)
+            p0.itemView.rowLayersDetailsKey.setTextColor(keyTextColor)
         }
     }
 

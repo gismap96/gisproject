@@ -12,4 +12,6 @@
     <color name="light_blue">#0096FC</color>
     <color name="dark_blue">#010B1F</color>
     <color name="dark_blue_transparent">#99010B1F</color>
+    <color name="details_dialog_background">#CC010b1f</color>
+    <color name="details_dialog_key_text_color">#3fadf8</color>
 </resources>
