@@ -1,6 +1,9 @@
 package com.bgvofir.grappygis.ClientFeatureLayers
 
 import android.graphics.Color
+import android.util.Log
+import com.bgvofir.grappygis.FormatGeometry.FormatJSONCollectionFeature
+import com.bgvofir.grappygis.ProjectRelated.ProjectId
 import com.esri.arcgisruntime.data.Feature
 import com.esri.arcgisruntime.data.FeatureCollection
 import com.esri.arcgisruntime.data.FeatureCollectionTable
@@ -12,12 +15,15 @@ import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol
 import com.esri.arcgisruntime.symbology.SimpleRenderer
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
 import kotlin.collections.HashMap
 
 class ClientFeatureCollectionLayer () {
+    val TAG = "CollectionFeature"
     var collection = FeatureCollection()
     var layer = FeatureCollectionLayer(collection)
     var features = mutableListOf<Feature>()
@@ -27,7 +33,7 @@ class ClientFeatureCollectionLayer () {
     var fields = mutableListOf<GrappiField>()
     private var fieldsArray = mutableListOf<Field>()
     private lateinit var featureCollectionTable: FeatureCollectionTable
-    var lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.WHITE, 4f)
+    var lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.WHITE, 3.5f)
     var renderer = SimpleRenderer(lineSymbol)
 
     constructor(name: String): this(){
@@ -83,7 +89,7 @@ class ClientFeatureCollectionLayer () {
     }
 
     fun setColor(){
-        lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.DASH_DOT, Color.GREEN, 20f)
+        lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.DASH, Color.GREEN, 4f)
         renderer = SimpleRenderer(lineSymbol)
         featureCollectionTable.renderer = renderer
     }
@@ -122,14 +128,29 @@ class ClientFeatureCollectionLayer () {
 
     }
 
-    fun generateARCGISJSON(){
+    fun uploadJSON(){
+        val mProjectId = ProjectId.projectId
+        val firebaseStorage = FirebaseStorage.getInstance()
+        val storageRef = firebaseStorage.reference
+        val username = FirebaseAuth.getInstance().uid
+        val childRef = storageRef.child("settlements/$mProjectId/userLayers/$username/polyline.json")
+        val json = generateARCGISJSON().toString().toByteArray()
+        childRef.putBytes(json).addOnSuccessListener {
+            Log.d(TAG, "file sent")
+        }.addOnFailureListener{
+            e->
+            Log.d(TAG,e.toString())
+        }
+    }
+    fun generateARCGISJSON(): JSONObject{
         var resultJson = JSONObject()
         resultJson.put("displayFieldName", "")
         resultJson.put("fieldAliases", generateFieldAliasesForJSON())
         resultJson.put("geometryType", "esriGeometryPolyline")
         resultJson.put("spatialReference", generateSpatialReferenceJSON())
         resultJson.put("fields", generateFieldsElementForJSON())
-
+        resultJson.put("features", generateFeaturesForJSON())
+        return resultJson
     }
 //    fun polylineToJSON(geometry: Geometry){
 //        val result = JSONObject()
@@ -153,11 +174,28 @@ class ClientFeatureCollectionLayer () {
 //        Log.d(FormatJSONGeometry.TAG, result.toString())
 //    }
 
+    private fun generateFeaturesForJSON(): JSONArray{
+        val json = JSONArray()
+        features.forEach {
+            var featureJSON = JSONObject()
+            var attributesJSON = JSONObject()
+            it.attributes.forEach{
+                attributesJSON.put(it.key, it.value)
+            }
+            featureJSON.put("attributes", attributesJSON)
+            val geometryJson = JSONObject(it.geometry.toJson())
+            val geometryJSONArray = geometryJson.getJSONArray("paths").get(0)
+            featureJSON.put("paths", geometryJSONArray)
+            json.put(featureJSON)
+        }
+        return json
+    }
     private fun generateFieldAliasesForJSON(): JSONObject{
         val json = JSONObject()
         fieldsArray.forEach {
             json.put(it.name, it.alias)
         }
+        json.put("ObjectID", "ObjectID")
         return json
     }
 
@@ -180,6 +218,11 @@ class ClientFeatureCollectionLayer () {
             }
             json.put(temp)
         }
+        val objectid = JSONObject()
+        objectid.put("name", "ObjectID")
+        objectid.put("type", "esriFieldTypeOID")
+        objectid.put("alias", "ObjectID")
+        json.put(objectid)
         return json
 
     }

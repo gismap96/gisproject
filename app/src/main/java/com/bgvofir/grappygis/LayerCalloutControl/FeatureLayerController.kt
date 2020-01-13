@@ -7,6 +7,7 @@ import android.util.Log
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
 import com.bgvofir.grappygis.ClientFeatureLayers.GrappiField
 import com.bgvofir.grappygis.ClientPoint
+import com.bgvofir.grappygis.ProjectRelated.ProjectId
 import com.bgvofir.grappygis.R
 import com.bgvofir.grappygis.SketchController.SketchEditorController
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
@@ -237,6 +238,7 @@ object FeatureLayerController {
         attributes.put("category", category)
         collection2!!.createFeature(attributes, geometry)
         SketchEditorController.clean(mMap)
+        collection2!!.uploadJSON()
     }
     fun addGeometryToMap(geometry: Geometry, mMap: MapView, name: String, sketcherEditorTypes: SketcherEditorTypes, category:String){
 
@@ -249,6 +251,7 @@ object FeatureLayerController {
         }
         var attributes = hashMapOf<String, Any>()
         attributes.put("category", category)
+
 
 
 
@@ -281,6 +284,7 @@ object FeatureLayerController {
 
         clientFeatureCollection!!.createFeature(attributes, geometry)
         SketchEditorController.clean(mMap)
+        clientFeatureCollection!!.uploadJSON()
     }
 
 }

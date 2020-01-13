@@ -81,6 +81,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
             val backgroundColor = ResourcesCompat.getColor(context.resources, R.color.details_dialog_background, null)
             val keyTextColor = ResourcesCompat.getColor(context.resources, R.color.details_dialog_key_text_color, null)
             val white = Color.WHITE
+            p0.itemView.setBackgroundColor(Color.TRANSPARENT)
             p0.itemView.rowLayersDetailsValue.setBackgroundColor(backgroundColor)
             p0.itemView.rowLayersDetailsValue.setTextColor(white)
             p0.itemView.rowLayersDetailsKey.setBackgroundColor(backgroundColor)

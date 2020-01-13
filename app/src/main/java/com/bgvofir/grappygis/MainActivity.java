@@ -57,6 +57,7 @@ import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsFragment;
 import com.bgvofir.grappygis.LegendSidebar.LegendGroup;
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController;
 import com.bgvofir.grappygis.LegendSidebar.LegendSidebarAdapter;
+import com.bgvofir.grappygis.ProjectRelated.ProjectId;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes;
 import com.bgvofir.grappygis.SketchController.SketcherSaveDialogFragment;
@@ -215,6 +216,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         storageReference = storage.getReference();
         mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
         mProjectId = mPrefs.getString(Consts.PROJECT_ID_KEY, "default");
+        ProjectId.INSTANCE.setProjectId(mProjectId);
         addPoint = findViewById(R.id.addPoint);
         ivDeletePoint = findViewById(R.id.deletePoint);
         mapProgress = findViewById(R.id.map_progress);
@@ -823,7 +825,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
             } else {
-                //todo If loading failed, deal with failure depending on the cause...
                 Log.e("MainActivity", "some error");
             }
         });
