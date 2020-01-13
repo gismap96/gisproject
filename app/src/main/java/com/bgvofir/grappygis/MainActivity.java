@@ -269,21 +269,21 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         zift2 = findViewById(R.id.zift2);
-//        zift2.setVisibility(View.GONE);
-        zift2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
-                if (geometry == null){
-                    Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER,0,0);
-                    toast.show();
-                    return;
-                }
-                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true);
-                layerAttributes.show();
-            }
-        });
+        zift2.setVisibility(View.GONE);
+//        zift2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
+//                if (geometry == null){
+//                    Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
+//                    toast.setGravity(Gravity.CENTER,0,0);
+//                    toast.show();
+//                    return;
+//                }
+//                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true);
+//                layerAttributes.show();
+//            }
+//        });
 //        zift2.setVisibility(View.GONE);
         cleanSketcherTV = findViewById(R.id.cleanSketcherTV);
         cleanSketcherTV.setOnClickListener(new View.OnClickListener() {
