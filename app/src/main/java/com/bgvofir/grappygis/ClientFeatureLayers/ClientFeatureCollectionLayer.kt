@@ -81,7 +81,7 @@ class ClientFeatureCollectionLayer () {
 
     private fun generateIDField(){
 //        fields.add(GrappiField("FID", "esriFieldTypeOID", "FID"))
-        fields.add(GrappiField("Id", "esriFieldTypeString", "Id", 24))
+        fields.add(GrappiField("Id", "esriFieldTypeString", "Id", 50))
 
     }
     fun setColor(alpha: Int, red: Int, green: Int, blue: Int, width: Float){
@@ -176,17 +176,21 @@ class ClientFeatureCollectionLayer () {
 
     private fun generateFeaturesForJSON(): JSONArray{
         val json = JSONArray()
+        var objectIdNum = 1
         features.forEach {
             var featureJSON = JSONObject()
             var attributesJSON = JSONObject()
+            attributesJSON.put("OBJECTID", objectIdNum)
             it.attributes.forEach{
-                attributesJSON.put(it.key, it.value)
+                if (it.key != "ObjectID") attributesJSON.put(it.key, it.value)
             }
             featureJSON.put("attributes", attributesJSON)
             val geometryJson = JSONObject(it.geometry.toJson())
-            val geometryJSONArray = geometryJson.getJSONArray("paths").get(0)
-            featureJSON.put("paths", geometryJSONArray)
+            val geometryJSONArray = geometryJson.getJSONArray("paths")
+            val geometryWrapperJSON = JSONObject().put("paths", geometryJSONArray)
+            featureJSON.put("geometry", geometryWrapperJSON)
             json.put(featureJSON)
+            objectIdNum ++
         }
         return json
     }
@@ -195,7 +199,7 @@ class ClientFeatureCollectionLayer () {
         fieldsArray.forEach {
             json.put(it.name, it.alias)
         }
-        json.put("ObjectID", "ObjectID")
+        json.put("OBJECTID", "OBJECTID")
         return json
     }
 
@@ -208,6 +212,11 @@ class ClientFeatureCollectionLayer () {
 
     private fun generateFieldsElementForJSON():JSONArray{
         val json = JSONArray()
+        val objectid = JSONObject()
+        objectid.put("name", "OBJECTID")
+        objectid.put("type", "esriFieldTypeOID")
+        objectid.put("alias", "OBJECTID")
+        json.put(objectid)
         fields.forEach {
             val temp = JSONObject()
             temp.put("name", it.name)
@@ -218,11 +227,6 @@ class ClientFeatureCollectionLayer () {
             }
             json.put(temp)
         }
-        val objectid = JSONObject()
-        objectid.put("name", "ObjectID")
-        objectid.put("type", "esriFieldTypeOID")
-        objectid.put("alias", "ObjectID")
-        json.put(objectid)
         return json
 
     }
