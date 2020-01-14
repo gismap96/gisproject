@@ -1624,7 +1624,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     public void onClientPolylineJSONDownloaded(@NotNull JSONObject json) {
-        ClientLayersController.INSTANCE.generateFieldsArray(json);
+        clientPolyline = new ClientFeatureCollectionLayer(json, mMapView);
+        mMapView.getMap().getOperationalLayers().add(clientPolyline.getLayer());
     }
 
     @Override

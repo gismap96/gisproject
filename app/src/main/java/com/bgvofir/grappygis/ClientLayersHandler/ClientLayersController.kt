@@ -9,6 +9,7 @@ import com.bgvofir.grappygis.ProjectRelated.ProjectId
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
 import com.esri.arcgisruntime.data.Field
 import com.esri.arcgisruntime.data.ServiceFeatureTable
+import com.esri.arcgisruntime.geometry.PointBuilder
 import com.esri.arcgisruntime.geometry.SpatialReference
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
@@ -57,7 +58,8 @@ object ClientLayersController {
 //        val aliases = gson.fromJson(fieldAliases.toString(),mapTypeToken) as Map<String, Any>
 //        Log.d(TAG, aliases.toString())
         val fieldsArray = json.getJSONArray("fields")
-        val fields = gson.fromJson(fieldsArray.toString(), mutableListOf<GrappiField>()::class.java) as MutableList<GrappiField>
+        val typeToken = object: TypeToken<List<GrappiField>>(){}.type
+        val fields = gson.fromJson(fieldsArray.toString(), typeToken) as List<GrappiField>
         val arcGISFields = fieldsTransform(fields)
         Log.d(TAG, fields.toString())
         return arcGISFields
@@ -92,11 +94,11 @@ object ClientLayersController {
                 val paths = json.getJSONArray("paths")
                 for (i in 0 until paths.length()){
                     val innerArray = paths.getJSONArray(i)
-                    var pathPoints = mutableListOf<Point>()
                     for (j in 0 until innerArray.length()){
                         val x = innerArray.getJSONArray(j).get(0) as Double
                         val y = innerArray.getJSONArray(j).get(1) as Double
-                        val point = com.esri.arcgisruntime.geometry.Point(x, y, spatialReference)
+                        val point = PointBuilder(x, y).toGeometry()
+                        Log.d(TAG, point.toString())
                         pointsCollection.add(point)
                     }
                 }

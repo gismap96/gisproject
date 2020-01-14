@@ -65,7 +65,11 @@ class ClientFeatureCollectionLayer () {
         this.spatialReference = spatialReference
         initProperties()
     }
-    constructor(json: JSONObject): this() {
+    constructor(json: JSONObject, mMapView: MapView): this() {
+        this.spatialReference = mMapView.spatialReference
+        collection = FeatureCollection()
+        layer = FeatureCollectionLayer(collection)
+        layer.name = "שכבת משתמש" + "##$$"
         this.fieldsArray = ClientLayersController.generateFieldsArray(json)
         this.featureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POLYLINE, spatialReference)
         this.featureCollectionTable.renderer = renderer
@@ -75,6 +79,7 @@ class ClientFeatureCollectionLayer () {
     }
 
     private fun addFeatureList(){
+        Log.d(TAG, features[0].featureTable.hasGeometry().toString())
         featureCollectionTable.addFeaturesAsync(features)
     }
     private fun createFeaturesFromJSON(json: JSONObject) {
@@ -88,7 +93,7 @@ class ClientFeatureCollectionLayer () {
             val polyline = PolylineBuilder(pointsCollection)
             val polylineGeometry = polyline.toGeometry()
             val attributesJSON = item.getJSONObject("attributes").toString()
-            val attTypeToken = object : TypeToken<Map<String, Any>>() {}.type
+            val attTypeToken = object : TypeToken<HashMap<String, Any>>() {}.type
             val mAttMap = gson.fromJson(attributesJSON, attTypeToken) as HashMap<String, Any>
             generateFeature(mAttMap, polylineGeometry)
         }
