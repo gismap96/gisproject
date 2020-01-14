@@ -2,21 +2,23 @@ package com.bgvofir.grappygis.ClientFeatureLayers
 
 import android.graphics.Color
 import android.util.Log
-import com.bgvofir.grappygis.FormatGeometry.FormatJSONCollectionFeature
+import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController
+import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController.generatePointsArray
 import com.bgvofir.grappygis.ProjectRelated.ProjectId
+import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
 import com.esri.arcgisruntime.data.Feature
 import com.esri.arcgisruntime.data.FeatureCollection
 import com.esri.arcgisruntime.data.FeatureCollectionTable
 import com.esri.arcgisruntime.data.Field
-import com.esri.arcgisruntime.geometry.Geometry
-import com.esri.arcgisruntime.geometry.GeometryType
-import com.esri.arcgisruntime.geometry.SpatialReference
+import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol
 import com.esri.arcgisruntime.symbology.SimpleRenderer
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -36,11 +38,6 @@ class ClientFeatureCollectionLayer () {
     var lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.WHITE, 3.5f)
     var renderer = SimpleRenderer(lineSymbol)
 
-    constructor(name: String): this(){
-        this.name = name
-        layer.name = "$name$$##"
-        generateIDField()
-    }
     constructor(name: String, id: String): this(){
         this.name = name
         layer.name = "$name$$##"
@@ -68,7 +65,45 @@ class ClientFeatureCollectionLayer () {
         this.spatialReference = spatialReference
         initProperties()
     }
+    constructor(json: JSONObject): this() {
+        this.fieldsArray = ClientLayersController.generateFieldsArray(json)
+        this.featureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POLYLINE, spatialReference)
+        this.featureCollectionTable.renderer = renderer
+        this.collection.tables.add(featureCollectionTable)
+        createFeaturesFromJSON(json)
+        addFeatureList()
+    }
 
+    private fun addFeatureList(){
+        featureCollectionTable.addFeaturesAsync(features)
+    }
+    private fun createFeaturesFromJSON(json: JSONObject) {
+        val features = json.getJSONArray("features")
+        val gson = Gson()
+        for (i in 0 until features.length()) {
+            val item = features.getJSONObject(i)
+            val geometry = item.getJSONObject("geometry")
+            val pointsArray = generatePointsArray(SketcherEditorTypes.POLYLINE, geometry, spatialReference)
+            var pointsCollection = PointCollection(pointsArray)
+            val polyline = PolylineBuilder(pointsCollection)
+            val polylineGeometry = polyline.toGeometry()
+            val attributesJSON = item.getJSONObject("attributes").toString()
+            val attTypeToken = object : TypeToken<Map<String, Any>>() {}.type
+            val mAttMap = gson.fromJson(attributesJSON, attTypeToken) as HashMap<String, Any>
+            generateFeature(mAttMap, polylineGeometry)
+        }
+    }
+    fun generateFeature(attributes: HashMap<String, Any>,geometry: Geometry){
+        val feature = featureCollectionTable.createFeature(attributes, geometry) as Feature
+        features.add(feature)
+    }
+    fun createFeature(attributes: HashMap<String, Any>,geometry: Geometry){
+        val newAttributes = attributes.toMutableMap()
+        newAttributes["Id"] = UUID.randomUUID().toString()
+        val feature = featureCollectionTable.createFeature(newAttributes,geometry) as Feature
+        features.add(feature)
+        featureCollectionTable.addFeatureAsync(feature)
+    }
 
     private fun initProperties(){
         if (fields.size > 0){
@@ -93,13 +128,7 @@ class ClientFeatureCollectionLayer () {
         renderer = SimpleRenderer(lineSymbol)
         featureCollectionTable.renderer = renderer
     }
-    fun createFeature(attributes: HashMap<String, Any>,geometry: Geometry){
-        val newAttributes = attributes.toMutableMap()
-        newAttributes["Id"] = UUID.randomUUID().toString()
-        val feature = featureCollectionTable.createFeature(newAttributes,geometry) as Feature
-        features.add(feature)
-        featureCollectionTable.addFeatureAsync(feature)
-    }
+
 
     fun setNameForLayer(name: String){
         this.name = name
