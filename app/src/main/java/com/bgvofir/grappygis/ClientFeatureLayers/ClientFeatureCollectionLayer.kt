@@ -57,7 +57,7 @@ class ClientFeatureCollectionLayer () {
     }
     constructor(name: String, id: String, fields: MutableList<GrappiField>, lineSymbol: SimpleLineSymbol, spatialReference: SpatialReference): this(){
         this.name = name
-        layer.name = "$name$$##"
+        layer.name = "$name\$\$##"
         this.id = id
         generateIDField()
         this.fields.plusAssign(fields)
@@ -69,8 +69,9 @@ class ClientFeatureCollectionLayer () {
         this.spatialReference = mMapView.spatialReference
         collection = FeatureCollection()
         layer = FeatureCollectionLayer(collection)
-        layer.name = "שכבת משתמש" + "##$$"
+        layer.name = "פוליליין משתמש" + "\$\$##"
         this.fieldsArray = ClientLayersController.generateFieldsArray(json)
+        this.fields = ClientLayersController.generateGrappiFields(json)
         this.featureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POLYLINE, spatialReference)
         this.featureCollectionTable.renderer = renderer
         this.collection.tables.add(featureCollectionTable)
@@ -87,6 +88,7 @@ class ClientFeatureCollectionLayer () {
         val gson = Gson()
         for (i in 0 until features.length()) {
             val item = features.getJSONObject(i)
+            item.getJSONObject("attributes").remove("OBJECTID")
             val geometry = item.getJSONObject("geometry")
             val pointsArray = generatePointsArray(SketcherEditorTypes.POLYLINE, geometry, spatialReference)
             var pointsCollection = PointCollection(pointsArray)
@@ -186,27 +188,7 @@ class ClientFeatureCollectionLayer () {
         resultJson.put("features", generateFeaturesForJSON())
         return resultJson
     }
-//    fun polylineToJSON(geometry: Geometry){
-//        val result = JSONObject()
-//        result.put("displayFieldName", "meow")
-//        result.put("fieldAliases", FormatJSONGeometry.fieldAlisas())
-//        result.put("geometryType", "esriGeometryPolyline")
-//        result.put("spatialReference", FormatJSONGeometry.spatialReference())
-//        val fieldsElement = JSONArray()
-//        fieldsElement.put(FormatJSONGeometry.fields("FID", "esriFieldTypeOID"))
-//        fieldsElement.put(FormatJSONGeometry.fields("Id", "esriFieldTypeInteger"))
-//        result.put("fields", fieldsElement)
-//        var features = JSONArray()
-//        var mFirstFeature = JSONObject()
-//        mFirstFeature.put("attributes", FormatJSONGeometry.attributes(0, 0))
-//        var geometryJSONObject = JSONObject()
-//        geometryJSONObject.put("paths", FormatJSONGeometry.getPaths(geometry))
-//        mFirstFeature.put("geometry", geometryJSONObject)
-//
-//        features.put(mFirstFeature)
-//        result.put("features", features)
-//        Log.d(FormatJSONGeometry.TAG, result.toString())
-//    }
+
 
     private fun generateFeaturesForJSON(): JSONArray{
         val json = JSONArray()

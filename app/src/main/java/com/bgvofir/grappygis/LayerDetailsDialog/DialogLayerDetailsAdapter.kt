@@ -31,7 +31,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
     val TAG = "layerDetails"
 //    var elementsColor = mutableMapOf<Int, Boolean>()
     var rowValues = ArrayList<RowValue>()
-
+    var isUserLayer = false
 
     init{
         var isColored = false
@@ -44,10 +44,20 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
                     //elementsColor[rowValues.size] = isColored
                     rowValues.add(rowValue)
                 }
+                if (it.key == "ObjectID"){
+                    isUserLayer = true
+                }
             }
             isColored = !isColored
         }
-
+        if (isUserLayer){
+            polylineInit()
+        }
+    }
+    private fun polylineInit(){
+        val element = rowValues[rowValues.size - 1]
+        rowValues.remove(element)
+        rowValues.add(0, element)
     }
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DialogLayerDetailsAdapterViewHolder {
@@ -71,7 +81,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
 //            }
 //        }
         p0.bind(rowValues[p1].key, rowValues[p1].value, p1)
-        if (rowValues[p1].key == "FID"){
+        if (rowValues[p1].key == "FID" || rowValues[p1].key == "ObjectID"){
             p0.itemView.setBackgroundColor(Color.WHITE)
             p0.itemView.rowLayersDetailsValue.setBackgroundColor(Color.WHITE)
             p0.itemView.rowLayersDetailsValue.setTextColor(ResourcesCompat.getColor(context.resources, R.color.dark_blue, null))
@@ -96,7 +106,29 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
         private var previewImage = v.rowDetailsPreviewImageView
 
         fun bind(key: String, value: String, itemNum: Int){
-            if (key == "תצוגה מקדימה"){
+            if (isUserLayer && key != "תצוגה מקדימה"){
+                when (key){
+                    "ObjectID" ->{
+                        valueTextView.text = value
+                        keyTextView.text = "FID"
+                        return
+                    }
+                    "category" ->{
+                        val newValue = value.replace("_"," ")
+                        valueTextView.text = newValue
+                        keyTextView.text = "סיווג"
+                        return
+                    }
+                    "Id" ->{
+                        valueTextView.text = value
+                        keyTextView.text = "מספר מזהה"
+                        return
+                    }
+                    else ->{
+
+                    }
+                }
+            } else if (key == "תצוגה מקדימה"){
                 valueTextView.visibility = View.GONE
                 keyTextView.visibility = View.GONE
                 previewImage.visibility = View.VISIBLE

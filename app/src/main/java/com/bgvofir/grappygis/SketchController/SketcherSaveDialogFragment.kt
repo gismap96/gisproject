@@ -44,11 +44,11 @@ class SketcherSaveDialogFragment(context: Context, mMapView: MapView, isZift2: B
         val type = SketchEditorController.sketcherEditorTypes
         val category = addCategoryToSketcherSaveET.text.toString()
 
-        if (!iszift2){
-            FeatureLayerController.addGeometryToMap(geometry, mMapView, "קו מגניב", type, category)
-        } else {
-            FeatureLayerController.addNewGeometry(geometry, mMapView, "סתם קו")
-        }
+//        if (!iszift2){
+//            FeatureLayerController.addGeometryToMap(geometry, mMapView, "קו מגניב", type, category)
+//        } else {
+//            FeatureLayerController.addNewGeometry(geometry, mMapView, "סתם קו")
+//        }
 
         val toast = Toast.makeText(context, "polyline saved", Toast.LENGTH_SHORT)
         toast.setGravity(Gravity.CENTER,0,0)

@@ -60,6 +60,7 @@ import com.bgvofir.grappygis.LegendSidebar.LegendGroup;
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController;
 import com.bgvofir.grappygis.LegendSidebar.LegendSidebarAdapter;
 import com.bgvofir.grappygis.ProjectRelated.ProjectId;
+import com.bgvofir.grappygis.ProjectRelated.UserPolyline;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes;
 import com.bgvofir.grappygis.SketchController.SketcherSaveDialogFragment;
@@ -205,7 +206,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private TextView cleanSketcherTV;
     private ImageView setNorthBtn;
     private SketchEditor mSketcher;
-    private ClientFeatureCollectionLayer clientPolyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -272,10 +272,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         zift2 = findViewById(R.id.zift2);
-//        zift2.setVisibility(View.GONE);
-        zift2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        zift2.setVisibility(View.GONE);
+//        zift2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
 //                Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
 //                if (geometry == null){
 //                    Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
@@ -285,10 +285,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                }
 //                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true);
 //                layerAttributes.show();
-
-                ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
-            }
-        });
+//            }
+//        });
 //        zift2.setVisibility(View.GONE);
         cleanSketcherTV = findViewById(R.id.cleanSketcherTV);
         cleanSketcherTV.setOnClickListener(new View.OnClickListener() {
@@ -479,7 +477,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem(), clientPoint.getUser());
                     }
                     if (displayLegendFlag) {
-                        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+                        ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
                     } else {
                         displayLegendFlag = true;
                     }
@@ -577,7 +575,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
                             if (displayLegendFlag){
-                                LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+                                ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
+
                             } else {
                                 displayLegendFlag = true;
                             }
@@ -1619,17 +1618,22 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         if (animator instanceof SimpleItemAnimator){
             ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
         }
-
     }
 
     @Override
     public void onClientPolylineJSONDownloaded(@NotNull JSONObject json) {
-        clientPolyline = new ClientFeatureCollectionLayer(json, mMapView);
-        mMapView.getMap().getOperationalLayers().add(clientPolyline.getLayer());
+        UserPolyline.INSTANCE.setUserPolyline(new ClientFeatureCollectionLayer(json, mMapView));
+        mMapView.getMap().getOperationalLayers().add(UserPolyline.INSTANCE.getUserPolyline().getLayer());
+        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
     }
 
     @Override
     public void onClientPolygonnJSONDownloaded(@NotNull JSONObject json) {
 
+    }
+
+    @Override
+    public void onEmptyClientPolylineJSON() {
+        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
     }
 }

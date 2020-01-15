@@ -116,6 +116,9 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
             holder.iconForClientPointIV.setVisibility(View.VISIBLE);
 
         }
+        if (layer.getName().contains("פוליליין משתמש")){
+            holder.layerName.setText("פוליליין שלי");
+        }
     }
     /**
      * Returns the total number of items in the data set held by the adapter.

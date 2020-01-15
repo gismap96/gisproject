@@ -35,19 +35,9 @@ object ClientLayersController {
         childRef.getFile(localClientPolylineFile).addOnSuccessListener {
             val json = JSONObject(generateJson())
             callback.onClientPolylineJSONDownloaded(json)
-//            val features = json.getJSONArray("features")
-//            val gson = Gson()
-//            val allAttributesMap = mutableListOf<Map<String, Any>>()
-//            for (i in 0 until features.length()){
-//                val item = features.getJSONObject(i)
-//                val geometry = item.getJSONObject("geometry")
-//                val pointsArray = generatePointsArray(SketcherEditorTypes.POLYLINE, geometry)
-//                val attributesJSON = item.getJSONObject("attributes").toString()
-//                val attTypeToken = object: TypeToken<Map<String, Any>>(){}.type
-//                val mAttMap = gson.fromJson(attributesJSON, attTypeToken) as Map<String, Any>
-//                allAttributesMap.add(mAttMap)
-//
-//            }
+
+        }.addOnFailureListener{
+            callback.onEmptyClientPolylineJSON()
         }
     }
 
@@ -64,6 +54,15 @@ object ClientLayersController {
         Log.d(TAG, fields.toString())
         return arcGISFields
     }
+    fun generateGrappiFields(json: JSONObject): MutableList<GrappiField>{
+        val gson = Gson()
+        val fieldsArray = json.getJSONArray("fields")
+        fieldsArray.remove(0)
+        val typeToken = object: TypeToken<MutableList<GrappiField>>(){}.type
+        val fields = gson.fromJson(fieldsArray.toString(), typeToken) as MutableList<GrappiField>
+        return fields
+    }
+
 
     fun fieldsTransform(fields: List<GrappiField>): MutableList<Field>{
         val fieldsArray = mutableListOf<Field>()
@@ -127,5 +126,6 @@ object ClientLayersController {
     interface OnClientLayersJSONDownloaded{
         fun onClientPolylineJSONDownloaded(json: JSONObject)
         fun onClientPolygonnJSONDownloaded(json: JSONObject)
+        fun onEmptyClientPolylineJSON()
     }
 }
