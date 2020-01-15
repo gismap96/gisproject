@@ -51,4 +51,5 @@
     <string name="client_point">User Pin</string>
     <string name="description">description</string>
     <string name="category">Category</string>
+    <string name="polyline_saved">Polyline Saved</string>
 </resources>

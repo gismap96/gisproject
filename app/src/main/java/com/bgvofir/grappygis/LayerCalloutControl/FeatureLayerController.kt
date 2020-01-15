@@ -238,7 +238,7 @@ object FeatureLayerController {
         attributes.put("category", category)
         collection2!!.createFeature(attributes, geometry)
         SketchEditorController.clean(mMap)
-        collection2!!.uploadJSON()
+        collection2!!.generateARCGISJSON()
     }
     fun addGeometryToMap(geometry: Geometry, mMap: MapView, name: String, sketcherEditorTypes: SketcherEditorTypes, category:String){
 
@@ -284,7 +284,7 @@ object FeatureLayerController {
 
         clientFeatureCollection!!.createFeature(attributes, geometry)
         SketchEditorController.clean(mMap)
-        clientFeatureCollection!!.uploadJSON()
+        //clientFeatureCollection!!.uploadJSON()
     }
 
 }

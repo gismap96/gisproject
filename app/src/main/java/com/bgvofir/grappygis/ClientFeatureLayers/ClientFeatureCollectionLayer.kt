@@ -164,7 +164,7 @@ class ClientFeatureCollectionLayer () {
 
     }
 
-    fun uploadJSON(){
+    fun uploadJSON(callback: OnPolylineUploadFinish){
         val mProjectId = ProjectId.projectId
         val firebaseStorage = FirebaseStorage.getInstance()
         val storageRef = firebaseStorage.reference
@@ -172,6 +172,7 @@ class ClientFeatureCollectionLayer () {
         val childRef = storageRef.child("settlements/$mProjectId/userLayers/$username/polyline.json")
         val json = generateARCGISJSON().toString().toByteArray()
         childRef.putBytes(json).addOnSuccessListener {
+            callback.onPolylineUploadFinish()
             Log.d(TAG, "file sent")
         }.addOnFailureListener{
             e->
@@ -245,5 +246,9 @@ class ClientFeatureCollectionLayer () {
         }
         return json
 
+    }
+
+    interface OnPolylineUploadFinish{
+        fun onPolylineUploadFinish()
     }
 }

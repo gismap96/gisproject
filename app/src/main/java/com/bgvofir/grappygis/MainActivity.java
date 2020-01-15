@@ -59,6 +59,7 @@ import com.bgvofir.grappygis.LayerDetailsDialog.DialogLayerDetailsFragment;
 import com.bgvofir.grappygis.LegendSidebar.LegendGroup;
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController;
 import com.bgvofir.grappygis.LegendSidebar.LegendSidebarAdapter;
+import com.bgvofir.grappygis.ProjectRelated.MapProperties;
 import com.bgvofir.grappygis.ProjectRelated.ProjectId;
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
@@ -148,19 +149,16 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
-, LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded{
+, LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish{
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
     private static String extSDCardDirName;
     private Callout mCallout;
     private RecyclerView mLayerRecyclerView;
-    private MapLayerAdapter mContentAdapter;
     private boolean mIsDistance;
     private Point mFirstDistanceClick;
     private GraphicsOverlay mDistanceOverlay;
-    private String locationProvider;
-    private LocationManager locationManager;
     private boolean isAllGranted;
     private ProgressBar mapProgress;
     LocationDisplay locationDisplay;
@@ -215,6 +213,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         FirebaseApp.initializeApp(this);
 
         displayLegendFlag = false;
+        UserPolyline.INSTANCE.initFields();
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
@@ -272,21 +271,21 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         zift2 = findViewById(R.id.zift2);
-        zift2.setVisibility(View.GONE);
-//        zift2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
-//                if (geometry == null){
-//                    Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
-//                    toast.setGravity(Gravity.CENTER,0,0);
-//                    toast.show();
-//                    return;
-//                }
-//                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true);
-//                layerAttributes.show();
-//            }
-//        });
+//        zift2.setVisibility(View.GONE);
+        zift2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
+                if (geometry == null){
+                    Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER,0,0);
+                    toast.show();
+                    return;
+                }
+                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this);
+                layerAttributes.show();
+            }
+        });
 //        zift2.setVisibility(View.GONE);
         cleanSketcherTV = findViewById(R.id.cleanSketcherTV);
         cleanSketcherTV.setOnClickListener(new View.OnClickListener() {
@@ -561,6 +560,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
                     mMapView.getMap().getOperationalLayers().add(0, rasterLayer);
+                    MapProperties.INSTANCE.setSpatialReference(mMapView.getSpatialReference());
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -1635,5 +1635,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onEmptyClientPolylineJSON() {
         LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+    }
+
+    @Override
+    public void onPolylineUploadFinish() {
+        Toast toast = Toast.makeText(this, R.string.polyline_saved, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER,0,0);
+        toast.show();
     }
 }

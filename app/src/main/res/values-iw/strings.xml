@@ -50,4 +50,5 @@
     <string name="client_point">דקירה ממשתמש</string>
     <string name="description">תאור</string>
     <string name="category">סיווג</string>
+    <string name="polyline_saved">הפוליליין נשמר</string>
 </resources>
