@@ -52,4 +52,5 @@
     <string name="description">description</string>
     <string name="category">Category</string>
     <string name="polyline_saved">Polyline Saved</string>
+    <string name="my_polyline">My Polyline</string>
 </resources>

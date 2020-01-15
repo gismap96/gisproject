@@ -8,6 +8,7 @@ object UserPolyline{
     var grappiFields = mutableListOf<GrappiField>()
 
     fun initFields(){
+        grappiFields.clear()
         grappiFields.add(GrappiField("category", "esriFieldTypeString", "סיווג", 255))
     }
 }

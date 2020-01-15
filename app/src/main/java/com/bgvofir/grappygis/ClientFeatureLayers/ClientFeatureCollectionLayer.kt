@@ -1,10 +1,14 @@
 package com.bgvofir.grappygis.ClientFeatureLayers
 
+import android.content.Context
 import android.graphics.Color
+import android.support.v4.content.ContextCompat
+import android.support.v4.content.res.ResourcesCompat
 import android.util.Log
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController.generatePointsArray
 import com.bgvofir.grappygis.ProjectRelated.ProjectId
+import com.bgvofir.grappygis.R
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
 import com.esri.arcgisruntime.data.Feature
 import com.esri.arcgisruntime.data.FeatureCollection
@@ -35,7 +39,7 @@ class ClientFeatureCollectionLayer () {
     var fields = mutableListOf<GrappiField>()
     private var fieldsArray = mutableListOf<Field>()
     private lateinit var featureCollectionTable: FeatureCollectionTable
-    var lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.WHITE, 3.5f)
+    var lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.rgb(255,97,97) ,3.5f)
     var renderer = SimpleRenderer(lineSymbol)
 
     constructor(name: String, id: String): this(){
@@ -113,6 +117,9 @@ class ClientFeatureCollectionLayer () {
     }
 
     private fun initProperties(){
+        val setFields = fields.toSet()
+        fields.clear()
+        fields = setFields.toMutableList()
         if (fields.size > 0){
             fieldsTransform()
         }

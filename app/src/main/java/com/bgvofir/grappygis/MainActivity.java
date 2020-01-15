@@ -282,7 +282,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     toast.show();
                     return;
                 }
-                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this);
+                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this);
                 layerAttributes.show();
             }
         });

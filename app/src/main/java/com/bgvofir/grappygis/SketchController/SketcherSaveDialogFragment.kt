@@ -12,7 +12,9 @@ import android.view.Window
 import android.widget.Toast
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
+import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController
 import com.bgvofir.grappygis.ProjectRelated.MapProperties
+import com.bgvofir.grappygis.ProjectRelated.ProjectId
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline
 import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.mapping.view.MapView
@@ -20,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_dialog_sketcher_save_input.*
 import java.util.*
 
 class SketcherSaveDialogFragment(context: Context, mMapView: MapView, isZift2: Boolean,
-                                 callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish): Dialog(context), View.OnClickListener {
+                                 callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish, val layerListener: LegendLayerDisplayController.LayerGroupsListener): Dialog(context), View.OnClickListener {
 
     val callback = callback
 
@@ -54,9 +56,13 @@ class SketcherSaveDialogFragment(context: Context, mMapView: MapView, isZift2: B
                     UserPolyline.initFields()
                     UserPolyline.userPolyline = ClientFeatureCollectionLayer("פוליליין ממשתמש", UUID.randomUUID().toString(),
                             UserPolyline.grappiFields, MapProperties.spatialReference!!)
+                    mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
+                    layerListener.successListener()
                 } else if (UserPolyline.userPolyline!!.features.size == 0){
                     UserPolyline.userPolyline = ClientFeatureCollectionLayer("פוליליין ממשתמש", UUID.randomUUID().toString(),
                             UserPolyline.grappiFields, MapProperties.spatialReference!!)
+                    mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
+                    layerListener.successListener()
                 }
                 val attributes = hashMapOf<String, Any>()
                 attributes.put("category", category)
@@ -70,6 +76,7 @@ class SketcherSaveDialogFragment(context: Context, mMapView: MapView, isZift2: B
         }
         dismiss()
     }
+
 
     override fun onClick(v: View?) {
         when (v?.id){

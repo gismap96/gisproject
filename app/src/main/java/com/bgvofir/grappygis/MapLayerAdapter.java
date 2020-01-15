@@ -119,6 +119,11 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
         if (layer.getName().contains("פוליליין משתמש")){
             holder.layerName.setText("פוליליין שלי");
         }
+        if (layer.getName().contains("$$##")){
+            if (layer.getName().contains("פוליליין")){
+                holder.layerName.setText(R.string.my_polyline);
+            }
+        }
     }
     /**
      * Returns the total number of items in the data set held by the adapter.
