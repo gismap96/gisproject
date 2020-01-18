@@ -24,7 +24,7 @@
     <string name="take_photo_prompt">Would you like to take a photo and connect it to this entry?</string>
     <string name="description_alias">Description</string>
     <string name="pic_url_alias">URL</string>
-    <string name="add_category">Add category</string>
+
     <string name="field_mandatory">This field is mandatory</string>
     <string name="update_system">Update system</string>
     <string name="version_text">Beta</string>
@@ -53,4 +53,9 @@
     <string name="category">Category</string>
     <string name="polyline_saved">Polyline Saved</string>
     <string name="my_polyline">My Polyline</string>
+    <string name="add_category">Add category</string>
+    <string name="add_number">Add number</string>
+    <string name="save">Save</string>
+    <string name="add_data">Add data to</string>
+    <string name="polyline_layer">Polyline layer</string>
 </resources>

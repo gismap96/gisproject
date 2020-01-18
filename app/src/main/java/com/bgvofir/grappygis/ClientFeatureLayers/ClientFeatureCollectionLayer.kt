@@ -84,7 +84,6 @@ class ClientFeatureCollectionLayer () {
     }
 
     private fun addFeatureList(){
-        Log.d(TAG, features[0].featureTable.hasGeometry().toString())
         featureCollectionTable.addFeaturesAsync(features)
     }
     private fun createFeaturesFromJSON(json: JSONObject) {

@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.row_for_layer_details_dialog.view.*
 import java.lang.Exception
 import java.util.ArrayList
 
-class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<Map<String, String>>): RecyclerView.Adapter<DialogLayerDetailsAdapter.DialogLayerDetailsAdapterViewHolder>(){
+class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayList<MutableMap<String, String>>): RecyclerView.Adapter<DialogLayerDetailsAdapter.DialogLayerDetailsAdapterViewHolder>(){
 
     val TAG = "layerDetails"
 //    var elementsColor = mutableMapOf<Int, Boolean>()
@@ -55,6 +55,7 @@ class DialogLayerDetailsAdapter(val context: Context, displayLayers: ArrayList<M
         }
     }
     private fun polylineInit(){
+        rowValues.clear()
         val element = rowValues[rowValues.size - 1]
         rowValues.remove(element)
         rowValues.add(0, element)

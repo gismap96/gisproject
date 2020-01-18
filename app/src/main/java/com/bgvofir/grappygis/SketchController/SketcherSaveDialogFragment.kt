@@ -11,13 +11,12 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.Toast
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
-import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController
 import com.bgvofir.grappygis.ProjectRelated.MapProperties
-import com.bgvofir.grappygis.ProjectRelated.ProjectId
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline
 import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.mapping.view.MapView
+import kotlinx.android.synthetic.main.description_dialog.*
 import kotlinx.android.synthetic.main.fragment_dialog_sketcher_save_input.*
 import java.util.*
 
@@ -36,6 +35,7 @@ class SketcherSaveDialogFragment(context: Context, mMapView: MapView, isZift2: B
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         closeSketcherSaveTV.setOnClickListener(this)
+        cancelSketcherSaveTV.setOnClickListener(this)
 
     }
 
@@ -50,10 +50,13 @@ class SketcherSaveDialogFragment(context: Context, mMapView: MapView, isZift2: B
         }
         val type = SketchEditorController.sketcherEditorTypes
         val category = addCategoryToSketcherSaveET.text.toString()
+        val number = addNumberToSketcherSaveET.text.toString().toDouble()
+        val description = addDescriptionSketcherSaveET.text.toString()
+        var isUpdated = "no"
+        if (updateToSystemSketchSaveSW.isChecked) isUpdated = "yes"
         when (type){
             SketcherEditorTypes.POLYLINE -> {
                 if (UserPolyline.userPolyline == null){
-                    UserPolyline.initFields()
                     UserPolyline.userPolyline = ClientFeatureCollectionLayer("פוליליין ממשתמש", UUID.randomUUID().toString(),
                             UserPolyline.grappiFields, MapProperties.spatialReference!!)
                     mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
@@ -66,6 +69,9 @@ class SketcherSaveDialogFragment(context: Context, mMapView: MapView, isZift2: B
                 }
                 val attributes = hashMapOf<String, Any>()
                 attributes.put("category", category)
+                attributes.put("description", description)
+                attributes.put("number", number)
+                attributes.put("isUpdated", isUpdated)
                 UserPolyline.userPolyline!!.createFeature(attributes, geometry)
                 SketchEditorController.clean(mMapView)
                 UserPolyline.userPolyline!!.uploadJSON(callback)
@@ -77,11 +83,32 @@ class SketcherSaveDialogFragment(context: Context, mMapView: MapView, isZift2: B
         dismiss()
     }
 
+    fun validate(): Boolean{
+        if (addDescriptionSketcherSaveET.text.toString().trim().isEmpty() || addDescriptionSketcherSaveET.text == null){
+            addDescriptionSketcherSaveET.error = context.getString(R.string.field_mandatory)
+            return false
+        }
+        if (addNumberToSketcherSaveET.text.toString().trim().isEmpty() || addNumberToSketcherSaveET.text == null){
+            addNumberToSketcherSaveET.error = context.getString(R.string.field_mandatory)
+            return false
+        }
+        if (addCategoryToSketcherSaveET.text.toString().trim().isEmpty() || addCategoryToSketcherSaveET.text == null){
+            addCategoryToSketcherSaveET.error = context.getString(R.string.field_mandatory)
+            return false
+        }
+        return true
+    }
 
     override fun onClick(v: View?) {
         when (v?.id){
             R.id.closeSketcherSaveTV ->{
-                setGeometry()
+                if (validate()){
+                    setGeometry()
+                }
+
+            }
+            R.id.cancelSketcherSaveTV->{
+                dismiss()
             }
         }
     }
