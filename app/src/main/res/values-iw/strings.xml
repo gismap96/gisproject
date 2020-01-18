@@ -48,10 +48,14 @@
     <string name="description">תאור</string>
     <string name="category">סיווג</string>
     <string name="polyline_saved">הפוליליין נשמר</string>
-    <string name="my_polyline">פוליליין שלי</string>
+    <string name="my_polyline">שכבה קווית שלי</string>
     <string name="add_category">הוספת סיווג</string>
     <string name="add_number">הוספת מספר</string>
     <string name="save">שמור</string>
     <string name="add_data">הוספת נתונים</string>
     <string name="polyline_layer">שכבה קווית</string>
+    <string name="number">מספר</string>
+    <string name="yes">כן</string>
+    <string name="update_system_show">לעדכון</string>
+    <string name="no">לא</string>
 </resources>

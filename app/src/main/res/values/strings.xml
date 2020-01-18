@@ -56,6 +56,10 @@
     <string name="add_category">Add category</string>
     <string name="add_number">Add number</string>
     <string name="save">Save</string>
+    <string name="polyline_layer">Polyline Layer</string>
     <string name="add_data">Add data to</string>
-    <string name="polyline_layer">Polyline layer</string>
+    <string name="number">Number</string>
+    <string name="yes">Yes</string>
+    <string name="update_system_show">To update</string>
+    <string name="no">No</string>
 </resources>

@@ -37,6 +37,8 @@ import kotlin.collections.HashSet
 object FeatureLayerController {
     var point: android.graphics.Point? = null
     var tolerance = 10.0
+    var isUserLayer = false
+    var shapeType = SketcherEditorTypes.POLYLINE
     var clientFeatureCollection: ClientFeatureCollectionLayer? = null
     var collection2: ClientFeatureCollectionLayer? = null
 
@@ -80,8 +82,10 @@ object FeatureLayerController {
             return featureCollectionDetails(forLayer)
         }
         if (forLayer.layerContent.name.contains("\$\$##")){
+            isUserLayer = true
             return parseFeatureCollection(forLayer)
         }
+        isUserLayer = false
         var mAttributesString = ArrayList<String>()
         var layersAttributeList = ArrayList<Map<String, String>>()
         var mAliasesMap = mutableMapOf<String, String>() // <name, alias>

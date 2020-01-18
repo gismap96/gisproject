@@ -148,12 +148,12 @@ object LegendLayerDisplayController{
 
         Log.d(TAG, legendIds.toString())
         layers.forEach {
-            val layerName = it.name
+            var layerName = it.name
             val layerid = it.id
             if (layerName.contains(".jpg") || layerName.contains(".tif") || layerName.contains(".ecw")){
                 legendGroupMap[orthophotoName]?.add(it)
-            } else
-            if (legendIds.containsKey(layerid)){
+            }
+            else if (legendIds.containsKey(layerid)){
                 val layerGroupName = legendIds[layerid]
                 legendGroupMap[layerGroupName]?.add(it)
             }

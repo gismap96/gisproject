@@ -16,6 +16,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
+import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController.isUserLayer
 import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter
 import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
@@ -31,31 +33,52 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
     val TAG = "layerDetails"
 //    var elementsColor = mutableMapOf<Int, Boolean>()
     var rowValues = ArrayList<RowValue>()
-    var isUserLayer = false
 
     init{
         var isColored = false
 //        elementsColor.clear()
         rowValues.clear()
-        displayLayers.forEach {
-            it.forEach {
-                if (it.key != "uid") {
-                    val rowValue = RowValue(it.key, it.value)
-                    //elementsColor[rowValues.size] = isColored
-                    rowValues.add(rowValue)
-                }
-                if (it.key == "ObjectID"){
-                    isUserLayer = true
-                }
-            }
-            isColored = !isColored
-        }
-        if (isUserLayer){
+        if (FeatureLayerController.isUserLayer){
             polylineInit()
+
+        }else {
+            displayLayers.forEach {
+                it.forEach {
+                    if (it.key != "uid") {
+                        val rowValue = RowValue(it.key, it.value)
+                        //elementsColor[rowValues.size] = isColored
+                        rowValues.add(rowValue)
+                    }
+//                if (it.key == "ObjectID"){
+//                    isUserLayer = true
+//                }
+                }
+                isColored = !isColored
+            }
         }
+
     }
     private fun polylineInit(){
-        rowValues.clear()
+        displayLayers.forEach {
+            it.forEach {
+                when (it.key){
+                    "OBJECTID"-> rowValues.add(RowValue("FID", it.value))
+                    "ObjectID"-> rowValues.add(RowValue("FID", it.value))
+                    "category"-> rowValues.add(RowValue(context.resources.getString(R.string.category), it.value))
+                    "description"-> rowValues.add(RowValue(context.resources.getString(R.string.description), it.value))
+                    "isUpdated"-> {
+                        if (it.value == "yes"){
+                            rowValues.add(RowValue(context.resources.getString(R.string.update_system_show),
+                                    context.resources.getString(R.string.yes)))
+                        } else {
+                            rowValues.add(RowValue(context.resources.getString(R.string.update_system_show),
+                                    context.resources.getString(R.string.yes)))
+                        }
+                    }
+                    "number"-> rowValues.add(RowValue(context.resources.getString(R.string.number), it.value))
+                }
+            }
+        }
         val element = rowValues[rowValues.size - 1]
         rowValues.remove(element)
         rowValues.add(0, element)
@@ -66,21 +89,13 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
         return DialogLayerDetailsAdapterViewHolder(v)
     }
 
-
     override fun getItemCount(): Int {
         Log.d(TAG, rowValues.size.toString())
         return rowValues.size
     }
 
     override fun onBindViewHolder(p0: DialogLayerDetailsAdapterViewHolder, p1: Int) {
-//        elementsColor[p1]?.let {
-//            p0.bind(rowValues[p1].key, rowValues[p1].value)
-//            if (it){
-//                p0.itemView.setBackgroundColor(Color.GRAY)
-//            } else {
-//                p0.itemView.setBackgroundColor(Color.WHITE)
-//            }
-//        }
+
         p0.bind(rowValues[p1].key, rowValues[p1].value, p1)
         if (rowValues[p1].key == "FID" || rowValues[p1].key == "ObjectID"){
             p0.itemView.setBackgroundColor(Color.WHITE)
@@ -107,29 +122,8 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
         private var previewImage = v.rowDetailsPreviewImageView
 
         fun bind(key: String, value: String, itemNum: Int){
-            if (isUserLayer && key != "תצוגה מקדימה"){
-                when (key){
-                    "ObjectID" ->{
-                        valueTextView.text = value
-                        keyTextView.text = "FID"
-                        return
-                    }
-                    "category" ->{
-                        val newValue = value.replace("_"," ")
-                        valueTextView.text = newValue
-                        keyTextView.text = "סיווג"
-                        return
-                    }
-                    "Id" ->{
-                        valueTextView.text = value
-                        keyTextView.text = "מספר מזהה"
-                        return
-                    }
-                    else ->{
 
-                    }
-                }
-            } else if (key == "תצוגה מקדימה"){
+            if (key == "תצוגה מקדימה"){
                 valueTextView.visibility = View.GONE
                 keyTextView.visibility = View.GONE
                 previewImage.visibility = View.VISIBLE

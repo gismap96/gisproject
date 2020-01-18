@@ -69,11 +69,11 @@ class ClientFeatureCollectionLayer () {
         this.spatialReference = spatialReference
         initProperties()
     }
-    constructor(json: JSONObject, mMapView: MapView): this() {
+    constructor(json: JSONObject, mMapView: MapView, context: Context): this() {
         this.spatialReference = mMapView.spatialReference
         collection = FeatureCollection()
         layer = FeatureCollectionLayer(collection)
-        layer.name = "פוליליין משתמש" + "\$\$##"
+        layer.name = context.resources.getString(R.string.my_polyline) + "\$\$##"
         this.fieldsArray = ClientLayersController.generateFieldsArray(json)
         this.fields = ClientLayersController.generateGrappiFields(json)
         this.featureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POLYLINE, spatialReference)
