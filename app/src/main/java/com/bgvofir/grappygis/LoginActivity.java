@@ -487,8 +487,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
                     });
                 }
-                else if (value.equals(deviceId)){
+                else if (value.equals(deviceId) || Consts.IS_DEV){
                     saveProjectNameToPrefs();
+                    Toast.makeText(LoginActivity.this, "THIS IS DEV MODE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", Toast.LENGTH_LONG).show();
                 }
                 else{
                     showProgress(false);

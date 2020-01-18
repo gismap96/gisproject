@@ -8,6 +8,7 @@ public class Consts {
     public final static String DOWNLOAD_RASTER_TIME_KEY = "DOWNLOAD_RASTER_TIME";
     public final static String GRAPPY_FOLDER_NAME = "Grappy_GIS";
     public final static String USER_POLYLINE = "$$##";
+    public final static boolean IS_DEV = true;
 
 
 }
