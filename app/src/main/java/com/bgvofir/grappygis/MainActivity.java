@@ -167,6 +167,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private boolean isDeletePointMode;
     private PointCollection mPolylinePoints;
     private static final int TAKE_PICTURE = 1;
+    private static final int TAKE_PHOTO_FOR_LAYER = 2;
     private Uri imageUri;
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -1346,6 +1347,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
+            case TAKE_PHOTO_FOR_LAYER:
+                if (resultCode == Activity.RESULT_OK){
+
+                } else {
+                    UserPolyline.INSTANCE.getUserPolyline().uploadJSON(this);
+                }
+                break;
             case TAKE_PICTURE:
                 if (resultCode == Activity.RESULT_OK/* && data != null*/) {
                     uploadImage(imageUri);
