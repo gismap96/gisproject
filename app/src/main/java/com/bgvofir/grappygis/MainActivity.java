@@ -166,6 +166,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private boolean isDeletePointMode;
     private PointCollection mPolylinePoints;
     private static final int TAKE_PICTURE = 1;
+    private static final int TAKE_PHOTO_FOR_LAYER = 2;
     private Uri imageUri;
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -281,7 +282,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     toast.show();
                     return;
                 }
-                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this);
+                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this);
                 layerAttributes.show();
             }
         });
@@ -1345,6 +1346,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
+            case TAKE_PHOTO_FOR_LAYER:
+                if (resultCode == Activity.RESULT_OK){
+
+                } else {
+                    UserPolyline.INSTANCE.getUserPolyline().uploadJSON(this);
+                }
+                break;
             case TAKE_PICTURE:
                 if (resultCode == Activity.RESULT_OK/* && data != null*/) {
                     uploadImage(imageUri);
@@ -1622,7 +1630,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     public void onClientPolylineJSONDownloaded(@NotNull JSONObject json) {
-        UserPolyline.INSTANCE.setUserPolyline(new ClientFeatureCollectionLayer(json, mMapView));
+        UserPolyline.INSTANCE.setUserPolyline(new ClientFeatureCollectionLayer(json, mMapView, this));
         mMapView.getMap().getOperationalLayers().add(UserPolyline.INSTANCE.getUserPolyline().getLayer());
         LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
     }

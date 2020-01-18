@@ -54,6 +54,7 @@ object ClientLayersController {
         Log.d(TAG, fields.toString())
         return arcGISFields
     }
+
     fun generateGrappiFields(json: JSONObject): MutableList<GrappiField>{
         val gson = Gson()
         val fieldsArray = json.getJSONArray("fields")

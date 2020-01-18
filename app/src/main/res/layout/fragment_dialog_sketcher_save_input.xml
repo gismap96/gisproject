@@ -8,14 +8,24 @@
 
     <TextView
         android:id="@+id/selectInputForSketcherSaveTV"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:background="#E6010b1f"
+        android:layout_marginStart="8dp"
         android:gravity="center"
-        android:text="אנא הכניסו ערכים כפרות"
+        android:text="@string/add_data"
         android:textColor="@color/white"
-        android:textSize="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/shapeSymbolForSketcherSaveIV"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/shapeSymbolForSketcherSaveIV"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+
+        android:layout_marginTop="8dp"
+        android:src="@drawable/ic_polyline_soft_red"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,7 +37,58 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@color/white"
-        android:hint="הוסיפו סיווג"
+        android:gravity="start"
+        android:hint="@string/add_category"
+        android:inputType="text"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addDescriptionSketcherSaveET" />
+
+    <TextView
+        android:id="@+id/closeSketcherSaveTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/save"
+        android:textColor="@color/light_blue"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/updateToSystemSketchSaveSW" />
+
+    <EditText
+        android:id="@+id/addNumberToSketcherSaveET"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
+        android:hint="@string/add_number"
+        android:inputType="number"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addCategoryToSketcherSaveET" />
+
+    <EditText
+        android:id="@+id/addDescriptionSketcherSaveET"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
+        android:gravity="start"
+        android:hint="@string/add_a_description"
         android:inputType="text"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
@@ -36,19 +97,46 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/selectInputForSketcherSaveTV" />
 
-    <TextView
-        android:id="@+id/closeSketcherSaveTV"
-        android:layout_width="0dp"
+    <Switch
+        android:id="@+id/updateToSystemSketchSaveSW"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:background="@color/dark_blue"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="שמור"
-        android:textColor="@color/light_blue"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:checked="true"
+        android:switchPadding="8dp"
+        android:text="@string/update_system"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addCategoryToSketcherSaveET" />
+        app:layout_constraintTop_toBottomOf="@+id/addNumberToSketcherSaveET" />
+
+    <TextView
+        android:id="@+id/cancelSketcherSaveTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/cancel"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/updateToSystemSketchSaveSW" />
+
+    <TextView
+        android:id="@+id/shapeTypeSketcherSaveTV"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="@string/polyline_layer"
+        android:textColor="@color/soft_red"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/selectInputForSketcherSaveTV"
+        app:layout_constraintStart_toEndOf="@+id/selectInputForSketcherSaveTV"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

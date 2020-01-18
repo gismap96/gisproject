@@ -20,12 +20,9 @@
     <string name="take_photo_prompt">האם תרצו לצלם תמונה ממכשירכם ולהוסיף לשכבה?</string>
     <string name="pic_url_alias">כתובת תמונה</string>
     <string name="description_alias">תאור</string>
-
     <string name="orthophoto">אורטופוטו</string>
-
     <string name="update_system">עדכן למערכת</string>
-    <string name="add_category">הוסף סיווג</string>
-    <string name="field_mandatory">שדה חובה, לא ניתן להשאיר ריק</string>
+    <string name="field_mandatory">שדה נדרש, נא מלאו אותו</string>
     <string name="version_text">Beta</string>
     <string name="reset_password_via_email">איפוס סיסמא בעזרת דואר אלקטרוני</string>
     <string name="enter_valid_email">אנא הזינו כתובת דואר תקינה</string>
@@ -51,4 +48,14 @@
     <string name="description">תאור</string>
     <string name="category">סיווג</string>
     <string name="polyline_saved">הפוליליין נשמר</string>
+    <string name="my_polyline">שכבה קווית שלי</string>
+    <string name="add_category">הוספת סיווג</string>
+    <string name="add_number">הוספת מספר</string>
+    <string name="save">שמור</string>
+    <string name="add_data">הוספת נתונים</string>
+    <string name="polyline_layer">שכבה קווית</string>
+    <string name="number">מספר</string>
+    <string name="yes">כן</string>
+    <string name="update_system_show">לעדכון</string>
+    <string name="no">לא</string>
 </resources>

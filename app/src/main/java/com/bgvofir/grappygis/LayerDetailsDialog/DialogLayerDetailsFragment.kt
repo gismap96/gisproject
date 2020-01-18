@@ -8,9 +8,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import com.bgvofir.grappygis.R
 import kotlinx.android.synthetic.main.fragment_dialog_layer_details.*
 import android.support.v7.widget.DividerItemDecoration
-import android.R
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -30,6 +30,7 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
     override fun onStart() {
         super.onStart()
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +43,12 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
         recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
 
         var finalHeadline = headline.replace("\$\$##", "")
-        if (headline == "Feature Collection"){
+        if (headline == "Feature Collection") {
             finalHeadline = context.resources.getString(com.bgvofir.grappygis.R.string.client_point)
-            layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(com.bgvofir.grappygis.R.drawable.ic_star_blue))
+            layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_star_blue))
+        } else if (headline.contains(activity.resources.getString(R.string.my_polyline))){
+            finalHeadline = activity.resources.getString(R.string.my_polyline)
+            layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_polyline_soft_red))
         } else {
             var layerLegend = identifiedLayer.layerContent.fetchLegendInfosAsync()
             layerLegend.addDoneListener {
@@ -67,7 +71,10 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
         fragmentDialogLayerDetailsClose.setOnClickListener(this)
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+
     }
+
+
 
     private fun getBitmapFromVectorDrawable(drawableId: Int): Bitmap {
         var drawable = ContextCompat.getDrawable(context, drawableId)
