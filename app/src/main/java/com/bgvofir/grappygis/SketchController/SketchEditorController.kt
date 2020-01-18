@@ -96,16 +96,16 @@ object SketchEditorController {
         Log.d(TAG, geometry.toString())
     }
 
-    fun wertexOriginal(unit: String):Double{
+    fun wertexOriginal(unit: String):String{
         val geometry = sketchEditor.geometry
-        if (geometry.isEmpty) return 0.0
+        if (geometry.isEmpty) return "0.0m"
         val lastSection = mutableListOf<Point>()
         if (geometry.geometryType == GeometryType.POLYLINE) {
             val polyline = geometry as Polyline
             val lastPart = polyline.parts.last()
             val points = lastPart.points.toList()
             val pointsCount = points.count()
-            if (pointsCount < 2) return 0.0
+            if (pointsCount < 2) return "0.0m"
             lastSection.add(points[pointsCount-2])
             lastSection.add(points.last())
         }  else if (geometry.geometryType == GeometryType.POLYGON){
@@ -113,11 +113,11 @@ object SketchEditorController {
             val lastPart = polyline.parts.last()
             val points = lastPart.points.toList()
             val pointsCount = points.count()
-            if (pointsCount < 2) return 0.0
+            if (pointsCount < 2) return "0.0m"
             lastSection.add(points[pointsCount-2])
             lastSection.add(points.last())
         } else {
-            return 0.0
+            return "0.0m"
         }
         val pointsCollection = PointCollection(lastSection)
         val partToCalculate = Part(pointsCollection)
@@ -126,7 +126,7 @@ object SketchEditorController {
         if (unit == "mi"){
             length *= 1609.344
         }
-        return length
+        return length.toString() + "m"
     }
     fun polygonArea(mMapView: MapView): String{
         val geometry = sketchEditor.geometry
@@ -166,8 +166,9 @@ object SketchEditorController {
         val section = wertexOriginal(unit)
 
         val msg2 = " ומקטע "
-        val formatDistance = decimalFormat.format(distance).toString() +"m\n" + msg2 +
-                decimalFormat.format(section) + "m"
+        //+"m\n" + msg2 +
+        //                decimalFormat.format(section) + "m"
+        val formatDistance = decimalFormat.format(distance).toString() + "m"
         return formatDistance
 //        val toast = Toast.makeText(context, toastMsg1+ formattedDistance+ toastMsg2, Toast.LENGTH_LONG)
 //        toast.setGravity(Gravity.CENTER, 0, 0)
