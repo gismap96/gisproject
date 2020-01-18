@@ -18,7 +18,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -288,13 +287,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
 //        zift2.setVisibility(View.GONE);
-        cleanSketcherTV = findViewById(R.id.cleanSketcherTV);
-        cleanSketcherTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SketchEditorController.INSTANCE.clean(mMapView);
-            }
-        });
+//        cleanSketcherTV = findViewById(R.id.cleanSketcherTV);
+//        cleanSketcherTV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                SketchEditorController.INSTANCE.clean(mMapView);
+//            }
+//        });
         toggleAutoPanBtn = findViewById(R.id.toggleAutoPanBtn);
         toggleAutoPanBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -379,21 +378,21 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     }
                 }).check();
 
-        undoSkecherTV = findViewById(R.id.undoSkecherTV);
-        undoSkecherTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SketchEditorController.INSTANCE.undo();
-            }
-        });
-        closeSketcherTV = findViewById(R.id.closeSketcherTV);
-        closeSketcherTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
-                resetMenuFunctions();
-            }
-        });
+//        undoSkecherTV = findViewById(R.id.undoSkecherTV);
+//        undoSkecherTV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                SketchEditorController.INSTANCE.undo();
+//            }
+//        });
+//        closeSketcherTV = findViewById(R.id.closeSketcherTV);
+//        closeSketcherTV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
+//                resetMenuFunctions();
+//            }
+//        });
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
@@ -411,7 +410,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //        });
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
-        calculatePolygonAreaTV = findViewById(R.id.calculatePolygonAreaTV);
+        calculatePolygonAreaTV = findViewById(R.id.displayOverallForShapeTV);
         calculatePolygonAreaTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1605,6 +1604,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     case POLYLINE:
                         String distance = SketchEditorController.INSTANCE.polylineDistance(mMapView);
                         calculatePolygonAreaTV.setText(distance);
+                        String section = SketchEditorController.INSTANCE.wertexOriginal("m");
                         break;
                     case POLYGON:
                         String area = SketchEditorController.INSTANCE.polygonArea(mMapView);

@@ -98,7 +98,7 @@
 
         <ImageView
             android:id="@+id/addPoint"
-            android:layout_width="0dp"
+            android:layout_width="43dp"
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"
             android:padding="8dp"
@@ -211,68 +211,129 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/sketchControllerGL">
 
-        <TextView
-            android:id="@+id/cleanSketcherTV"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="center"
-            android:padding="16dp"
-            android:text="נקה"
-            android:textColor="@color/white"
-            android:textSize="24sp"
+        <ImageView
+            android:id="@+id/undoSkecherIV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/calculatePolygonAreaTV"
-            app:layout_constraintStart_toEndOf="@+id/undoSkecherTV"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/calculatePolygonAreaTV"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="center"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="חישוב שטח"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/closeSketcherTV"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/undoSkecherTV"
-            android:layout_width="56dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:gravity="center"
-            android:text="חזור"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/midofBottomBarGL"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_backwards_bar" />
 
-        <TextView
-            android:id="@+id/closeSketcherTV"
-            android:layout_width="56dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="center"
-            android:text="סגור"
-            android:textColor="@color/white"
-            android:textSize="24sp"
+        <ImageView
+            android:id="@+id/cleanSketcherIV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintStart_toEndOf="@+id/undoSkecherIV"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_clean_object" />
+
+        <ImageView
+            android:id="@+id/closeSketcherIV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="@+id/guideline5"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_close_bar" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/measurementConstraintLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline4"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/displayOverallForShapeTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="bottom|center"
+                android:text="0m"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/displaySectionLengthTV"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="0m"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/lengthSectionHeadlineTV"
+                app:layout_constraintTop_toBottomOf="@+id/displayOverallForShapeTV" />
+
+            <TextView
+                android:id="@+id/lengthSectionHeadlineTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="מקטע:"
+                android:textColor="@color/colorAccent"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/displaySectionLengthTV" />
+
+            <TextView
+
+                android:id="@+id/displaySectionLengthTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="אורך:"
+                android:textColor="@color/light_blue"
+                android:textSize="24sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/midofBottomBarGL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.15" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.3" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.6" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.85" />
 
     </android.support.constraint.ConstraintLayout>
 
