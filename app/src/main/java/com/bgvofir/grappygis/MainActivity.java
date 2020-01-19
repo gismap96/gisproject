@@ -1595,6 +1595,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //            return;
 //        }
         switch (sketcher){
+            case POINT:
+                isAddPointMode = true;
+                return;
             case POLYGON:
                 overallSizeHeadlineTV.setText(R.string.dunam);
                 lengthSectionHeadlineTV.setText(R.string.section);

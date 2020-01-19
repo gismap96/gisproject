@@ -57,6 +57,8 @@
     <string name="add_number">Add number</string>
     <string name="save">Save</string>
     <string name="polyline_layer">Polyline Layer</string>
+    <string name="polygon_layer">Polygon Layer</string>
+    <string name="point_layer">Point Layer</string>
     <string name="add_data">Add data to</string>
     <string name="number">Number</string>
     <string name="yes">Yes</string>

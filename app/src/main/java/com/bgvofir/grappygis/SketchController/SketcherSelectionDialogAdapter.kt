@@ -35,6 +35,8 @@ class SketcherSelectionDialogAdapter(var context: Context,var sketchSelectionCli
             when (type){
 //                SketcherEditorTypes.DISTANCE ->
 //                    sketcherIconSelectionIV.background = (ContextCompat.getDrawable(context, R.drawable.ic_distance))
+                SketcherEditorTypes.POINT ->
+                    sketcherIconSelectionIV.background = ContextCompat.getDrawable(context, R.drawable.ic_add_point)
                 SketcherEditorTypes.POLYLINE ->
                     sketcherIconSelectionIV.background = ContextCompat.getDrawable(context, R.drawable.ic_line_measurement)
                 SketcherEditorTypes.POLYGON ->
