@@ -98,14 +98,14 @@ object SketchEditorController {
 
     fun wertexOriginal(unit: String):String{
         val geometry = sketchEditor.geometry
-        if (geometry.isEmpty) return "0.0m"
+        if (geometry.isEmpty) return "0.00m"
         val lastSection = mutableListOf<Point>()
         if (geometry.geometryType == GeometryType.POLYLINE) {
             val polyline = geometry as Polyline
             val lastPart = polyline.parts.last()
             val points = lastPart.points.toList()
             val pointsCount = points.count()
-            if (pointsCount < 2) return "0.0m"
+            if (pointsCount < 2) return "0.00m"
             lastSection.add(points[pointsCount-2])
             lastSection.add(points.last())
         }  else if (geometry.geometryType == GeometryType.POLYGON){
@@ -113,19 +113,21 @@ object SketchEditorController {
             val lastPart = polyline.parts.last()
             val points = lastPart.points.toList()
             val pointsCount = points.count()
-            if (pointsCount < 2) return "0.0m"
+            if (pointsCount < 2) return "0.00m"
             lastSection.add(points[pointsCount-2])
             lastSection.add(points.last())
         } else {
-            return "0.0m"
+            return "0.00m"
         }
         val pointsCollection = PointCollection(lastSection)
         val partToCalculate = Part(pointsCollection)
         val newPolyline = Polyline(partToCalculate)
         var length = GeometryEngine.length(newPolyline)
+        val decimalFormat = DecimalFormat("#.00")
         if (unit == "mi"){
             length *= 1609.344
         }
+        length = decimalFormat.format(length).toDouble()
         return length.toString() + "m"
     }
     fun polygonArea(mMapView: MapView): String{
@@ -137,21 +139,10 @@ object SketchEditorController {
             area *= 1609.344
         }
         val decimalFormat = DecimalFormat("#.00")
-        val formatArea = decimalFormat.format(area).toString()
         dunam = area / 1000.0
         formatDunam = decimalFormat.format(dunam).toString()
-        val msg1 = "m"
-        val msg2 = "דונם"
-        val sectionLength = decimalFormat.format(wertexOriginal(unit))
-        val msg3 = "מקטע "
-        val finalmsg = "$msg2 $formatDunam\n $msg3${sectionLength}m"
-        return finalmsg
-        //val toast = Toast.makeText(context, finalMSG, Toast.LENGTH_LONG)
-        //toast.setGravity(Gravity.CENTER, 0, 0)
-        //toast.show()
-        //Log.d(TAG, "the polygonArea for ${sketcherEditorTypes.title} is: $area, unit: $unit")
-        //Log.d(TAG, "json ${geometry.toJson()}")
-      //  toJson(geometry)
+        if (formatDunam == ".00" || formatDunam == ".00m") formatDunam = "0.00m"
+        return formatDunam
     }
 
     fun polylineDistance(mMapView: MapView): String{
@@ -163,12 +154,9 @@ object SketchEditorController {
         if (unit == "mi"){
             distance *= 1609.344
         }
-        val section = wertexOriginal(unit)
 
-        val msg2 = " ומקטע "
-        //+"m\n" + msg2 +
-        //                decimalFormat.format(section) + "m"
-        val formatDistance = decimalFormat.format(distance).toString() + "m"
+        var formatDistance = decimalFormat.format(distance).toString() + "m"
+        if (formatDistance == ".00m") formatDistance = "0.00m"
         return formatDistance
 //        val toast = Toast.makeText(context, toastMsg1+ formattedDistance+ toastMsg2, Toast.LENGTH_LONG)
 //        toast.setGravity(Gravity.CENTER, 0, 0)

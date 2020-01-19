@@ -58,4 +58,9 @@
     <string name="yes">כן</string>
     <string name="update_system_show">לעדכון</string>
     <string name="no">לא</string>
+    <string name="length">אורך</string>
+    <string name="dunam">דונם</string>
+    <string name="section">מקטע</string>
+    <string name="uploading_layer">מעלה שכבה, נא לא לכבות את המכשיר</string>
+    <string name="image_upload_failed">העלאת התמונה נכשלה</string>
 </resources>

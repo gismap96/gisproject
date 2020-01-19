@@ -2,6 +2,7 @@ package com.bgvofir.grappygis.SketchController
 
 import android.app.Activity
 import android.app.Dialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -23,9 +24,7 @@ import kotlinx.android.synthetic.main.fragment_dialog_sketcher_save_input.*
 import java.util.*
 
 class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView, isZift2: Boolean,
-                                 callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish, val layerListener: LegendLayerDisplayController.LayerGroupsListener): Dialog(context), View.OnClickListener {
-
-    val callback = callback
+                                 val callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish, val layerListener: LegendLayerDisplayController.LayerGroupsListener, val progressDialog: ProgressDialog): Dialog(context), View.OnClickListener {
 
     var mMapView = mMapView
     val iszift2 = isZift2
@@ -74,9 +73,10 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView, isZif
                 attributes.put("description", description)
                 attributes.put("number", number)
                 attributes.put("isUpdated", isUpdated)
-                UserPolyline.userPolyline!!.createFeature(attributes, geometry)
+                attributes.put("imageURL", "")
+                //UserPolyline.userPolyline!!.createFeature(attributes, geometry)
                 SketchEditorController.clean(mMapView)
-                ClientPhotoController.takePhoto(context)
+                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback, progressDialog)
                 //UserPolyline.userPolyline!!.uploadJSON(callback)
             }
             SketcherEditorTypes.POLYGON -> {

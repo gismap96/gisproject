@@ -48,6 +48,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer;
+import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController;
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController;
 import com.bgvofir.grappygis.GeoViewController.GeoViewController;
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController;
@@ -184,6 +185,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ImageView addPoint;
     private ImageView toggleAutoPanBtn;
     private ImageView ivDeletePoint;
+    private ImageView undoSkecherIV;
     private ImageView zift2;
     private String mProjectId;
     private ListenableFuture<FeatureQueryResult> selectionResult;
@@ -194,16 +196,19 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private SketcherSelectionDialogFragment sketcherSelectionDialogFragment;
     private android.graphics.Point screenPoint;
     private ConstraintLayout bottomSketchBarContainer;
-    private TextView closeSketcherTV;
-    private TextView undoSkecherTV;
+    private ImageView closeSketcherIV;
     private ImageView zift;
     private Viewpoint mViewPoint;
     private LegendSidebarAdapter legendAdapter;
     private TextView calculatePolygonAreaTV;
     private boolean displayLegendFlag;
-    private TextView cleanSketcherTV;
     private ImageView setNorthBtn;
     private SketchEditor mSketcher;
+    private ImageView cleanSketcherIV;
+    private TextView displaySectionForShapeTV;
+    private TextView overallSizeHeadlineTV;
+    private TextView lengthSectionHeadlineTV;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,15 +216,20 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         FirebaseApp.initializeApp(this);
-
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle(getString(R.string.uploading_layer));
+        progressDialog.setCancelable(false);
         displayLegendFlag = false;
         UserPolyline.INSTANCE.initFields();
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
+        overallSizeHeadlineTV = findViewById(R.id.overallSizeHeadlineTV);
+        lengthSectionHeadlineTV = findViewById(R.id.lengthSectionHeadlineTV);
         mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
         mProjectId = mPrefs.getString(Consts.PROJECT_ID_KEY, "default");
         ProjectId.INSTANCE.setProjectId(mProjectId);
         addPoint = findViewById(R.id.addPoint);
+        displaySectionForShapeTV = findViewById(R.id.displaySectionForShapeTV);
         ivDeletePoint = findViewById(R.id.deletePoint);
         mapProgress = findViewById(R.id.map_progress);
         toggledistanceBtn = findViewById(R.id.toggledistanceBtn);
@@ -233,14 +243,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         toggledistanceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                mIsDistance = !mIsDistance;
-//                if (mIsDistance){
-//                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-//                }
-//                else{
-//                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-//                }
-
                 resetMenuFunctions();
                 if (MainUpperMenu.INSTANCE.measureLine()) {
 //                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
@@ -282,7 +284,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     toast.show();
                     return;
                 }
-                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this);
+                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this, progressDialog);
                 layerAttributes.show();
             }
         });
@@ -378,13 +380,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     }
                 }).check();
 
-//        undoSkecherTV = findViewById(R.id.undoSkecherTV);
-//        undoSkecherTV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SketchEditorController.INSTANCE.undo();
-//            }
-//        });
+        undoSkecherIV = findViewById(R.id.undoSkecherIV);
+        undoSkecherIV.setOnClickListener(v -> SketchEditorController.INSTANCE.undo());
+        cleanSketcherIV = findViewById(R.id.cleanSketcherIV);
+        cleanSketcherIV.setOnClickListener(v-> {
+            SketchEditorController.INSTANCE.clean(mMapView);
+        });
 //        closeSketcherTV = findViewById(R.id.closeSketcherTV);
 //        closeSketcherTV.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -393,6 +394,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                resetMenuFunctions();
 //            }
 //        });
+        closeSketcherIV = findViewById(R.id.closeSketcherIV);
+        closeSketcherIV.setOnClickListener(v -> {
+            SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
+            resetMenuFunctions();
+        });
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
@@ -1348,7 +1354,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         switch (requestCode) {
             case TAKE_PHOTO_FOR_LAYER:
                 if (resultCode == Activity.RESULT_OK){
-
+                    this.progressDialog.show();
+                    Uri uri = ClientPhotoController.INSTANCE.getImageURI();
+                    ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this);
                 } else {
                     UserPolyline.INSTANCE.getUserPolyline().uploadJSON(this);
                 }
@@ -1588,10 +1596,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //        }
         switch (sketcher){
             case POLYGON:
-                calculatePolygonAreaTV.setText(getString(R.string.measure_polygon_area));
+                overallSizeHeadlineTV.setText(R.string.dunam);
+                lengthSectionHeadlineTV.setText(R.string.section);
                 break;
             case POLYLINE:
-                calculatePolygonAreaTV.setText(getString(R.string.measure_track));
+                overallSizeHeadlineTV.setText(R.string.length);
+                lengthSectionHeadlineTV.setText(R.string.section);
                 break;
         }
         SketchEditorController.INSTANCE.startSketching(sketcher, mMapView);
@@ -1600,11 +1610,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
             @Override
             public void geometryChanged(SketchGeometryChangedEvent sketchGeometryChangedEvent) {
+                String unit = mMapView.getSpatialReference().getUnit().getAbbreviation();
+                String section = SketchEditorController.INSTANCE.wertexOriginal(unit);
+                displaySectionForShapeTV.setText(section);
                 switch (sketcher){
                     case POLYLINE:
                         String distance = SketchEditorController.INSTANCE.polylineDistance(mMapView);
                         calculatePolygonAreaTV.setText(distance);
-                        String section = SketchEditorController.INSTANCE.wertexOriginal("m");
                         break;
                     case POLYGON:
                         String area = SketchEditorController.INSTANCE.polygonArea(mMapView);
@@ -1647,8 +1659,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     public void onPolylineUploadFinish() {
+        progressDialog.dismiss();
         Toast toast = Toast.makeText(this, R.string.polyline_saved, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER,0,0);
         toast.show();
+
     }
 }

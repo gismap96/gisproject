@@ -3,12 +3,9 @@ package com.bgvofir.grappygis.LayerDetailsDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.support.v4.content.ContextCompat
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -17,13 +14,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
-import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController.isUserLayer
-import com.bgvofir.grappygis.LayerCalloutDialog.DialogLayerAdapter
 import com.bgvofir.grappygis.R
-import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import com.squareup.picasso.Picasso
-import io.fabric.sdk.android.services.concurrency.AsyncTask.init
-import kotlinx.android.synthetic.main.fragment_dialog_layer_details.view.*
 import kotlinx.android.synthetic.main.row_for_layer_details_dialog.view.*
 import java.lang.Exception
 import java.util.ArrayList
@@ -39,7 +31,7 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
 //        elementsColor.clear()
         rowValues.clear()
         if (FeatureLayerController.isUserLayer){
-            polylineInit()
+            clientPolylineInit()
 
         }else {
             displayLayers.forEach {
@@ -58,7 +50,7 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
         }
 
     }
-    private fun polylineInit(){
+    private fun clientPolylineInit(){
         displayLayers.forEach {
             it.forEach {
                 when (it.key){
@@ -76,6 +68,11 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                         }
                     }
                     "number"-> rowValues.add(RowValue(context.resources.getString(R.string.number), it.value))
+                    "imageURL"-> {
+                        if (it.value.count() > 4) {
+                            rowValues.add(RowValue("imageURL", it.value))
+                        }
+                    }
                 }
             }
         }
@@ -123,7 +120,7 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
 
         fun bind(key: String, value: String, itemNum: Int){
 
-            if (key == "תצוגה מקדימה"){
+            if (key == "תצוגה מקדימה"|| key == "imageURL"){
                 valueTextView.visibility = View.GONE
                 keyTextView.visibility = View.GONE
                 previewImage.visibility = View.VISIBLE
@@ -152,7 +149,8 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                     context.startActivity(intent)
                 }
 
-            } else {
+            }
+            else {
                 val newValue = value.replace("_"," ")
                 valueTextView.text = newValue
             }

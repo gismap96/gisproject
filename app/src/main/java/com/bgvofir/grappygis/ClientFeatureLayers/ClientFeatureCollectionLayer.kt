@@ -2,8 +2,6 @@ package com.bgvofir.grappygis.ClientFeatureLayers
 
 import android.content.Context
 import android.graphics.Color
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
 import android.util.Log
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController.generatePointsArray
@@ -100,10 +98,10 @@ class ClientFeatureCollectionLayer () {
             val attributesJSON = item.getJSONObject("attributes").toString()
             val attTypeToken = object : TypeToken<HashMap<String, Any>>() {}.type
             val mAttMap = gson.fromJson(attributesJSON, attTypeToken) as HashMap<String, Any>
-            generateFeature(mAttMap, polylineGeometry)
+            generateFeatureForJSON(mAttMap, polylineGeometry)
         }
     }
-    fun generateFeature(attributes: HashMap<String, Any>,geometry: Geometry){
+    private fun generateFeatureForJSON(attributes: HashMap<String, Any>, geometry: Geometry){
         val feature = featureCollectionTable.createFeature(attributes, geometry) as Feature
         features.add(feature)
     }
@@ -204,8 +202,20 @@ class ClientFeatureCollectionLayer () {
             var featureJSON = JSONObject()
             var attributesJSON = JSONObject()
             attributesJSON.put("OBJECTID", objectIdNum)
+            val attributesMap = mutableMapOf<String, Any>()
             it.attributes.forEach{
-                if (it.key != "ObjectID") attributesJSON.put(it.key, it.value)
+                //if (it.key != "ObjectID") attributesJSON.put(it.key, it.value)
+                if (it.value != null){
+                    if (it.key != "ObjectID") attributesMap[it.key] = it.value
+                }
+
+            }
+            fields.forEach {
+                if (it.name == "number"){
+                    attributesJSON.put(it.name, attributesMap[it.name] as Double)
+                } else {
+                    attributesJSON.put(it.name, attributesMap[it.name])
+                }
             }
             featureJSON.put("attributes", attributesJSON)
             val geometryJson = JSONObject(it.geometry.toJson())
@@ -219,10 +229,10 @@ class ClientFeatureCollectionLayer () {
     }
     private fun generateFieldAliasesForJSON(): JSONObject{
         val json = JSONObject()
+        json.put("OBJECTID", "OBJECTID")
         fieldsArray.forEach {
             json.put(it.name, it.alias)
         }
-        json.put("OBJECTID", "OBJECTID")
         return json
     }
 
