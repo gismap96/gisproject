@@ -42,7 +42,7 @@
     <string name="measure_track">מדידת אורך מסלול</string>
     <string name="measure_polygon_area">מדידת שטח פוליגון</string>
     <string name="choose_a_layer">בחר שכבה רצויה</string>
-    <string name="choose_a_measurement_tool">בחרו כלי מדידה</string>
+    <string name="choose_a_layer_to_edit">בחרו שכבה לעריכה</string>
     <string name="close">סגור</string>
     <string name="client_point">דקירה ממשתמש</string>
     <string name="description">תאור</string>
@@ -65,4 +65,7 @@
     <string name="section">מקטע</string>
     <string name="uploading_layer">מעלה שכבה, נא לא לכבות את המכשיר</string>
     <string name="image_upload_failed">העלאת התמונה נכשלה</string>
+    <string name="coming_soon">יתווסף בקרוב</string>
+    <string name="no_support">כרגע אין תמיכה בפועלה זו, אנחנו עובדים עליה והיא תתווסף בקרוב</string>
+    <string name="understood">הבנתי</string>
 </resources>

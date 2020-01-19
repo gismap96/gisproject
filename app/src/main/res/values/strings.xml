@@ -46,7 +46,7 @@
     <string name="measure_track">measure track distance</string>
     <string name="measure_polygon_area">measure polygon area</string>
     <string name="choose_a_layer">Choose a layer</string>
-    <string name="choose_a_measurement_tool">Select measurement tool</string>
+    <string name="choose_a_layer_to_edit">Select layer type</string>
     <string name="close">close</string>
     <string name="client_point">User Pin</string>
     <string name="description">description</string>
@@ -69,4 +69,7 @@
     <string name="section">Section</string>
     <string name="uploading_layer">Uploading layer, please do not turn off</string>
     <string name="image_upload_failed">Image upload failed</string>
+    <string name="coming_soon">Coming Soon...</string>
+    <string name="no_support">Right now we do not support this feature, but we promise you were working hard to add it ASAP</string>
+    <string name="understood">Understood</string>
 </resources>

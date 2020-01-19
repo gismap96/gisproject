@@ -4,10 +4,10 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:animateLayoutChanges="true"
     android:id="@+id/mapContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:orientation="horizontal">
 
     <!-- MapView -->
@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.88" />
+        app:layout_constraintGuide_percent="0.85" />
 
     <com.esri.arcgisruntime.mapping.view.MapView
         android:id="@+id/mapView"
@@ -57,7 +57,7 @@
             android:layout_marginBottom="8dp"
             android:src="@drawable/ic_star_blue"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/deletePoint"
+            app:layout_constraintEnd_toStartOf="@+id/trashGL"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -90,35 +90,37 @@
             android:layout_height="0dp"
             android:layout_marginEnd="12dp"
             android:padding="8dp"
-            android:src="@drawable/ic_distance"
+            android:src="@drawable/ic_edit_layers"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/measurementsGL"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/addPoint"
-            android:layout_width="43dp"
+            android:id="@+id/northBarIV"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"
             android:padding="8dp"
-            android:src="@drawable/ic_hollow_plus_star"
+            android:src="@drawable/ic_arrow_north_bar"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/toggledistanceBtn"
-            app:layout_constraintStart_toStartOf="@+id/addStarGL"
+            app:layout_constraintEnd_toStartOf="@+id/addStarGL"
+            app:layout_constraintStart_toStartOf="@+id/trashGL"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/deletePoint"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:padding="8dp"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_trash_stars"
-            app:layout_constraintBottom_toBottomOf="@+id/addPoint"
-            app:layout_constraintEnd_toStartOf="@+id/addPoint"
-            app:layout_constraintStart_toStartOf="@+id/trashGL"
-            app:layout_constraintTop_toTopOf="@+id/addPoint" />
+            android:foregroundGravity="center"
+            android:padding="8dp"
+            android:scaleType="center"
+            android:src="@drawable/empty_trash_general"
+            app:layout_constraintBottom_toBottomOf="@+id/northBarIV"
+            app:layout_constraintEnd_toStartOf="@+id/measurementsGL"
+            app:layout_constraintStart_toStartOf="@+id/addStarGL"
+            app:layout_constraintTop_toTopOf="@+id/northBarIV" />
 
         <android.support.constraint.Guideline
             android:id="@+id/glForLegendSidebar"
@@ -174,18 +176,6 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomSketcherControllerBarContainer"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageView
-        android:id="@+id/setNorthBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_margin="25dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/dark_circle"
-        android:padding="8dp"
-        android:src="@drawable/ic_auto_pan"
-        app:layout_constraintBottom_toTopOf="@+id/toggleAutoPanBtn"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <ProgressBar
         android:id="@+id/map_progress"
         style="?android:attr/progressBarStyleLarge"
@@ -203,46 +193,60 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/bottomSketcherControllerBarContainer"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="#E6010b1f"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/sketchControllerGL">
+        app:layout_constraintTop_toBottomOf="@+id/sketchControllerGL">
 
         <ImageView
             android:id="@+id/undoSkecherIV"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+
             android:padding="15dp"
+            android:src="@drawable/ic_backwards_bar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/midofBottomBarGL"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_backwards_bar" />
+            app:layout_constraintTop_toTopOf="@+id/saveHorizonalGL" />
 
         <ImageView
             android:id="@+id/cleanSketcherIV"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:padding="15dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:src="@drawable/ic_clean_object"
             app:layout_constraintEnd_toStartOf="@+id/guideline3"
-            app:layout_constraintStart_toEndOf="@+id/undoSkecherIV"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_clean_object" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/midofBottomBarGL"
+            app:layout_constraintTop_toBottomOf="@+id/saveHorizonalGL" />
 
         <ImageView
             android:id="@+id/closeSketcherIV"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:padding="15dp"
+            android:src="@drawable/ic_close_bar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline5"
+            app:layout_constraintTop_toTopOf="@+id/saveHorizonalGL" />
+
+        <TextView
+            android:id="@+id/saveShapeTV"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white_transparent"
+            android:gravity="center"
+            android:text="@string/save"
+            android:textSize="16sp"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/saveHorizonalGL"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_close_bar" />
+            tools:layout_editor_absoluteX="123dp" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/measurementConstraintLayout"
@@ -252,7 +256,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline3"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@+id/saveHorizonalGL">
 
             <TextView
                 android:id="@+id/displayOverallForShapeTV"
@@ -323,6 +327,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.85" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/saveHorizonalGL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="32dp" />
 
     </android.support.constraint.ConstraintLayout>
 

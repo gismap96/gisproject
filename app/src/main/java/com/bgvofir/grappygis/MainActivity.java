@@ -202,13 +202,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private LegendSidebarAdapter legendAdapter;
     private TextView calculatePolygonAreaTV;
     private boolean displayLegendFlag;
-    private ImageView setNorthBtn;
+    private ImageView northBarIV;
     private SketchEditor mSketcher;
     private ImageView cleanSketcherIV;
     private TextView displaySectionForShapeTV;
     private TextView overallSizeHeadlineTV;
     private TextView lengthSectionHeadlineTV;
     private ProgressDialog progressDialog;
+    private TextView saveShapeTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -228,13 +229,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
         mProjectId = mPrefs.getString(Consts.PROJECT_ID_KEY, "default");
         ProjectId.INSTANCE.setProjectId(mProjectId);
-        addPoint = findViewById(R.id.addPoint);
+//        addPoint = findViewById(R.id.addPoint);
         displaySectionForShapeTV = findViewById(R.id.displaySectionForShapeTV);
         ivDeletePoint = findViewById(R.id.deletePoint);
         mapProgress = findViewById(R.id.map_progress);
         toggledistanceBtn = findViewById(R.id.toggledistanceBtn);
-        setNorthBtn = findViewById(R.id.setNorthBtn);
-        setNorthBtn.setOnClickListener(new View.OnClickListener() {
+        northBarIV = findViewById(R.id.northBarIV);
+        northBarIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 rotateMap(0);
@@ -247,7 +248,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 if (MainUpperMenu.INSTANCE.measureLine()) {
 //                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
 //                    mIsDistance = true;
-                SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this, MainActivity.this);
+
+                   // toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this, MainActivity.this);
                 sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter);
                 sketcherSelectionDialogFragment.show();
                 } else {
@@ -265,28 +268,65 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         });
 
 
-        addPoint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggleAddPoint(true);
-//                takePhoto();
-            }
-        });
+//        addPoint.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                toggleAddPoint(true);
+////                takePhoto();
+//            }
+//        });
         zift2 = findViewById(R.id.zift2);
-//        zift2.setVisibility(View.GONE);
-        zift2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
-                if (geometry == null){
-                    Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER,0,0);
-                    toast.show();
-                    return;
-                }
-                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this, progressDialog);
-                layerAttributes.show();
+        zift2.setVisibility(View.GONE);
+//        zift2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
+//                if (geometry == null){
+//                    Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
+//                    toast.setGravity(Gravity.CENTER,0,0);
+//                    toast.show();
+//                    return;
+//                }
+//                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this, progressDialog);
+//                layerAttributes.show();
+//            }
+//        });
+        saveShapeTV = findViewById(R.id.saveShapeTV);
+        saveShapeTV.setOnClickListener(v->{
+            Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
+            if (geometry == null){
+                Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
+                return;
             }
+            SketcherEditorTypes type = SketchEditorController.INSTANCE.getSketcherEditorTypes();
+            switch (type){
+
+                case POINT:
+                    break;
+                case POLYLINE:
+                    SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this, progressDialog);
+                    layerAttributes.show();
+                    break;
+                case POLYGON:
+                    AlertDialog builder = new AlertDialog.Builder(this)
+                            .setTitle(R.string.coming_soon)
+                            .setMessage(R.string.no_support)
+
+                            // Specifying a listener allows you to take an action before dismissing the dialog.
+                            // The dialog is automatically dismissed when a dialog button is clicked.
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            })
+
+                            // A null listener allows the button to dismiss the dialog and take no further action.
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                    break;
+            }
+
         });
 //        zift2.setVisibility(View.GONE);
 //        cleanSketcherTV = findViewById(R.id.cleanSketcherTV);
@@ -450,7 +490,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         isAddPointMode = false;
         isDeletePointMode = false;
         SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
-        addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+//        addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 
@@ -743,20 +783,20 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     }
 
-    private void toggleAddPoint(boolean isOn){
-        if (mLayerRecyclerView.getAdapter() == null){
-            return;
-        }
-        resetMenuFunctions();
-        if (MainUpperMenu.INSTANCE.addPointClicked() && isOn){
-            addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-            isAddPointMode = isOn;
-            LegendLayerDisplayController.INSTANCE.showLayersFromUser(mMapView);
-            mLayerRecyclerView.getAdapter().notifyDataSetChanged();
-        } else {
-            addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-        }
-    }
+//    private void toggleAddPoint(boolean isOn){
+//        if (mLayerRecyclerView.getAdapter() == null){
+//            return;
+//        }
+//        resetMenuFunctions();
+//        if (MainUpperMenu.INSTANCE.addPointClicked() && isOn){
+//            addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+//            isAddPointMode = isOn;
+//            LegendLayerDisplayController.INSTANCE.showLayersFromUser(mMapView);
+//            mLayerRecyclerView.getAdapter().notifyDataSetChanged();
+//        } else {
+//            addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+//        }
+//    }
 
     private void initMap(String mmpkFileURL){
 //        String mmpkFileURL = createMobileMapPackageFilePath("shfayim_full");
@@ -887,7 +927,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
             @Override
             public void onCanceled() {
-                toggleAddPoint(false);
+                resetMenuFunctions();
             }
         });
         descriptionDialog.setCancelable(false);
@@ -908,7 +948,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 .setPositiveButton(getString(R.string.continue_to_photo), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         takePhoto((float) locationPoint.getX(), (float) locationPoint.getY(), description, category, isUpdateSys);
-                        toggleAddPoint(false);
+                        resetMenuFunctions();
                     }
                 })
                 .setNegativeButton(getString(R.string.no_thank_you), new DialogInterface.OnClickListener() {
@@ -917,7 +957,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys, currentuser);
                         mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys, currentuser));
                         saveClientPoints(false);
-                        toggleAddPoint(false);
+                        resetMenuFunctions();
                     }
                 })
                 .setIcon(R.drawable.ic_add_photo)
@@ -1387,7 +1427,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys, currentuser);
                         mClientPoints.add(new ClientPoint((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys, currentuser));
                         saveClientPoints(false);
-                        toggleAddPoint(false);
+                        resetMenuFunctions();
                     }
                 }
         }
