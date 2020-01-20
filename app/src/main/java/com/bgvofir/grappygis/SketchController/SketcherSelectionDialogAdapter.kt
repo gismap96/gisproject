@@ -49,6 +49,6 @@ class SketcherSelectionDialogAdapter(var context: Context,var sketchSelectionCli
     }
 
     interface OnSketchSelectionClickListener{
-        fun onSketchSelectionListener(sketcher: SketcherEditorTypes)
+        fun onSketchSelectionListener(sketcher: SketcherEditorTypes?)
     }
 }

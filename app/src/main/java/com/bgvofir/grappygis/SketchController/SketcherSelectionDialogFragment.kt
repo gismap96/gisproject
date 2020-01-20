@@ -14,7 +14,7 @@ import com.bgvofir.grappygis.R
 import kotlinx.android.synthetic.main.fragment_dialog_layer_selection.*
 import kotlinx.android.synthetic.main.fragment_dialog_sketch_mode_selection.*
 
-class SketcherSelectionDialogFragment(var activity: Activity,  var adapter: RecyclerView.Adapter<*>): Dialog(activity), View.OnClickListener{
+class SketcherSelectionDialogFragment(var activity: Activity,  var adapter: RecyclerView.Adapter<*>, val callback: SketcherSelectionDialogAdapter.OnSketchSelectionClickListener): Dialog(activity), View.OnClickListener{
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +34,7 @@ class SketcherSelectionDialogFragment(var activity: Activity,  var adapter: Recy
     override fun onClick(v: View?) {
         when (v?.id){
             R.id.closeSketchSelectDialog ->{
-                dismiss()
+                callback.onSketchSelectionListener(null)
             }
         }
     }

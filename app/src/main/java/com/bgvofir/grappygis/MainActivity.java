@@ -250,8 +250,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                    mIsDistance = true;
 
                    // toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                     SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this, MainActivity.this);
-                sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter);
+                sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter, MainActivity.this);
                 sketcherSelectionDialogFragment.show();
                 } else {
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
@@ -1634,9 +1635,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     @Override
-    public void onSketchSelectionListener(@NotNull SketcherEditorTypes sketcher) {
+    public void onSketchSelectionListener(SketcherEditorTypes sketcher) {
         sketcherSelectionDialogFragment.dismiss();
-        toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+        if (sketcher == null){
+            resetMenuFunctions();
+            return;
+        }
+
 //        if (sketcher == SketcherEditorTypes.DISTANCE){
 //            mIsDistance = true;
 //            return;
