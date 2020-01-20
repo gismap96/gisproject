@@ -293,21 +293,28 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //        });
         saveShapeTV = findViewById(R.id.saveShapeTV);
         saveShapeTV.setOnClickListener(v->{
-            Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
-            if (geometry == null){
-                Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
-                toast.setGravity(Gravity.CENTER,0,0);
-                toast.show();
-                return;
-            }
+//            Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
+//            if (geometry == null){
+//                Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
+//                toast.setGravity(Gravity.CENTER,0,0);
+//                toast.show();
+//                return;
+//            }
             SketcherEditorTypes type = SketchEditorController.INSTANCE.getSketcherEditorTypes();
             switch (type){
 
                 case POINT:
                     break;
                 case POLYLINE:
-                    SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this, progressDialog);
-                    layerAttributes.show();
+                    if (SketchEditorController.INSTANCE.isPolylineNotEmpty()){
+                        SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this, progressDialog);
+                        layerAttributes.show();
+                    } else {
+                        Toast toast = Toast.makeText(MainActivity.this, R.string.empty_polyline, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                        return;
+                    }
                     break;
                 case POLYGON:
                     AlertDialog builder = new AlertDialog.Builder(this)

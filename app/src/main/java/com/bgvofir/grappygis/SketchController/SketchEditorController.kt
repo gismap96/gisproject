@@ -80,10 +80,12 @@ object SketchEditorController {
         var graphic = Graphic(geometry)
     }
     fun polylineMode(){
+        distance = 0.0
         sketchEditor.start(SketchCreationMode.POLYLINE)
     }
 
     fun polygonMode(){
+        area = 0.0
         sketchEditor.start(SketchCreationMode.POLYGON)
     }
 
@@ -162,6 +164,9 @@ object SketchEditorController {
 //        toast.setGravity(Gravity.CENTER, 0, 0)
 //        toast.show()
 //        FormatJSONGeometry.polylineToJSON(geometry)
+    }
+    fun isPolylineNotEmpty():Boolean{
+        return distance > 0.0
     }
 
     fun stopSketcher(layout: ConstraintLayout){
