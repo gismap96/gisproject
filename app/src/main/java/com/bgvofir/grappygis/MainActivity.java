@@ -75,7 +75,6 @@ import com.esri.arcgisruntime.data.FeatureQueryResult;
 import com.esri.arcgisruntime.data.Field;
 import com.esri.arcgisruntime.data.QueryParameters;
 import com.esri.arcgisruntime.geometry.Envelope;
-import com.esri.arcgisruntime.geometry.Geometry;
 import com.esri.arcgisruntime.geometry.GeometryEngine;
 import com.esri.arcgisruntime.geometry.GeometryType;
 import com.esri.arcgisruntime.geometry.Point;
@@ -184,7 +183,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ImageView toggledistanceBtn;
     private ImageView addPoint;
     private ImageView toggleAutoPanBtn;
-    private ImageView ivDeletePoint;
+    private ImageView deletePointIV;
     private ImageView undoSkecherIV;
     private ImageView zift2;
     private String mProjectId;
@@ -231,7 +230,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         ProjectId.INSTANCE.setProjectId(mProjectId);
 //        addPoint = findViewById(R.id.addPoint);
         displaySectionForShapeTV = findViewById(R.id.displaySectionForShapeTV);
-        ivDeletePoint = findViewById(R.id.deletePoint);
+        deletePointIV = findViewById(R.id.deletePointIV);
         mapProgress = findViewById(R.id.map_progress);
         toggledistanceBtn = findViewById(R.id.toggledistanceBtn);
         northBarIV = findViewById(R.id.northBarIV);
@@ -368,22 +367,22 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
 
-        ivDeletePoint.setOnClickListener(new View.OnClickListener() {
+        deletePointIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                isDeletePointMode = !isDeletePointMode;
 //                if (isDeletePointMode){
-//                    ivDeletePoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+//                    deletePointIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
 //                }
 //                else{
-//                    ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+//                    deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 //                }
                 resetMenuFunctions();
                 if (MainUpperMenu.INSTANCE.trashClicked()){
-                    ivDeletePoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    deletePointIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                     isDeletePointMode = true;
                 }  else {
-                    ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                    deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                 }
             }
         });
@@ -500,7 +499,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
 //        addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-        ivDeletePoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
 
     }
 
@@ -1002,7 +1001,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        ivDeletePoint.performClick();
+                        deletePointIV.performClick();
                         resetMenuFunctions();
                     }
                 })
@@ -1646,6 +1645,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //            mIsDistance = true;
 //            return;
 //        }
+        toggledistanceBtn.setEnabled(false);
         switch (sketcher){
             case POINT:
                 isAddPointMode = true;

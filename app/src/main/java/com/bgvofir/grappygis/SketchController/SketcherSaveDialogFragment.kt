@@ -82,6 +82,7 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView, isZif
             SketcherEditorTypes.POLYGON -> {
 
             }
+            SketcherEditorTypes.POINT -> {}
         }
         dismiss()
     }
@@ -92,8 +93,8 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView, isZif
             return false
         }
         if (addNumberToSketcherSaveET.text.toString().trim().isEmpty() || addNumberToSketcherSaveET.text == null){
-            addNumberToSketcherSaveET.error = context.getString(R.string.field_mandatory)
-            return false
+//            addNumberToSketcherSaveET.error = context.getString(R.string.field_mandatory)
+            addNumberToSketcherSaveET.setText("0")
         }
         if (addCategoryToSketcherSaveET.text.toString().trim().isEmpty() || addCategoryToSketcherSaveET.text == null){
             addCategoryToSketcherSaveET.error = context.getString(R.string.field_mandatory)

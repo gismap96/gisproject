@@ -77,6 +77,7 @@ object FeatureLayerController {
 
     fun layerDetails(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
         val resultGeoElements = forLayer.elements
+        isUserLayer = false
         if (forLayer.layerContent.name == "Feature Collection"){
             //doesn't work here :(
             return featureCollectionDetails(forLayer)

@@ -109,7 +109,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/deletePoint"
+            android:id="@+id/deletePointIV"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="8dp"
@@ -242,8 +242,8 @@
             android:background="@color/white_transparent"
             android:gravity="center"
             android:text="@string/save"
-            android:textSize="16sp"
             android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/saveHorizonalGL"
             app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="123dp" />
@@ -333,7 +333,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="32dp" />
+            app:layout_constraintGuide_percent="0.33" />
 
     </android.support.constraint.ConstraintLayout>
 

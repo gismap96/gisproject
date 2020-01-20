@@ -147,8 +147,6 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                             previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
                             previewImage.setImageBitmap(it)
                         }
-
-
                     }
                 })
                 previewImage.setOnClickListener {
