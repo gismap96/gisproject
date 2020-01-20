@@ -146,8 +146,7 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                         bitmap?.let{
                             Toast.makeText(context, "הורדה הצליחה", Toast.LENGTH_LONG).show()
                             previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
-                            previewImage.setImageBitmap(bitmap)
-
+                            previewImage.setImageBitmap(it)
                         }
 
 
