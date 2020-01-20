@@ -31,12 +31,14 @@ object SketchEditorController {
     var formatArea = ""
     var formatDunam = ""
     var formatDistance = ""
+    var isWorking = false
 
     fun getGeometry():Geometry?{
         return sketchEditor.geometry
     }
     fun openSketcherBarContainer(layout: ConstraintLayout){
         layout.visibility = View.VISIBLE
+        if (isWorking) return else isWorking = true
         ObjectAnimator.ofFloat(layout,"translationY", 200f).apply {
             duration = 0
             start()
@@ -170,6 +172,7 @@ object SketchEditorController {
     }
 
     fun stopSketcher(layout: ConstraintLayout){
+        if (!isWorking) return else isWorking = false
         sketchEditor.stop()
         ObjectAnimator.ofFloat(layout,"translationY", 200f).apply{
             duration = 500

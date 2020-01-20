@@ -6,9 +6,7 @@ object MainUpperMenu{
     /***
      * 0 - nothing selected
      * 1 - measure line
-     * 2 - add point of interest
-     * 3 - trash
-     * 4 - sketcher
+     * 2 - trash
      */
 
     fun measureLine(): Boolean{
@@ -19,7 +17,7 @@ object MainUpperMenu{
         changeSelected(1)
         return true
     }
-    fun addPointClicked(): Boolean{
+    fun trashClicked(): Boolean{
         if (checkIfSelected(2)) {
             resetMenu()
             return false
@@ -27,22 +25,7 @@ object MainUpperMenu{
         changeSelected(2)
         return true
     }
-    fun trashClicked(): Boolean{
-        if (checkIfSelected(3)) {
-            resetMenu()
-            return false
-        }
-        changeSelected(3)
-        return true
-    }
 
-    fun sketcherClicked(): Boolean{
-        if (checkIfSelected(4)){
-            resetMenu()
-            return false
-        }
-        return true
-    }
     fun changeSelected(to:Int){
         itemNumber = to
         isItemSelected = true

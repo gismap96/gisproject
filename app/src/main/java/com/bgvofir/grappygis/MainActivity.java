@@ -251,10 +251,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                    // toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                     toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                     SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this, MainActivity.this);
-                sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter, MainActivity.this);
-                sketcherSelectionDialogFragment.show();
-                } else {
-                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                    sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter, MainActivity.this);
+                    sketcherSelectionDialogFragment.show();
                 }
             }
         });
@@ -381,8 +379,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 if (MainUpperMenu.INSTANCE.trashClicked()){
                     deletePointIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                     isDeletePointMode = true;
-                }  else {
-                    deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                 }
             }
         });
@@ -443,8 +439,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //        });
         closeSketcherIV = findViewById(R.id.closeSketcherIV);
         closeSketcherIV.setOnClickListener(v -> {
-            SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
             resetMenuFunctions();
+            deletePointIV.setEnabled(true);
+            toggledistanceBtn.setEnabled(true);
         });
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
@@ -500,7 +497,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //        addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-
+        MainUpperMenu.INSTANCE.resetMenu();
     }
 
     private void setClientPoints(){
@@ -1646,6 +1643,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //            return;
 //        }
         toggledistanceBtn.setEnabled(false);
+        deletePointIV.setEnabled(false);
         switch (sketcher){
             case POINT:
                 isAddPointMode = true;

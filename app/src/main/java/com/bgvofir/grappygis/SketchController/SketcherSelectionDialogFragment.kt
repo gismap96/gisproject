@@ -27,13 +27,14 @@ class SketcherSelectionDialogFragment(var activity: Activity,  var adapter: Recy
         var layoutManager = LinearLayoutManager(activity)
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
-        this.setCanceledOnTouchOutside(false)
+        setCanceledOnTouchOutside(false)
         closeSketchSelectDialog.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
         when (v?.id){
             R.id.closeSketchSelectDialog ->{
+                setCanceledOnTouchOutside(true)
                 callback.onSketchSelectionListener(null)
             }
         }
