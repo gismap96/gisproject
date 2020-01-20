@@ -52,6 +52,7 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
 
     }
     private fun clientPolylineInit(){
+        var imageLocation = -1
         displayLayers.forEach {
             it.forEach {
                 when (it.key){
@@ -71,15 +72,21 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                     "number"-> rowValues.add(RowValue(context.resources.getString(R.string.number), it.value))
                     "imageURL"-> {
                         if (it.value.count() > 4) {
+                            imageLocation = rowValues.size
                             rowValues.add(RowValue("imageURL", it.value))
                         }
                     }
                 }
             }
         }
-        val element = rowValues[rowValues.size - 1]
-        rowValues.remove(element)
-        rowValues.add(0, element)
+        val fidElement = rowValues[rowValues.size - 1]
+        rowValues.remove(fidElement)
+        if (imageLocation >= 0){
+            val imageElement = rowValues[imageLocation]
+            rowValues.remove(imageElement)
+            rowValues.add(rowValues.lastIndex+1, imageElement)
+        }
+        rowValues.add(0, fidElement)
     }
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DialogLayerDetailsAdapterViewHolder {
@@ -131,13 +138,13 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                     }
 
                     override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-                        Toast.makeText(context, "הורדה נכשלה", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getText(R.string.failed_to_download_image), Toast.LENGTH_LONG).show()
                     }
 
                     override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
 
                         bitmap?.let{
-                            Toast.makeText(context, "סיים הורדה", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "הורדה הצליחה", Toast.LENGTH_LONG).show()
                             previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
                             previewImage.setImageBitmap(bitmap)
 
