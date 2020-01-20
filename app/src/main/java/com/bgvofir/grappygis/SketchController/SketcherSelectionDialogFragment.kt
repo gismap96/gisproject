@@ -27,7 +27,7 @@ class SketcherSelectionDialogFragment(var activity: Activity,  var adapter: Recy
         var layoutManager = LinearLayoutManager(activity)
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
-
+        this.setCanceledOnTouchOutside(false)
         closeSketchSelectDialog.setOnClickListener(this)
     }
 
