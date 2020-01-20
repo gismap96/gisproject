@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
 import com.bgvofir.grappygis.R
 import com.squareup.picasso.Picasso
@@ -130,16 +131,18 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                     }
 
                     override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-
+                        Toast.makeText(context, "הורדה נכשלה", Toast.LENGTH_LONG).show()
                     }
 
                     override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
 
                         bitmap?.let{
+                            Toast.makeText(context, "סיים הורדה", Toast.LENGTH_LONG).show()
                             previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
                             previewImage.setImageBitmap(bitmap)
 
                         }
+
 
                     }
                 })

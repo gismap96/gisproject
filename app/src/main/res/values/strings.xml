@@ -73,4 +73,5 @@
     <string name="no_support">Right now we do not support this feature, but we promise you were working hard to add it ASAP</string>
     <string name="understood">Understood</string>
     <string name="empty_polyline">Please draw a polyline</string>
+    <string name="failed_to_download_image">failed to download preview image</string>
 </resources>
