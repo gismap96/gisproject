@@ -1395,6 +1395,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
         switch (requestCode) {
             case TAKE_PHOTO_FOR_LAYER:
                 if (resultCode == Activity.RESULT_OK){
