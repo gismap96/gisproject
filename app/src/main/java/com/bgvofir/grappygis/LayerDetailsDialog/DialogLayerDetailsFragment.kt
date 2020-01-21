@@ -1,13 +1,14 @@
 package com.bgvofir.grappygis.LayerDetailsDialog
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import com.bgvofir.grappygis.R
 import kotlinx.android.synthetic.main.fragment_dialog_layer_details.*
 import android.support.v7.widget.DividerItemDecoration
@@ -18,13 +19,13 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
+import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
+import com.bgvofir.grappygis.ProjectRelated.UserPolyline
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import java.util.concurrent.ExecutionException
 
 
-class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>, var headline: String, val identifiedLayer: IdentifyLayerResult): Dialog(activity), View.OnClickListener {
-
-
+class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>, var headline: String, val identifiedLayer: IdentifyLayerResult, val context: Activity): Dialog(activity), View.OnClickListener {
 
 
     override fun onStart() {
@@ -41,7 +42,6 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
         recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
-
         var finalHeadline = headline.replace("\$\$##", "")
         if (headline == "Feature Collection") {
             finalHeadline = context.resources.getString(com.bgvofir.grappygis.R.string.client_point)
@@ -70,7 +70,7 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
         fragmentDialogLayerDetailsHeadline.text = finalHeadline
         fragmentDialogLayerDetailsClose.setOnClickListener(this)
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
+        deleteClientLayerIV.setOnClickListener(this)
 
     }
 
@@ -94,8 +94,29 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
 
     override fun onClick(v: View?) {
         when(v?.id){
-            com.bgvofir.grappygis.R.id.fragmentDialogLayerDetailsClose ->{
+            R.id.fragmentDialogLayerDetailsClose ->{
                 dismiss()
+            }
+            R.id.deleteClientLayerIV->{
+               // Toast.makeText(context, "objectid: ${FeatureLayerController.layerId}", Toast.LENGTH_LONG).show()
+                val builder = AlertDialog.Builder(context)
+                builder.setMessage(context.getString(R.string.delete_layer_dialog_message))
+                        .setTitle(context.getString(R.string.delete_layer_dialog_headline))
+                        .setPositiveButton(R.string.yes,
+                                DialogInterface.OnClickListener { dialog, id ->
+                                    UserPolyline.userPolyline?.let {
+                                        it.deleteFeature(FeatureLayerController.layerId, context)
+                                    }
+                                    dismiss()
+                                })
+                        .setNegativeButton(R.string.cancel,
+                                DialogInterface.OnClickListener { dialog, id ->
+                                    // User cancelled the dialog
+
+                                })
+                // Create the AlertDialog object and return it
+                builder.create().show()
+
             }
         }
     }

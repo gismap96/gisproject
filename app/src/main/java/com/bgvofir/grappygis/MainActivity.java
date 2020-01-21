@@ -1610,7 +1610,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         ArrayList<Map<String, String>> displayMap = FeatureLayerController.INSTANCE.layerDetails(layerResult);
         DialogLayerDetailsAdapter dialogLayerDetailsAdapter = new DialogLayerDetailsAdapter(this, displayMap);
         String layerTitle = layerResult.getLayerContent().getName();
-        DialogLayerDetailsFragment dialogLayerDetailsFragment = new DialogLayerDetailsFragment(this, dialogLayerDetailsAdapter, layerTitle, layerResult);
+        DialogLayerDetailsFragment dialogLayerDetailsFragment = new DialogLayerDetailsFragment(this, dialogLayerDetailsAdapter, layerTitle, layerResult, this);
         dialogLayerDetailsFragment.show();
     }
 

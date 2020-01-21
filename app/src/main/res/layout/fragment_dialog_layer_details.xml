@@ -20,11 +20,12 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
         android:gravity="center"
         android:text="כותרת"
         android:textColor="#ffffff"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/deleteClientLayerIV"
         app:layout_constraintStart_toEndOf="@+id/layerIconForDetailsDialog"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,8 +61,21 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginStart="32dp"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@+id/backgroundForHeadlineDialogDetails"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/arcgisruntime_location_display_default_symbol" />
+
+    <ImageView
+        android:id="@+id/deleteClientLayerIV"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:padding="6dp"
+        android:layout_marginEnd="16dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/empty_trash_general"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/layerIconForDetailsDialog" />
 </android.support.constraint.ConstraintLayout>

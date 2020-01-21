@@ -1,34 +1,19 @@
 package com.bgvofir.grappygis.LayerCalloutControl
 
-import android.graphics.Color
-import android.graphics.Point
-import android.util.JsonReader
 import android.util.Log
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
 import com.bgvofir.grappygis.ClientFeatureLayers.GrappiField
-import com.bgvofir.grappygis.ClientPoint
-import com.bgvofir.grappygis.ProjectRelated.ProjectId
-import com.bgvofir.grappygis.R
 import com.bgvofir.grappygis.SketchController.SketchEditorController
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
 import com.esri.arcgisruntime.geometry.Envelope
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer
-import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.io.StringReader
 import java.util.concurrent.ExecutionException
-import com.esri.arcgisruntime.concurrent.ListenableFuture
 import com.esri.arcgisruntime.data.*
 import com.esri.arcgisruntime.geometry.Geometry
-import com.esri.arcgisruntime.geometry.GeometryType
-import com.esri.arcgisruntime.geometry.PolylineBuilder
-import com.esri.arcgisruntime.layers.Layer
-import com.esri.arcgisruntime.symbology.SimpleLineSymbol
-import com.esri.arcgisruntime.symbology.SimpleRenderer
-import java.io.ObjectInput
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
@@ -38,6 +23,7 @@ object FeatureLayerController {
     var point: android.graphics.Point? = null
     var tolerance = 10.0
     var isUserLayer = false
+    var layerId = ""
     var shapeType = SketcherEditorTypes.POLYLINE
     var clientFeatureCollection: ClientFeatureCollectionLayer? = null
     var collection2: ClientFeatureCollectionLayer? = null
@@ -77,6 +63,7 @@ object FeatureLayerController {
 
     fun layerDetails(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
         val resultGeoElements = forLayer.elements
+        layerId = ""
         isUserLayer = false
         if (forLayer.layerContent.name == "Feature Collection"){
             //doesn't work here :(
@@ -129,6 +116,7 @@ object FeatureLayerController {
     }
     private fun parseFeatureCollection(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
         var resultList = ArrayList<Map<String, String>>()
+
         forLayer.sublayerResults.forEach {
 
             var mTempMap = mutableMapOf<String, String>()
@@ -136,7 +124,12 @@ object FeatureLayerController {
                 it.attributes.forEach {
                     mTempMap[it.key] = it.value.toString()
                 }
+                mTempMap["Id"]?.let { id->
+                    layerId = id
+                }
+
             }
+
             resultList.add(mTempMap)
         }
         val set = HashSet<Map<String, String>>(resultList)

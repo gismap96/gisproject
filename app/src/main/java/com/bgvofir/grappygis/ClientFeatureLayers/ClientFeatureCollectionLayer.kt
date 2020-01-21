@@ -1,8 +1,11 @@
 package com.bgvofir.grappygis.ClientFeatureLayers
 
+import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.Color
 import android.util.Log
+import android.widget.Toast
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController.generatePointsArray
 import com.bgvofir.grappygis.ProjectRelated.ProjectId
@@ -263,6 +266,59 @@ class ClientFeatureCollectionLayer () {
         return json
 
     }
+    fun identifyFeatureById(id: String): Int{
+        var count = 0
+        features.forEach {
+            if (it.attributes["Id"] == id) return count
+            count++
+        }
+        return -1
+    }
+    fun deleteFeature(layerId: String, context: Activity){
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        val objectID = identifyFeatureById(layerId)
+        if (objectID < 0){
+            Toast.makeText(context, "failed to update layer", Toast.LENGTH_LONG).show()
+        }
+        featureCollectionTable.deleteFeatureAsync(features[objectID]).addDoneListener{
+            val url = features[objectID].attributes["imageURL"] as String
+            val storage = FirebaseStorage.getInstance()
+            if (url.count() > 5) {
+                val reference = storage.getReferenceFromUrl(url)
+                reference.delete().addOnSuccessListener {
+                    features.removeAt(objectID)
+                    uploadJSON(object : ClientFeatureCollectionLayer.OnPolylineUploadFinish {
+                        override fun onPolylineUploadFinish() {
+                            progressDialog.dismiss()
+                            Toast.makeText(context, context.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }.addOnFailureListener {
+                    features.removeAt(objectID)
+                    uploadJSON(object : ClientFeatureCollectionLayer.OnPolylineUploadFinish {
+                        override fun onPolylineUploadFinish() {
+                            progressDialog.dismiss()
+                            Toast.makeText(context, context.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
+            } else {
+                features.removeAt(objectID)
+                uploadJSON(object : ClientFeatureCollectionLayer.OnPolylineUploadFinish {
+                    override fun onPolylineUploadFinish() {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+
+        }
+
+    }
+
 
     interface OnPolylineUploadFinish{
         fun onPolylineUploadFinish()

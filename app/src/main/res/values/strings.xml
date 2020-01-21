@@ -74,4 +74,8 @@
     <string name="understood">Understood</string>
     <string name="empty_polyline">Please draw a polyline</string>
     <string name="failed_to_download_image">failed to download preview image</string>
+    <string name="delete_layer_dialog_headline">Delete Feature?</string>
+    <string name="delete_layer_dialog_message">The feature will be permanently deleted.</string>
+    <string name="updating_layer">Updating Layer, please do not close the app</string>
+    <string name="layer_updated">Layer Updated</string>
 </resources>

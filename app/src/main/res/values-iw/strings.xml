@@ -70,4 +70,8 @@
     <string name="understood">הבנתי</string>
     <string name="empty_polyline">יש לצייר קו</string>
     <string name="failed_to_download_image">הורדת תמונה מקדימה נכשל</string>
+    <string name="delete_layer_dialog_headline">למחוק את הישות?</string>
+    <string name="delete_layer_dialog_message">הישות תהיה מחוקה לצמיתות ולא ניתן יהיה לשחזרה.</string>
+    <string name="updating_layer">מעדכן שכבה, נא לא לסגור את האפליקציה</string>
+    <string name="layer_updated">השכבה עודכנה בהצלחה</string>
 </resources>
