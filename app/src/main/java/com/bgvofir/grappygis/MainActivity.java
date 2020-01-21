@@ -298,6 +298,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                toast.show();
 //                return;
 //            }
+            mViewPoint = mMapView.getCurrentViewpoint(Viewpoint.Type.CENTER_AND_SCALE);
             SketcherEditorTypes type = SketchEditorController.INSTANCE.getSketcherEditorTypes();
             switch (type){
 
@@ -1395,7 +1396,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
         switch (requestCode) {
             case TAKE_PHOTO_FOR_LAYER:
                 if (resultCode == Activity.RESULT_OK){
@@ -1717,6 +1717,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         Toast toast = Toast.makeText(this, R.string.polyline_saved, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER,0,0);
         toast.show();
+        mMapView.setViewpoint(mViewPoint);
 
     }
 }
