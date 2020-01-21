@@ -67,10 +67,15 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
                 }
             }
         }
+        deleteClientLayerIV.visibility = View.GONE
+        if (FeatureLayerController.isUserLayer){
+            deleteClientLayerIV.visibility = View.VISIBLE
+            deleteClientLayerIV.setOnClickListener(this)
+        }
         fragmentDialogLayerDetailsHeadline.text = finalHeadline
         fragmentDialogLayerDetailsClose.setOnClickListener(this)
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        deleteClientLayerIV.setOnClickListener(this)
+
 
     }
 
