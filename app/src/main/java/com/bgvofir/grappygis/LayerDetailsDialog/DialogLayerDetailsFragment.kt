@@ -78,7 +78,7 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
             editClientLayerAttributesIV.visibility = View.VISIBLE
             deleteClientLayerIV.setOnClickListener(this)
             editClientLayerGeometryIV.setOnClickListener(this)
-            
+
         }
         fragmentDialogLayerDetailsHeadline.text = finalHeadline
         fragmentDialogLayerDetailsClose.setOnClickListener(this)

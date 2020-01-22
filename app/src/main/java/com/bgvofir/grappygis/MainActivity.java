@@ -1661,6 +1661,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         switch (sketcher){
             case POINT:
                 isAddPointMode = true;
+                sketchEditorStartIV.setEnabled(true);
+                deletePointIV.setEnabled(true);
                 return;
             case POLYGON:
                 overallSizeHeadlineTV.setText(R.string.dunam);
@@ -1677,19 +1679,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
             @Override
             public void geometryChanged(SketchGeometryChangedEvent sketchGeometryChangedEvent) {
-                String unit = mMapView.getSpatialReference().getUnit().getAbbreviation();
-                String section = SketchEditorController.INSTANCE.wertexOriginal(unit);
-                displaySectionForShapeTV.setText(section);
-                switch (sketcher){
-                    case POLYLINE:
-                        String distance = SketchEditorController.INSTANCE.polylineDistance(mMapView);
-                        calculatePolygonAreaTV.setText(distance);
-                        break;
-                    case POLYGON:
-                        String area = SketchEditorController.INSTANCE.polygonArea(mMapView);
-                        calculatePolygonAreaTV.setText(area);
-                        break;
-                }
+                setMeasurementsDisplay(sketcher);
             }
         });
     }
@@ -1731,7 +1721,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         toast.setGravity(Gravity.CENTER,0,0);
         toast.show();
         mMapView.setViewpoint(mViewPoint);
-
+        if (SketchEditorController.INSTANCE.isEditMode()){
+            SketchEditorController.INSTANCE.setEditMode(false);
+            resetMenuFunctions();
+        }
     }
 
     @Override
@@ -1760,23 +1753,28 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         SketchEditorController.INSTANCE.startSketching(type, mMapView, editGeometry);
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
         mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
+        setMeasurementsDisplay(type);
         mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
             @Override
             public void geometryChanged(SketchGeometryChangedEvent sketchGeometryChangedEvent) {
-                String unit = mMapView.getSpatialReference().getUnit().getAbbreviation();
-                String section = SketchEditorController.INSTANCE.wertexOriginal(unit);
-                displaySectionForShapeTV.setText(section);
-                switch (type){
-                    case POLYLINE:
-                        String distance = SketchEditorController.INSTANCE.polylineDistance(mMapView);
-                        calculatePolygonAreaTV.setText(distance);
-                        break;
-                    case POLYGON:
-                        String area = SketchEditorController.INSTANCE.polygonArea(mMapView);
-                        calculatePolygonAreaTV.setText(area);
-                        break;
-                }
+                setMeasurementsDisplay(type);
             }
         });
+    }
+
+    private void setMeasurementsDisplay(@NotNull SketcherEditorTypes type) {
+        String unit = mMapView.getSpatialReference().getUnit().getAbbreviation();
+        String section = SketchEditorController.INSTANCE.wertexOriginal(unit);
+        displaySectionForShapeTV.setText(section);
+        switch (type) {
+            case POLYLINE:
+                String distance = SketchEditorController.INSTANCE.polylineDistance(mMapView);
+                calculatePolygonAreaTV.setText(distance);
+                break;
+            case POLYGON:
+                String area = SketchEditorController.INSTANCE.polygonArea(mMapView);
+                calculatePolygonAreaTV.setText(area);
+                break;
+        }
     }
 }

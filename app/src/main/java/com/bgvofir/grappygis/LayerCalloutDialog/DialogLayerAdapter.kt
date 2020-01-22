@@ -14,7 +14,7 @@ import com.esri.arcgisruntime.layers.LegendInfo
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import kotlinx.android.synthetic.main.row_for_callout_dialog.view.*
 import java.util.concurrent.ExecutionException
-import android.R
+import com.bgvofir.grappygis.R
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Build
@@ -89,11 +89,14 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
                 }
             } else {
                 mTextView.text = "דקירה ממשתמש"
-                mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(com.bgvofir.grappygis.R.drawable.ic_star_blue))
+                mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_star_blue))
             }
             //end of legend image
             itemView.setOnClickListener {
                 onRowClickListener.onRowClickListener(layerTitle, identifiedLayer)
+            }
+            if (layerTitle.contains("\$\$##") && layerTitle == context.getString(R.string.polyline_layer)){
+                mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_polyline_soft_red))
             }
         }
     }
