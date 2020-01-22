@@ -75,6 +75,7 @@ import com.esri.arcgisruntime.data.FeatureQueryResult;
 import com.esri.arcgisruntime.data.Field;
 import com.esri.arcgisruntime.data.QueryParameters;
 import com.esri.arcgisruntime.geometry.Envelope;
+import com.esri.arcgisruntime.geometry.Geometry;
 import com.esri.arcgisruntime.geometry.GeometryEngine;
 import com.esri.arcgisruntime.geometry.GeometryType;
 import com.esri.arcgisruntime.geometry.Point;
@@ -148,7 +149,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
-, LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish{
+, LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish, DialogLayerDetailsFragment.OnEditSelectedListener{
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
@@ -180,7 +181,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private float mCurrentX;
     private float mCurrentY;
     private ImageView toggleMenuBtn;
-    private ImageView toggledistanceBtn;
+    private ImageView sketchEditorStartIV;
     private ImageView addPoint;
     private ImageView toggleAutoPanBtn;
     private ImageView deletePointIV;
@@ -232,7 +233,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         displaySectionForShapeTV = findViewById(R.id.displaySectionForShapeTV);
         deletePointIV = findViewById(R.id.deletePointIV);
         mapProgress = findViewById(R.id.map_progress);
-        toggledistanceBtn = findViewById(R.id.toggledistanceBtn);
+        sketchEditorStartIV = findViewById(R.id.sketchEditorIV);
         northBarIV = findViewById(R.id.northBarIV);
         northBarIV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -240,16 +241,16 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 rotateMap(0);
             }
         });
-        toggledistanceBtn.setOnClickListener(new View.OnClickListener() {
+        sketchEditorStartIV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 resetMenuFunctions();
                 if (MainUpperMenu.INSTANCE.measureLine()) {
-//                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+//                    sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
 //                    mIsDistance = true;
 
-                   // toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                   // sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                    sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
                     SketcherSelectionDialogAdapter sketcherSelectionDialogAdapter = new SketcherSelectionDialogAdapter(MainActivity.this, MainActivity.this);
                     sketcherSelectionDialogFragment = new SketcherSelectionDialogFragment(MainActivity.this, sketcherSelectionDialogAdapter, MainActivity.this);
                     sketcherSelectionDialogFragment.show();
@@ -306,8 +307,21 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     break;
                 case POLYLINE:
                     if (SketchEditorController.INSTANCE.isPolylineNotEmpty()){
-                        SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this, progressDialog);
-                        layerAttributes.show();
+                        if (SketchEditorController.INSTANCE.isEditMode()){
+                            String layerId = FeatureLayerController.INSTANCE.getLayerId();
+                            Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
+                            if (geometry != null){
+                                progressDialog.show();
+                                SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
+                                UserPolyline.INSTANCE.getUserPolyline().editFeatureGeometry(layerId,geometry, this);
+                            } else {
+                                Toast.makeText(this, "empty geometry", Toast.LENGTH_LONG).show();
+                            }
+
+                        } else {
+                            SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this, progressDialog);
+                            layerAttributes.show();
+                        }
                     } else {
                         Toast toast = Toast.makeText(MainActivity.this, R.string.empty_polyline, Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER,0,0);
@@ -442,7 +456,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         closeSketcherIV.setOnClickListener(v -> {
             resetMenuFunctions();
             deletePointIV.setEnabled(true);
-            toggledistanceBtn.setEnabled(true);
+            sketchEditorStartIV.setEnabled(true);
         });
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
@@ -496,7 +510,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         isDeletePointMode = false;
         SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
 //        addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-        toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         MainUpperMenu.INSTANCE.resetMenu();
     }
@@ -1036,7 +1050,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 @Override
                 public void run() {
                     mDistanceOverlay.getGraphics().clear();
-                    toggledistanceBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                    sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
                     MainUpperMenu.INSTANCE.resetMenu();
 //                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 }
@@ -1611,7 +1625,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         ArrayList<Map<String, String>> displayMap = FeatureLayerController.INSTANCE.layerDetails(layerResult);
         DialogLayerDetailsAdapter dialogLayerDetailsAdapter = new DialogLayerDetailsAdapter(this, displayMap);
         String layerTitle = layerResult.getLayerContent().getName();
-        DialogLayerDetailsFragment dialogLayerDetailsFragment = new DialogLayerDetailsFragment(this, dialogLayerDetailsAdapter, layerTitle, layerResult, this);
+        DialogLayerDetailsFragment dialogLayerDetailsFragment = new DialogLayerDetailsFragment(this, dialogLayerDetailsAdapter, layerTitle, layerResult, this, this);
         dialogLayerDetailsFragment.show();
     }
 
@@ -1638,12 +1652,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             resetMenuFunctions();
             return;
         }
+        sketcherStart(sketcher);
+    }
 
-//        if (sketcher == SketcherEditorTypes.DISTANCE){
-//            mIsDistance = true;
-//            return;
-//        }
-        toggledistanceBtn.setEnabled(false);
+    private void sketcherStart(SketcherEditorTypes sketcher) {
+        sketchEditorStartIV.setEnabled(false);
         deletePointIV.setEnabled(false);
         switch (sketcher){
             case POINT:
@@ -1719,5 +1732,51 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         toast.show();
         mMapView.setViewpoint(mViewPoint);
 
+    }
+
+    @Override
+    public void onEditSelectedListener(@NotNull SketcherEditorTypes type, @NotNull String layerId) {
+        Geometry editGeometry = UserPolyline.INSTANCE.getUserPolyline().getFeatureGeometry(layerId);
+        if (editGeometry == null){
+            return;
+        }
+        sketcherStart(type);
+        sketchEditorStartIV.setEnabled(false);
+        deletePointIV.setEnabled(false);
+        switch (type){
+            case POINT:
+                isAddPointMode = true;
+                return;
+            case POLYGON:
+                overallSizeHeadlineTV.setText(R.string.dunam);
+                lengthSectionHeadlineTV.setText(R.string.section);
+                break;
+            case POLYLINE:
+                overallSizeHeadlineTV.setText(R.string.length);
+                lengthSectionHeadlineTV.setText(R.string.section);
+                break;
+        }
+
+        SketchEditorController.INSTANCE.startSketching(type, mMapView, editGeometry);
+        SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
+        mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
+        mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
+            @Override
+            public void geometryChanged(SketchGeometryChangedEvent sketchGeometryChangedEvent) {
+                String unit = mMapView.getSpatialReference().getUnit().getAbbreviation();
+                String section = SketchEditorController.INSTANCE.wertexOriginal(unit);
+                displaySectionForShapeTV.setText(section);
+                switch (type){
+                    case POLYLINE:
+                        String distance = SketchEditorController.INSTANCE.polylineDistance(mMapView);
+                        calculatePolygonAreaTV.setText(distance);
+                        break;
+                    case POLYGON:
+                        String area = SketchEditorController.INSTANCE.polygonArea(mMapView);
+                        calculatePolygonAreaTV.setText(area);
+                        break;
+                }
+            }
+        });
     }
 }

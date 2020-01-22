@@ -32,6 +32,7 @@ object SketchEditorController {
     var formatDunam = ""
     var formatDistance = ""
     var isWorking = false
+    var isEditMode = false
 
     fun getGeometry():Geometry?{
         return sketchEditor.geometry
@@ -91,6 +92,15 @@ object SketchEditorController {
         sketchEditor.start(SketchCreationMode.POLYGON)
     }
 
+    fun polylineMode(geometry: Geometry){
+        distance = 0.0
+        sketchEditor.start(geometry, SketchCreationMode.POLYLINE)
+    }
+
+    fun polygonMode(geometry: Geometry){
+        area = 0.0
+        sketchEditor.start(geometry, SketchCreationMode.POLYGON)
+    }
     fun clean(mMapView: MapView){
         sketchEditor.clearGeometry()
     }
@@ -172,6 +182,7 @@ object SketchEditorController {
     }
 
     fun stopSketcher(layout: ConstraintLayout){
+        isEditMode = false
         if (!isWorking) return else isWorking = false
         sketchEditor.stop()
         ObjectAnimator.ofFloat(layout,"translationY", 200f).apply{
@@ -198,6 +209,7 @@ object SketchEditorController {
 
     fun startSketching(sketcherEditorTypes: SketcherEditorTypes, mMapView: MapView) {
         sketchEditor.stop()
+        isEditMode = false
         this.sketcherEditorTypes = sketcherEditorTypes
         this.sketchEditor = SketchEditor()
         sketchEditor = sketchEditor
@@ -212,6 +224,22 @@ object SketchEditorController {
         }
     }
 
+    fun startSketching(sketcherEditorTypes: SketcherEditorTypes, mMapView: MapView, geometry: Geometry) {
+        sketchEditor.stop()
+        isEditMode = true
+        this.sketcherEditorTypes = sketcherEditorTypes
+        this.sketchEditor = SketchEditor()
+        sketchEditor = sketchEditor
+        mMapView.sketchEditor = sketchEditor
+        when (sketcherEditorTypes) {
+            SketcherEditorTypes.POLYLINE -> {
+                polylineMode(geometry)
+            }
+            SketcherEditorTypes.POLYGON -> {
+                polygonMode(geometry)
+            }
+        }
+    }
     fun undo(){
         sketchEditor.undo()
     }

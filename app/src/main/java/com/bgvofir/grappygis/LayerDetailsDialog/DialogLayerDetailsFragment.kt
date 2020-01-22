@@ -19,15 +19,17 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
+import android.util.Log
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline
+import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import java.util.concurrent.ExecutionException
 
 
-class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>, var headline: String, val identifiedLayer: IdentifyLayerResult, val context: Activity): Dialog(activity), View.OnClickListener {
+class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>, var headline: String, val identifiedLayer: IdentifyLayerResult, val context: Activity, val callback: OnEditSelectedListener): Dialog(activity), View.OnClickListener {
 
-
+    val TAG = "DialogDetails"
     override fun onStart() {
         super.onStart()
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -67,16 +69,17 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
                 }
             }
         }
+        editClientLayerGeometryIV.visibility = View.GONE
         deleteClientLayerIV.visibility = View.GONE
         if (FeatureLayerController.isUserLayer){
             deleteClientLayerIV.visibility = View.VISIBLE
+            editClientLayerGeometryIV.visibility = View.VISIBLE
             deleteClientLayerIV.setOnClickListener(this)
+            editClientLayerGeometryIV.setOnClickListener(this)
         }
         fragmentDialogLayerDetailsHeadline.text = finalHeadline
         fragmentDialogLayerDetailsClose.setOnClickListener(this)
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-
     }
 
 
@@ -123,6 +126,19 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
                 builder.create().show()
 
             }
+            R.id.editClientLayerGeometryIV->{
+                val layerId = FeatureLayerController.layerId
+                if (layerId.count() > 0){
+                    callback.onEditSelectedListener(SketcherEditorTypes.POLYLINE, layerId)
+                } else {
+                    Log.d(TAG, "error loading feature")
+                }
+                dismiss()
+            }
         }
+    }
+
+    interface OnEditSelectedListener{
+        fun onEditSelectedListener(type: SketcherEditorTypes, layerId: String)
     }
 }

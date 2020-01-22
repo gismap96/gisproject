@@ -20,11 +20,12 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
         android:gravity="center"
         android:text="כותרת"
         android:textColor="#ffffff"
-        android:textSize="24sp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/deleteClientLayerIV"
         app:layout_constraintStart_toEndOf="@+id/layerIconForDetailsDialog"
         app:layout_constraintTop_toTopOf="parent" />
@@ -71,11 +72,30 @@
         android:id="@+id/deleteClientLayerIV"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:padding="6dp"
         android:layout_marginEnd="16dp"
+        android:padding="6dp"
         android:scaleType="fitCenter"
         android:src="@drawable/empty_trash_general"
         android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/editClientLayerGeometryIV"
         app:layout_constraintTop_toTopOf="@+id/layerIconForDetailsDialog" />
+
+    <ImageView
+        android:id="@+id/editClientLayerGeometryIV"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="8dp"
+        android:padding="6dp"
+        android:src="@drawable/ic_edit_layers"
+        app:layout_constraintEnd_toStartOf="@+id/editClientLayerAttributesIV"
+        app:layout_constraintTop_toTopOf="@+id/deleteClientLayerIV" />
+    <ImageView
+        android:id="@+id/editClientLayerAttributesIV"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="6dp"
+        android:src="@drawable/ic_star_blue"
+        app:layout_constraintTop_toTopOf="@+id/deleteClientLayerIV"
+        tools:layout_editor_absoluteX="293dp" />
 </android.support.constraint.ConstraintLayout>

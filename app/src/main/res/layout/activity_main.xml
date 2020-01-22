@@ -85,7 +85,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/toggledistanceBtn"
+            android:id="@+id/sketchEditorIV"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="12dp"

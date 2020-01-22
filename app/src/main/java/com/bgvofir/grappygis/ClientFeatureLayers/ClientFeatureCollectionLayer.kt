@@ -274,6 +274,16 @@ class ClientFeatureCollectionLayer () {
         }
         return -1
     }
+
+    fun getFeatureGeometry(id: String):Geometry?{
+        val featureNum = identifyFeatureById(id)
+        if (featureNum >= 0){
+            val mFeature = features[featureNum]
+            return mFeature.geometry
+        }
+        return null
+    }
+
     fun deleteFeature(layerId: String, context: Activity){
         val progressDialog = ProgressDialog(context)
         progressDialog.setTitle(context.getString(R.string.updating_layer))
@@ -318,7 +328,15 @@ class ClientFeatureCollectionLayer () {
         }
 
     }
+    fun editFeatureGeometry(id: String, geometry:Geometry, callback: OnPolylineUploadFinish){
+        val featureNum = identifyFeatureById(id)
+        val editFeature = features[featureNum]
+        editFeature.geometry = geometry
+        featureCollectionTable.updateFeatureAsync(editFeature).addDoneListener{
+            uploadJSON(callback)
+        }
 
+    }
 
     interface OnPolylineUploadFinish{
         fun onPolylineUploadFinish()
