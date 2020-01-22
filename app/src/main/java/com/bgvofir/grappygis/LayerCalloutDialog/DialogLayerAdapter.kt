@@ -95,7 +95,7 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
             itemView.setOnClickListener {
                 onRowClickListener.onRowClickListener(layerTitle, identifiedLayer)
             }
-            if (layerTitle.contains("\$\$##") && layerTitle == context.getString(R.string.polyline_layer)){
+            if (layerTitle.contains("\$\$##") && layerTitle.contains(context.getString(R.string.polyline_layer))){
                 mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_polyline_soft_red))
             }
         }
