@@ -23,7 +23,7 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.widget.ImageView
 
 
-class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,internal var onRowClickListener: OnRowClickListener, val identifiedLayers: MutableList<IdentifyLayerResult>): RecyclerView.Adapter<DialogLayerAdapter.DialogLayerAdapterViewHolder>(){
+class DialogLayerAdapter(val context: Context,var layerNames: ArrayList<String>,internal var onRowClickListener: OnRowClickListener, val identifiedLayers: MutableList<IdentifyLayerResult>): RecyclerView.Adapter<DialogLayerAdapter.DialogLayerAdapterViewHolder>(){
 
 //    var keyList =  arrayListOf<String>()
 //    var valueList =  arrayListOf<String>()
@@ -37,6 +37,9 @@ class DialogLayerAdapter(val context: Context,val layerNames: ArrayList<String>,
 //            valueList.add(it.value)
 //        }
 //    }
+    init {
+        layerNames = ArrayList(layerNames.distinct())
+    }
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): DialogLayerAdapterViewHolder {
 
