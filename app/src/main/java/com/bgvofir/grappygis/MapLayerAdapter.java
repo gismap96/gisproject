@@ -26,9 +26,11 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
     private List<Layer> mLayers ;
     private final Context mContext;
     private final String TAG = MapLayerAdapter.class.getSimpleName();
+    private OnLegendItemInteraction mInteractionListener;
 
-    public MapLayerAdapter(final Context context){
+    public MapLayerAdapter(final Context context, OnLegendItemInteraction listener){
         mContext = context;
+        mInteractionListener = listener;
     }
 
     /**
@@ -67,7 +69,18 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
         final boolean layerVisible = (layer.isVisible());
         holder.checkBox.setChecked(layerVisible);
 
-
+        holder.layerName.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                try{
+                    mInteractionListener.onLongPressed(layer);
+                }
+                catch(Exception ex){
+                    Log.d("MapLayerAdapter", "layer extent fair");
+                }
+                return false;
+            }
+        });
 
 
         holder.checkBox.setTag(mLayers.get(position));
@@ -144,7 +157,9 @@ public class MapLayerAdapter extends RecyclerView.Adapter<MapLayerAdapter.MapLay
             legendItems = (RecyclerView) view.findViewById(R.id.legendRecylerView);
             iconForClientPointIV = view.findViewById(R.id.iconForClientPointIV);
         }
+    }
 
-
+    public interface OnLegendItemInteraction{
+        void onLongPressed(Layer layer);
     }
 }

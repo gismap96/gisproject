@@ -16,7 +16,7 @@ import com.esri.arcgisruntime.layers.Layer
 import kotlinx.android.synthetic.main.legend_sidebar_group_overlay.view.*
 
 
-class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, val recyclerView: RecyclerView): RecyclerView.Adapter<LegendSidebarAdapter.LegendSidebarViewHolder>(){
+class LegendSidebarAdapter(var context: Context, val interactionListener: MapLayerAdapter.OnLegendItemInteraction, val layers: List<LegendGroup>, val recyclerView: RecyclerView): RecyclerView.Adapter<LegendSidebarAdapter.LegendSidebarViewHolder>(){
 
 
     val TAG = "Sidebaradapter"
@@ -40,7 +40,7 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, 
     }
 
     override fun onBindViewHolder(p0: LegendSidebarViewHolder, p1: Int) {
-        p0.bind(mLayers[p1], context)
+        p0.bind(mLayers[p1], context, interactionListener)
         p0.setIsRecyclable(false)
         p0.itemView.setOnClickListener {
             if (p0.legendDetailsRecyclerView.visibility == View.GONE){
@@ -63,9 +63,9 @@ class LegendSidebarAdapter(var context: Context, val layers: List<LegendGroup>, 
         var legendDetailsRecyclerView = v.legendDetailsRecyclerView
         var legendIconIV = v.legendIconIV
 
-        fun bind(group: LegendGroup, context: Context){
+        fun bind(group: LegendGroup, context: Context, interactionListener: MapLayerAdapter.OnLegendItemInteraction){
             legendGroupNameTV.text = group.title
-            val adapter = MapLayerAdapter(context)
+            val adapter = MapLayerAdapter(context, interactionListener)
             adapter.setLayerList(group.layers)
             val layoutManager = LinearLayoutManager(context)
             legendDetailsRecyclerView.layoutManager = layoutManager

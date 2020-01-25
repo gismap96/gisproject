@@ -38,7 +38,7 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(com.bgvofir.grappygis.R.layout.fragment_dialog_layer_details)
+        setContentView(R.layout.fragment_dialog_layer_details)
         var layoutManager = LinearLayoutManager(activity)
         var recycler = dialogLayerDetailsRecyclerview
         recycler.layoutManager = layoutManager

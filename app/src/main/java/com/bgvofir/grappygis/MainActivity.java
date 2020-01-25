@@ -83,6 +83,7 @@ import com.esri.arcgisruntime.geometry.PointCollection;
 import com.esri.arcgisruntime.geometry.Polyline;
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer;
 import com.esri.arcgisruntime.layers.FeatureLayer;
+import com.esri.arcgisruntime.layers.Layer;
 import com.esri.arcgisruntime.layers.RasterLayer;
 import com.esri.arcgisruntime.loadable.LoadStatus;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
@@ -106,6 +107,8 @@ import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
 import com.esri.arcgisruntime.symbology.SimpleRenderer;
 import com.esri.arcgisruntime.symbology.TextSymbol;
+import com.esri.arcgisruntime.tasks.geocode.LocatorAttribute;
+import com.esri.arcgisruntime.tasks.geocode.LocatorTask;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
@@ -135,6 +138,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -149,7 +153,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
-, LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish, DialogLayerDetailsFragment.OnEditSelectedListener{
+        , LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish, DialogLayerDetailsFragment.OnEditSelectedListener, MapLayerAdapter.OnLegendItemInteraction {
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
@@ -603,6 +607,15 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         }
                     }
                 });
+    }
+
+    private void gotoXYBylayer(@NonNull Layer layer){
+        Envelope myExtents = layer.getFullExtent();
+        if (myExtents != null){
+            myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
+            mMapView.setViewpoint(new Viewpoint(myExtents));
+
+        }
     }
 
     /**
@@ -1693,7 +1706,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void successListener() {
         List<LegendGroup> legendGroups = LegendLayerDisplayController.INSTANCE.generateLegendGroupList(mMapView);
-        legendAdapter = new LegendSidebarAdapter(this, legendGroups, mLayerRecyclerView);
+        legendAdapter = new LegendSidebarAdapter(this, this, legendGroups, mLayerRecyclerView);
         mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mLayerRecyclerView.setAdapter(legendAdapter);
         toggleMenuBtn.setVisibility(View.VISIBLE);
@@ -1782,5 +1795,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 calculatePolygonAreaTV.setText(area);
                 break;
         }
+    }
+
+    @Override
+    public void onLongPressed(Layer layer) {
+        gotoXYBylayer(layer);
     }
 }
