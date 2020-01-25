@@ -17,6 +17,7 @@ import android.widget.Toast
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
 import com.bgvofir.grappygis.R
 import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 import kotlinx.android.synthetic.main.row_for_layer_details_dialog.view.*
 import java.lang.Exception
 import java.util.ArrayList
@@ -122,6 +123,7 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
 
 
     inner class DialogLayerDetailsAdapterViewHolder(v: View): RecyclerView.ViewHolder(v){
+        private lateinit var target: Target
         private var keyTextView = v.rowLayersDetailsKey
         private var valueTextView = v.rowLayersDetailsValue
         private var previewImage = v.rowDetailsPreviewImageView
@@ -132,7 +134,8 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                 valueTextView.visibility = View.GONE
                 keyTextView.visibility = View.GONE
                 previewImage.visibility = View.VISIBLE
-                Picasso.get().load(value).placeholder(R.drawable.ic_placeholder).into(object: com.squareup.picasso.Target{
+                Picasso.get().isLoggingEnabled = true
+                target = object: Target{
                     override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
                         previewImage.setImageDrawable(placeHolderDrawable)
                     }
@@ -143,12 +146,22 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
 
                     override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
 
+                        if (bitmap != null){
+                            previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
+                            previewImage.setImageBitmap(bitmap)
+                            Toast.makeText(context, "Bitmap is loaded", Toast.LENGTH_LONG).show()
+                        }
+                        else{
+                            Toast.makeText(context, "Bitmap is null", Toast.LENGTH_LONG).show()
+                        }
                         bitmap?.let{
                             previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
                             previewImage.setImageBitmap(it)
                         }
                     }
-                })
+                }
+
+                Picasso.get().load(value).placeholder(R.drawable.ic_placeholder).into(target)
                 previewImage.setOnClickListener {
                     val intent = Intent(Intent.ACTION_VIEW)
                     intent.data = (Uri.parse(value))

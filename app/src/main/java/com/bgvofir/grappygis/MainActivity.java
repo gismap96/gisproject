@@ -678,7 +678,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         });
     }
 
+    private void deleteRasterFolder(){
+        File rasterFolder = new File(getRasterFolderPath());
+        deleteRecursive(rasterFolder);
+    }
+
     private void downloadRaster(){
+        deleteRasterFolder();
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setTitle(getString(R.string.initial_download_message));
