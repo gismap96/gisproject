@@ -146,14 +146,6 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
 
                     override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
 
-                        if (bitmap != null){
-                            previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
-                            previewImage.setImageBitmap(bitmap)
-                            Toast.makeText(context, "Bitmap is loaded", Toast.LENGTH_LONG).show()
-                        }
-                        else{
-                            Toast.makeText(context, "Bitmap is null", Toast.LENGTH_LONG).show()
-                        }
                         bitmap?.let{
                             previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
                             previewImage.setImageBitmap(it)

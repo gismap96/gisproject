@@ -14,6 +14,7 @@ import android.view.Window
 import android.widget.Toast
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
 import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController
+import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController
 import com.bgvofir.grappygis.ProjectRelated.MapProperties
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline
@@ -23,11 +24,10 @@ import kotlinx.android.synthetic.main.description_dialog.*
 import kotlinx.android.synthetic.main.fragment_dialog_sketcher_save_input.*
 import java.util.*
 
-class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView, isZift2: Boolean,
-                                 val callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish, val layerListener: LegendLayerDisplayController.LayerGroupsListener, val progressDialog: ProgressDialog): Dialog(context), View.OnClickListener {
+class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
+                                 val callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish?, val layerListener: LegendLayerDisplayController.LayerGroupsListener?, val progressDialog: ProgressDialog?, val isEditMode: Boolean): Dialog(context), View.OnClickListener {
 
     var mMapView = mMapView
-    val iszift2 = isZift2
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -41,6 +41,24 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView, isZif
     }
 
     fun setGeometry(){
+        val type = SketchEditorController.sketcherEditorTypes
+        val category = addCategoryToSketcherSaveET.text.toString()
+        val number = addNumberToSketcherSaveET.text.toString().toDouble()
+        val description = addDescriptionSketcherSaveET.text.toString()
+        var isUpdated = "no"
+        if (updateToSystemSketchSaveSW.isChecked) isUpdated = "yes"
+        val attributes = hashMapOf<String, Any>()
+        attributes.put("category", category)
+        attributes.put("description", description)
+        attributes.put("number", number)
+        attributes.put("isUpdated", isUpdated)
+        attributes.put("imageURL", "")
+        if (isEditMode){
+            val layerId = FeatureLayerController.layerId
+            UserPolyline.userPolyline!!.editFeatureAttributes(context, layerId, attributes)
+            dismiss()
+            return
+        }
         val geometry = SketchEditorController.getGeometry()
         if (geometry == null){
             val toast = Toast.makeText(context, "צורה ריקה", Toast.LENGTH_SHORT)
@@ -49,34 +67,24 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView, isZif
             dismiss()
             return
         }
-        val type = SketchEditorController.sketcherEditorTypes
-        val category = addCategoryToSketcherSaveET.text.toString()
-        val number = addNumberToSketcherSaveET.text.toString().toDouble()
-        val description = addDescriptionSketcherSaveET.text.toString()
-        var isUpdated = "no"
-        if (updateToSystemSketchSaveSW.isChecked) isUpdated = "yes"
+
         when (type){
             SketcherEditorTypes.POLYLINE -> {
                 if (UserPolyline.userPolyline == null){
                     UserPolyline.userPolyline = ClientFeatureCollectionLayer("פוליליין ממשתמש", UUID.randomUUID().toString(),
                             UserPolyline.grappiFields, MapProperties.spatialReference!!)
                     mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
-                    layerListener.successListener()
+                    layerListener?.successListener()
                 } else if (UserPolyline.userPolyline!!.features.size == 0){
                     UserPolyline.userPolyline = ClientFeatureCollectionLayer("פוליליין ממשתמש", UUID.randomUUID().toString(),
                             UserPolyline.grappiFields, MapProperties.spatialReference!!)
                     mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
-                    layerListener.successListener()
+                    layerListener?.successListener()
                 }
-                val attributes = hashMapOf<String, Any>()
-                attributes.put("category", category)
-                attributes.put("description", description)
-                attributes.put("number", number)
-                attributes.put("isUpdated", isUpdated)
-                attributes.put("imageURL", "")
+
                 //UserPolyline.userPolyline!!.createFeature(attributes, geometry)
                 SketchEditorController.clean(mMapView)
-                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback, progressDialog)
+                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
                 //UserPolyline.userPolyline!!.uploadJSON(callback)
             }
             SketcherEditorTypes.POLYGON -> {

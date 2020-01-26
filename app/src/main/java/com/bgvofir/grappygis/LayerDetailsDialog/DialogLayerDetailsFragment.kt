@@ -23,11 +23,13 @@ import android.util.Log
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
+import com.bgvofir.grappygis.SketchController.SketcherSaveDialogFragment
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
+import com.esri.arcgisruntime.mapping.view.MapView
 import java.util.concurrent.ExecutionException
 
 
-class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: RecyclerView.Adapter<*>, var headline: String, val identifiedLayer: IdentifyLayerResult, val context: Activity, val callback: OnEditSelectedListener): Dialog(activity), View.OnClickListener {
+class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, internal var adapter: RecyclerView.Adapter<*>, var headline: String, val identifiedLayer: IdentifyLayerResult, val context: Activity, val callback: OnEditSelectedListener): Dialog(activity), View.OnClickListener {
 
     val TAG = "DialogDetails"
     override fun onStart() {
@@ -69,16 +71,12 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
                 }
             }
         }
-        editClientLayerGeometryIV.visibility = View.GONE
-        deleteClientLayerIV.visibility = View.GONE
-        editClientLayerAttributesIV.visibility = View.GONE
+        upperEditLayerCommandBar.visibility = View.GONE
         if (FeatureLayerController.isUserLayer){
-            deleteClientLayerIV.visibility = View.VISIBLE
-            editClientLayerGeometryIV.visibility = View.VISIBLE
-            editClientLayerAttributesIV.visibility = View.VISIBLE
+            upperEditLayerCommandBar.visibility = View.VISIBLE
             deleteClientLayerIV.setOnClickListener(this)
             editClientLayerGeometryIV.setOnClickListener(this)
-
+            editClientLayerAttributesIV.setOnClickListener(this)
         }
         fragmentDialogLayerDetailsHeadline.text = finalHeadline
         fragmentDialogLayerDetailsClose.setOnClickListener(this)
@@ -137,6 +135,11 @@ class DialogLayerDetailsFragment(var activity: Activity, internal var adapter: R
                     Log.d(TAG, "error loading feature")
                 }
                 dismiss()
+            }
+            R.id.editClientLayerAttributesIV->{
+                dismiss()
+                val saveDialog = SketcherSaveDialogFragment(context, mMap, null, null, null, true)
+                saveDialog.show()
             }
         }
     }

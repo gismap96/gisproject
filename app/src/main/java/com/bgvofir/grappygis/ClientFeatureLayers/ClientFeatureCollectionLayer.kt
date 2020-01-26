@@ -338,6 +338,32 @@ class ClientFeatureCollectionLayer () {
 
     }
 
+    fun editFeatureAttributes(context: Context,id: String, attributes: HashMap<String, Any>){
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        val featureNum = identifyFeatureById(id)
+        val editFeature = features[featureNum]
+        val newAttributes = attributes.toMutableMap()
+        newAttributes["Id"] = UUID.randomUUID().toString()
+        newAttributes["imageURL"] = editFeature.attributes["imageURL"]!!
+        val geometry = editFeature.geometry
+        val newFeature = featureCollectionTable.createFeature(newAttributes,geometry) as Feature
+        features.add(newFeature)
+        featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
+            featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
+                uploadJSON(object: OnPolylineUploadFinish{
+                    override fun onPolylineUploadFinish() {
+                        progressDialog.dismiss()
+                    }
+
+                })
+            }
+        }
+
+    }
+
     interface OnPolylineUploadFinish{
         fun onPolylineUploadFinish()
     }

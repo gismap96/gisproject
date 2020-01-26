@@ -323,7 +323,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                             }
 
                         } else {
-                            SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this, progressDialog);
+                            SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, MainActivity.this, MainActivity.this, progressDialog, false);
                             layerAttributes.show();
                         }
                     } else {
@@ -406,12 +406,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         mDistanceOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(mDistanceOverlay);
         locationDisplay = mMapView.getLocationDisplay();
-        mMapView.addNavigationChangedListener(new NavigationChangedListener() {
-            @Override
-            public void navigationChanged(NavigationChangedEvent navigationChangedEvent) {
-                GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView);
-            }
-        });
+        mMapView.addNavigationChangedListener(navigationChangedEvent -> GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView));
 
 //        ArcGISMap map = new ArcGISMap(Basemap.Type.TOPOGRAPHIC, 34.056295, -117.195800, 16);
 
@@ -1644,7 +1639,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         ArrayList<Map<String, String>> displayMap = FeatureLayerController.INSTANCE.layerDetails(layerResult);
         DialogLayerDetailsAdapter dialogLayerDetailsAdapter = new DialogLayerDetailsAdapter(this, displayMap);
         String layerTitle = layerResult.getLayerContent().getName();
-        DialogLayerDetailsFragment dialogLayerDetailsFragment = new DialogLayerDetailsFragment(this, dialogLayerDetailsAdapter, layerTitle, layerResult, this, this);
+        DialogLayerDetailsFragment dialogLayerDetailsFragment = new DialogLayerDetailsFragment(mMapView, this, dialogLayerDetailsAdapter, layerTitle, layerResult, this, this);
         dialogLayerDetailsFragment.show();
     }
 
