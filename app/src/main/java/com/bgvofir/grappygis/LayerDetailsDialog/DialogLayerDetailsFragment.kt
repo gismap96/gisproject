@@ -20,6 +20,7 @@ import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.Log
+import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
@@ -77,6 +78,7 @@ class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, inter
             deleteClientLayerIV.setOnClickListener(this)
             editClientLayerGeometryIV.setOnClickListener(this)
             editClientLayerAttributesIV.setOnClickListener(this)
+            editFeatureImageIV.setOnClickListener(this)
         }
         fragmentDialogLayerDetailsHeadline.text = finalHeadline
         fragmentDialogLayerDetailsClose.setOnClickListener(this)
@@ -140,6 +142,10 @@ class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, inter
                 dismiss()
                 val saveDialog = SketcherSaveDialogFragment(context, mMap, null, null, null, true)
                 saveDialog.show()
+            }
+            R.id.editFeatureImageIV->{
+                dismiss()
+                ClientPhotoController.editPhoto(context)
             }
         }
     }

@@ -153,10 +153,13 @@ object SketchEditorController {
             area *= 1609.344
         }
         val decimalFormat = DecimalFormat("#.00")
-        dunam = area / 1000.0
-        formatDunam = decimalFormat.format(dunam).toString()
-        if (formatDunam == ".00" || formatDunam == ".00m") formatDunam = "0.00m"
-        return formatDunam
+//        dunam = area / 1000.0
+//        formatDunam = decimalFormat.format(dunam).toString()
+      //  if (formatDunam == ".00" || formatDunam == ".00m") formatDunam = "0.00m"
+        var areaFormat = decimalFormat.format(area).toString()
+        if (areaFormat == ".00m" || areaFormat == ".00") areaFormat = "0.00"
+        areaFormat += "m²"
+        return areaFormat
     }
 
     fun polylineDistance(mMapView: MapView): String{

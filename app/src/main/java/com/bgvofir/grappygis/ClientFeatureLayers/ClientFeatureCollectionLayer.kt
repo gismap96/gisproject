@@ -4,11 +4,14 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.Color
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController.generatePointsArray
 import com.bgvofir.grappygis.ProjectRelated.ProjectId
+import com.bgvofir.grappygis.ProjectRelated.UserPolyline
 import com.bgvofir.grappygis.R
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
 import com.esri.arcgisruntime.data.Feature
@@ -24,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.squareup.picasso.Picasso
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -361,10 +365,29 @@ class ClientFeatureCollectionLayer () {
                 })
             }
         }
-
     }
 
     interface OnPolylineUploadFinish{
         fun onPolylineUploadFinish()
+    }
+    fun editFeatureImage(context: Context, id: String, uri: Uri?){
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        val featureNum = identifyFeatureById(id)
+        uri?.let {mUri ->
+            val storage = FirebaseStorage.getInstance()
+            val oldURL = features[featureNum].attributes["imageURL"] as String
+            val ref = storage.getReferenceFromUrl(oldURL)
+            Picasso.get().invalidate(oldURL)
+            val compressedImage = ClientPhotoController.reduceImageSize(mUri)
+            compressedImage?.let{
+                ref.putFile(it).addOnSuccessListener {
+                    progressDialog.dismiss()
+                    Toast.makeText(context, context.getString(R.string.layer_updated),Toast.LENGTH_SHORT)
+                }
+            }
+        }
     }
 }

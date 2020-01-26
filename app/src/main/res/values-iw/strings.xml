@@ -74,4 +74,5 @@
     <string name="delete_layer_dialog_message">הישות תהיה מחוקה לצמיתות ולא ניתן יהיה לשחזרה.</string>
     <string name="updating_layer">מעדכן שכבה, נא לא לסגור את האפליקציה</string>
     <string name="layer_updated">השכבה עודכנה בהצלחה</string>
+    <string name="area">שטח</string>
 </resources>

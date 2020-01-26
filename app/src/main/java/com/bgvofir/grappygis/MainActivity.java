@@ -172,6 +172,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private PointCollection mPolylinePoints;
     private static final int TAKE_PICTURE = 1;
     private static final int TAKE_PHOTO_FOR_LAYER = 2;
+    private static final int EDIT_PHOTO_FOR_LAYER = 3;
     private Uri imageUri;
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -1425,6 +1426,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
+            case EDIT_PHOTO_FOR_LAYER:
+                if (resultCode == Activity.RESULT_OK){
+                    Uri uri = ClientPhotoController.INSTANCE.getImageURI();
+                    String layerID = FeatureLayerController.INSTANCE.getLayerId();
+                    UserPolyline.INSTANCE.getUserPolyline().editFeatureImage(this, layerID, uri);
+                }
+                break;
             case TAKE_PHOTO_FOR_LAYER:
                 if (resultCode == Activity.RESULT_OK){
                     this.progressDialog.show();
@@ -1679,7 +1687,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 deletePointIV.setEnabled(true);
                 return;
             case POLYGON:
-                overallSizeHeadlineTV.setText(R.string.dunam);
+                overallSizeHeadlineTV.setText(R.string.area);
                 lengthSectionHeadlineTV.setText(R.string.section);
                 break;
             case POLYLINE:

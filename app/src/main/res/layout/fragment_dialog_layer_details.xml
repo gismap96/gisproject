@@ -14,6 +14,18 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/editFeatureImageIV"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="8dp"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_add_photo"
+            android:tint="@color/colorPrimary"
+            app:layout_constraintEnd_toStartOf="@+id/editClientLayerAttributesIV"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/deleteClientLayerIV"
             android:layout_width="45dp"
             android:layout_height="45dp"
@@ -43,6 +55,7 @@
             android:layout_height="45dp"
             android:layout_marginEnd="8dp"
             android:padding="8dp"
+            android:scaleType="centerInside"
             android:src="@drawable/ic_content_editing"
             app:layout_constraintEnd_toStartOf="@+id/editClientLayerGeometryIV"
             app:layout_constraintTop_toTopOf="@+id/deleteClientLayerIV" />

@@ -78,4 +78,5 @@
     <string name="delete_layer_dialog_message">The feature will be permanently deleted.</string>
     <string name="updating_layer">Updating Layer, please do not close the app</string>
     <string name="layer_updated">Layer Updated</string>
+    <string name="area">area</string>
 </resources>

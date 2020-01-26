@@ -24,19 +24,31 @@ import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.geometry.Geometry
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
 
 object ClientPhotoController {
-    private val TAKE_PHOTO_FOR_LAYER = 2
+    private const val TAKE_PHOTO_FOR_LAYER = 2
+    private const val EDIT_PHOTO_FOR_LAYER = 3
     lateinit var imageURI: Uri
     val storage = FirebaseStorage.getInstance()
     val reference = storage.reference
     lateinit var attributes: HashMap<String, Any>
     lateinit var geometry: Geometry
 
+
+    fun editPhoto(context: Activity){
+        val builder = StrictMode.VmPolicy.Builder() // for image intent
+        StrictMode.setVmPolicy(builder.build())
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val photo = File(Environment.getExternalStorageDirectory(), "Pic.jpg")
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photo))
+        imageURI = Uri.fromFile(photo)
+        context.startActivityForResult(intent, EDIT_PHOTO_FOR_LAYER)
+    }
     private fun takePhoto(context: Activity){
         val builder = StrictMode.VmPolicy.Builder() // for image intent
         StrictMode.setVmPolicy(builder.build())
@@ -66,7 +78,6 @@ object ClientPhotoController {
                 .setIcon(R.drawable.ic_add_photo)
                 .show()
     }
-
     fun uploadImage(uri: Uri?, context: Activity,callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish){
         uri?.let{
             uri->
@@ -88,7 +99,7 @@ object ClientPhotoController {
         }
     }
 
-    private fun reduceImageSize(uri: Uri): Uri? {
+    fun reduceImageSize(uri: Uri): Uri? {
         try {
 
             // BitmapFactory options to downsize the image
