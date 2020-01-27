@@ -320,7 +320,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                 SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
                                 UserPolyline.INSTANCE.getUserPolyline().editFeatureGeometry(layerId,geometry, this);
                             } else {
-                                Toast.makeText(this, "empty geometry", Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, R.string.empty_polyline, Toast.LENGTH_LONG).show();
                             }
 
                         } else {

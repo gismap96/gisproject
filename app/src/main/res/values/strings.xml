@@ -79,4 +79,5 @@
     <string name="updating_layer">Updating Layer, please do not close the app</string>
     <string name="layer_updated">Layer Updated</string>
     <string name="area">area</string>
+    <string name="other">Other</string>
 </resources>

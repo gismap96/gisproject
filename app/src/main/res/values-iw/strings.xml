@@ -75,4 +75,5 @@
     <string name="updating_layer">מעדכן שכבה, נא לא לסגור את האפליקציה</string>
     <string name="layer_updated">השכבה עודכנה בהצלחה</string>
     <string name="area">שטח</string>
+    <string name="other">אחר</string>
 </resources>

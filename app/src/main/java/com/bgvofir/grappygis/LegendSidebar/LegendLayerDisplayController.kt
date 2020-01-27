@@ -2,6 +2,7 @@ package com.bgvofir.grappygis.LegendSidebar
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
@@ -138,9 +139,10 @@ object LegendLayerDisplayController{
 
     fun generateLegendGroupList(map: MapView): List<LegendGroup>{
         var orthophotoName = map.context.getString(R.string.orthophoto)
+        val otherName = map.context.getString(R.string.other)
         val layers = map.map.operationalLayers
         var legendGroupMap = mutableMapOf<String, MutableList<Layer>>()
-        legendGroupMap["אחר"] = mutableListOf()
+        legendGroupMap[otherName] = mutableListOf()
         legendGroupMap[orthophotoName] = mutableListOf()
         groupNames.forEach {
             legendGroupMap[it] = mutableListOf()
@@ -158,9 +160,13 @@ object LegendLayerDisplayController{
                 legendGroupMap[layerGroupName]?.add(it)
             }
             else if (layerName.trim().isNotEmpty()){
-                legendGroupMap["אחר"]?.add(it)
+                legendGroupMap[otherName]?.add(it)
             }
         }
+        legendGroupMap[otherName]?.let{
+            if (it.count() == 0) legendGroupMap.remove(otherName)
+        }
+
         var legendGroupList = mutableListOf<LegendGroup>()
         legendGroupMap.forEach{
             legendGroupList.add(LegendGroup(it.key, it.value))
@@ -169,7 +175,6 @@ object LegendLayerDisplayController{
         legendGroupList.forEach {
             it.layers = it.layers.reversed()
         }
-
         return legendGroupList
     }
 
