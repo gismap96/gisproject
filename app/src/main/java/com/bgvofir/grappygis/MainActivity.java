@@ -48,6 +48,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer;
+import com.bgvofir.grappygis.ClientFeatureLayers.ClientPointFeatureCollection;
+import com.bgvofir.grappygis.ClientFeatureLayers.GrappiField;
 import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController;
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController;
 import com.bgvofir.grappygis.GeoViewController.GeoViewController;
@@ -61,6 +63,7 @@ import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController;
 import com.bgvofir.grappygis.LegendSidebar.LegendSidebarAdapter;
 import com.bgvofir.grappygis.ProjectRelated.MapProperties;
 import com.bgvofir.grappygis.ProjectRelated.ProjectId;
+import com.bgvofir.grappygis.ProjectRelated.UserPoints;
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes;
@@ -227,6 +230,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         progressDialog.setCancelable(false);
         displayLegendFlag = false;
         UserPolyline.INSTANCE.initFields();
+        UserPoints.INSTANCE.initFields();
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
         overallSizeHeadlineTV = findViewById(R.id.overallSizeHeadlineTV);
@@ -284,15 +288,22 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //        zift2.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
+//                String name = "meow";
+//                String id = "00";
+//                UserPoints.INSTANCE.initFields();
+//                List<GrappiField> fields = UserPoints.INSTANCE.getGrappiFields();
+//                UserPoints.INSTANCE.setUserPoints(new ClientPointFeatureCollection(MainActivity.this, name, id,fields,mMapView.getMap().getSpatialReference()));
+//                Boolean bool = mMapView.getMap().getOperationalLayers().add(UserPoints.INSTANCE.getUserPoints().getLayer());
+//                Log.d("zift",bool.toString());
+//                ClientPointFeatureCollection collection = UserPoints.INSTANCE.getUserPoints();
+//                HashMap<String, Object> attributes = new HashMap<>();
+//                attributes.put("category", "meow");
+//                attributes.put("description", "meow");
+//                attributes.put("number", 1.0);
+//                attributes.put("isUpdated", "meow");
+//                attributes.put("imageURL", "");
 //                Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
-//                if (geometry == null){
-//                    Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
-//                    toast.setGravity(Gravity.CENTER,0,0);
-//                    toast.show();
-//                    return;
-//                }
-//                SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, true, MainActivity.this, MainActivity.this, progressDialog);
-//                layerAttributes.show();
+//                collection.createFeature(attributes, geometry);
 //            }
 //        });
         saveShapeTV = findViewById(R.id.saveShapeTV);
@@ -309,6 +320,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             switch (type){
 
                 case POINT:
+                    if (SketchEditorController.INSTANCE.getGeometry() != null){
+                        SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, MainActivity.this, MainActivity.this, progressDialog, false);
+                        layerAttributes.show();
+                    }
                     break;
                 case POLYLINE:
                     if (SketchEditorController.INSTANCE.isPolylineNotEmpty()){
@@ -461,18 +476,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-        zift.setVisibility(View.GONE);
-//        zift.setOnClickListener(v -> {
-//            Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
-//            if (geometry == null){
-//                Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
-//                toast.setGravity(Gravity.CENTER,0,0);
-//                toast.show();
-//                return;
-//            }
-//            SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, false);
-//            layerAttributes.show();
-//        });
+//        zift.setVisibility(View.GONE);
+        zift.setOnClickListener(v -> {
+            SketchEditorController.INSTANCE.startSketching(SketcherEditorTypes.POINT, mMapView);
+            SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
+            mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
+        });
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         calculatePolygonAreaTV = findViewById(R.id.displayOverallForShapeTV);
@@ -1785,6 +1794,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void setMeasurementsDisplay(@NotNull SketcherEditorTypes type) {
+        if (type == SketcherEditorTypes.POINT) {
+            return;
+        }
         String unit = mMapView.getSpatialReference().getUnit().getAbbreviation();
         String section = SketchEditorController.INSTANCE.wertexOriginal(unit);
         displaySectionForShapeTV.setText(section);

@@ -91,7 +91,9 @@ object SketchEditorController {
         area = 0.0
         sketchEditor.start(SketchCreationMode.POLYGON)
     }
-
+    fun pointMode(geometry: Geometry){
+        sketchEditor.start(geometry, SketchCreationMode.POINT)
+    }
     fun polylineMode(geometry: Geometry){
         distance = 0.0
         sketchEditor.start(geometry, SketchCreationMode.POLYLINE)
@@ -101,6 +103,7 @@ object SketchEditorController {
         area = 0.0
         sketchEditor.start(geometry, SketchCreationMode.POLYGON)
     }
+
     fun clean(mMapView: MapView){
         sketchEditor.clearGeometry()
     }
@@ -224,6 +227,9 @@ object SketchEditorController {
             SketcherEditorTypes.POLYGON -> {
                 polygonMode()
             }
+            SketcherEditorTypes.POINT -> {
+                pointMode()
+            }
         }
     }
 
@@ -240,6 +246,9 @@ object SketchEditorController {
             }
             SketcherEditorTypes.POLYGON -> {
                 polygonMode(geometry)
+            }
+            SketcherEditorTypes.POINT ->{
+                pointMode(geometry)
             }
         }
     }

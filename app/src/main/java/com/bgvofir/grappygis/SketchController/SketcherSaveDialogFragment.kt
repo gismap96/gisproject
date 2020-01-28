@@ -13,10 +13,12 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.Toast
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
+import com.bgvofir.grappygis.ClientFeatureLayers.ClientPointFeatureCollection
 import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController
 import com.bgvofir.grappygis.ProjectRelated.MapProperties
+import com.bgvofir.grappygis.ProjectRelated.UserPoints
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline
 import com.bgvofir.grappygis.R
 import com.esri.arcgisruntime.mapping.view.MapView
@@ -71,12 +73,12 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
         when (type){
             SketcherEditorTypes.POLYLINE -> {
                 if (UserPolyline.userPolyline == null){
-                    UserPolyline.userPolyline = ClientFeatureCollectionLayer("פוליליין ממשתמש", UUID.randomUUID().toString(),
+                    UserPolyline.userPolyline = ClientFeatureCollectionLayer(context.resources.getString(R.string.my_polyline), UUID.randomUUID().toString(),
                             UserPolyline.grappiFields, MapProperties.spatialReference!!)
                     mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
                     layerListener?.successListener()
                 } else if (UserPolyline.userPolyline!!.features.size == 0){
-                    UserPolyline.userPolyline = ClientFeatureCollectionLayer("פוליליין ממשתמש", UUID.randomUUID().toString(),
+                    UserPolyline.userPolyline = ClientFeatureCollectionLayer(context.resources.getString(R.string.my_polyline), UUID.randomUUID().toString(),
                             UserPolyline.grappiFields, MapProperties.spatialReference!!)
                     mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
                     layerListener?.successListener()
@@ -90,7 +92,15 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
             SketcherEditorTypes.POLYGON -> {
 
             }
-            SketcherEditorTypes.POINT -> {}
+            SketcherEditorTypes.POINT -> {
+                if (UserPoints.userPoints == null){
+                    UserPoints.userPoints = ClientPointFeatureCollection(context, context.resources.getString(R.string.my_points),UUID.randomUUID().toString(),
+                            UserPoints.grappiFields, MapProperties.spatialReference!!)
+                    mMapView.map.operationalLayers.add(UserPoints.userPoints!!.layer)
+                }
+                SketchEditorController.clean(mMapView)
+                UserPoints.userPoints!!.createFeature(attributes,geometry)
+            }
         }
         dismiss()
     }

@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken
 import java.util.concurrent.ExecutionException
 import com.esri.arcgisruntime.data.*
 import com.esri.arcgisruntime.geometry.Geometry
+import com.esri.arcgisruntime.geometry.GeometryType
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
@@ -115,6 +116,19 @@ object FeatureLayerController {
         return layersAttributeList
     }
     private fun parseFeatureCollection(forLayer: IdentifyLayerResult): ArrayList<Map<String, String>>{
+        val type = forLayer.sublayerResults[0].elements[0].geometry.geometryType
+        when (type){
+            GeometryType.POINT -> {
+                shapeType = SketcherEditorTypes.POINT
+            }
+            GeometryType.ENVELOPE -> {}
+            GeometryType.POLYLINE -> {
+                shapeType = SketcherEditorTypes.POLYLINE
+            }
+            GeometryType.POLYGON -> {}
+            GeometryType.MULTIPOINT -> {}
+            GeometryType.UNKNOWN -> {}
+        }
         var resultList = ArrayList<Map<String, String>>()
 
         forLayer.sublayerResults.forEach {

@@ -55,7 +55,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:src="@drawable/ic_star_blue"
+            android:src="@drawable/ic_star_black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/trashGL"
             app:layout_constraintTop_toTopOf="parent" />

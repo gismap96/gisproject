@@ -76,4 +76,7 @@
     <string name="layer_updated">השכבה עודכנה בהצלחה</string>
     <string name="area">שטח</string>
     <string name="other">אחר</string>
+    <string name="user_polyline">פוליליין משתמש</string>
+    <string name="user_points">דקירות משתמש</string>
+    <string name="my_points">דקירות שלי</string>
 </resources>
