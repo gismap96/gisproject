@@ -48,8 +48,8 @@ class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, inter
         recycler.adapter = adapter
         recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
         var finalHeadline = headline.replace("\$\$##", "")
-        if (headline == "Feature Collection") {
-            finalHeadline = context.resources.getString(com.bgvofir.grappygis.R.string.client_point)
+        if (headline == "Feature Collection" || headline.contains(activity.resources.getString(R.string.my_points))) {
+            finalHeadline = context.resources.getString(R.string.my_points)
             layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_star_blue))
         } else if (headline.contains(activity.resources.getString(R.string.my_polyline))){
             finalHeadline = activity.resources.getString(R.string.my_polyline)

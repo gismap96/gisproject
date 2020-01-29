@@ -209,6 +209,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private Viewpoint mViewPoint;
     private LegendSidebarAdapter legendAdapter;
     private TextView calculatePolygonAreaTV;
+    private ConstraintLayout measurementConstraintLayout;
     private boolean displayLegendFlag;
     private ImageView northBarIV;
     private SketchEditor mSketcher;
@@ -233,6 +234,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         UserPoints.INSTANCE.initFields();
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
+        measurementConstraintLayout = findViewById(R.id.measurementConstraintLayout);
         overallSizeHeadlineTV = findViewById(R.id.overallSizeHeadlineTV);
         lengthSectionHeadlineTV = findViewById(R.id.lengthSectionHeadlineTV);
         mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
@@ -481,6 +483,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             SketchEditorController.INSTANCE.startSketching(SketcherEditorTypes.POINT, mMapView);
             SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
             mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
+            measurementConstraintLayout.setVisibility(View.INVISIBLE);
+
         });
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
@@ -1706,6 +1710,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         SketchEditorController.INSTANCE.startSketching(sketcher, mMapView);
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
+        measurementConstraintLayout.setVisibility(View.VISIBLE);
         mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
         mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
             @Override
@@ -1780,7 +1785,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 lengthSectionHeadlineTV.setText(R.string.section);
                 break;
         }
-
+        measurementConstraintLayout.setVisibility(View.VISIBLE);
         SketchEditorController.INSTANCE.startSketching(type, mMapView, editGeometry);
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
         mSketcher = SketchEditorController.INSTANCE.getSketchEditor();

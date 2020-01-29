@@ -4,9 +4,15 @@ import android.app.Activity
 import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +21,7 @@ import android.widget.Toast
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientPointFeatureCollection
 import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController
+import com.bgvofir.grappygis.ClientPoint
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
 import com.bgvofir.grappygis.LegendSidebar.LegendLayerDisplayController
 import com.bgvofir.grappygis.ProjectRelated.MapProperties
@@ -29,6 +36,7 @@ import java.util.*
 class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
                                  val callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish?, val layerListener: LegendLayerDisplayController.LayerGroupsListener?, val progressDialog: ProgressDialog?, val isEditMode: Boolean): Dialog(context), View.OnClickListener {
 
+    val TAG = "sketcherSave"
     var mMapView = mMapView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +48,35 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
         closeSketcherSaveTV.setOnClickListener(this)
         cancelSketcherSaveTV.setOnClickListener(this)
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (SketchEditorController.isEditMode){
+            when (FeatureLayerController.shapeType){
+                SketcherEditorTypes.POINT -> {
+                    shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.points_layer)
+                    shapeTypeSketcherSaveTV.setTextColor(context.resources.getColor(R.color.light_blue))
+                    val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_star_blue)
+                    shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
+
+                }
+                SketcherEditorTypes.POLYLINE -> {}
+                SketcherEditorTypes.POLYGON -> {}
+            }
+            return
+        }
+        when (SketchEditorController.sketcherEditorTypes){
+            SketcherEditorTypes.POINT -> {
+                shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.points_layer)
+                shapeTypeSketcherSaveTV.setTextColor(context.resources.getColor(R.color.light_blue))
+                val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_star_blue)
+                shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
+            }
+            SketcherEditorTypes.POLYLINE -> {}
+            SketcherEditorTypes.POLYGON -> {}
+        }
+        shapeTypeSketcherSaveTV.text
     }
 
     fun setGeometry(){
@@ -93,13 +130,48 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
 
             }
             SketcherEditorTypes.POINT -> {
+
                 if (UserPoints.userPoints == null){
                     UserPoints.userPoints = ClientPointFeatureCollection(context, context.resources.getString(R.string.my_points),UUID.randomUUID().toString(),
                             UserPoints.grappiFields, MapProperties.spatialReference!!)
                     mMapView.map.operationalLayers.add(UserPoints.userPoints!!.layer)
+                    val progressDialog = ProgressDialog(context)
+                    progressDialog.setTitle(context.getString(R.string.updating_layer))
+                    progressDialog.setCancelable(false)
+                    progressDialog.show()
+                    UserPoints.userPoints!!.createFeature(attributes, geometry){
+                        if (UserPoints.userPoints!!.features.count() > 0){
+                            mMapView.map.retryLoadAsync()
+                            SketchEditorController.clean(mMapView)
+                            UserPoints.userPoints!!.uploadJSON(object: ClientPointFeatureCollection.OnPointsUploaded{
+                                override fun onPointsUploadFinished() {
+                                    progressDialog.dismiss()
+                                    layerListener?.successListener()
+                                    Toast.makeText(context, context.resources.getString(R.string.point_saved),Toast.LENGTH_SHORT).show()
+                                }
+
+                            })
+
+                        } else {
+                            Log.d(TAG, "failed to load feature")
+                        }
+                    }
+                    dismiss()
+                    return
                 }
+                UserPoints.userPoints!!.createFeature(attributes,geometry, null)
                 SketchEditorController.clean(mMapView)
-                UserPoints.userPoints!!.createFeature(attributes,geometry)
+                val progressDialog = ProgressDialog(context)
+                progressDialog.setTitle(context.getString(R.string.updating_layer))
+                progressDialog.setCancelable(false)
+                progressDialog.show()
+                UserPoints.userPoints!!.uploadJSON(object: ClientPointFeatureCollection.OnPointsUploaded{
+                    override fun onPointsUploadFinished() {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.resources.getString(R.string.point_saved),Toast.LENGTH_SHORT).show()
+                    }
+
+                })
             }
         }
         dismiss()
@@ -133,5 +205,17 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
                 dismiss()
             }
         }
+    }
+    private fun getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
+        var drawable = ContextCompat.getDrawable(context, drawableId)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = DrawableCompat.wrap(drawable!!).mutate()
+        }
+        val bitmap = Bitmap.createBitmap(drawable!!.intrinsicWidth,
+                drawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
     }
 }

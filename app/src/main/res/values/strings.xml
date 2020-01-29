@@ -83,4 +83,6 @@
     <string name="user_polyline">User Polyline</string>
     <string name="user_points">User Points</string>
     <string name="my_points">My Points</string>
+    <string name="point_saved">Point saved</string>
+    <string name="points_layer">Points Layer</string>
 </resources>
