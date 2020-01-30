@@ -8,20 +8,23 @@ import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.Log
+import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController
+import com.bgvofir.grappygis.ProjectRelated.MapProperties
 import com.bgvofir.grappygis.ProjectRelated.ProjectId
 import com.bgvofir.grappygis.R
+import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
 import com.esri.arcgisruntime.data.Feature
 import com.esri.arcgisruntime.data.FeatureCollection
 import com.esri.arcgisruntime.data.FeatureCollectionTable
 import com.esri.arcgisruntime.data.Field
-import com.esri.arcgisruntime.geometry.Geometry
-import com.esri.arcgisruntime.geometry.GeometryType
-import com.esri.arcgisruntime.geometry.SpatialReference
+import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.symbology.PictureMarkerSymbol
 import com.esri.arcgisruntime.symbology.SimpleRenderer
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -38,9 +41,11 @@ class ClientPointFeatureCollection(val context: Context) {
     private var fieldsArray = mutableListOf<Field>()
     private lateinit var featureCollectionTable: FeatureCollectionTable
     val pinBlueStarDrawable = BitmapDrawable(context.resources, getBitmapFromVectorDrawable(R.drawable.ic_star_blue))
-    val pinBlackStarDrawable = BitmapDrawable(context.resources, getBitmapFromVectorDrawable(R.drawable.ic_star_black))
-    var pictureMarkerSymbol = PictureMarkerSymbol(pinBlackStarDrawable)
+//    val pinBlackStarDrawable = BitmapDrawable(context.resources, getBitmapFromVectorDrawable(R.drawable.ic_star_black))
+    var pictureMarkerSymbol = PictureMarkerSymbol(pinBlueStarDrawable)
     var renderer = SimpleRenderer(pictureMarkerSymbol)
+    var WIDTH = 40f
+    var HEIGHT = 40f
 
     constructor(context: Context, name: String, id: String, fields: MutableList<GrappiField>, spatialReference: SpatialReference): this(context){
         collection = FeatureCollection()
@@ -54,16 +59,62 @@ class ClientPointFeatureCollection(val context: Context) {
         initProperties()
     }
 
+    constructor(context: Context, json: JSONObject): this(context){
+        this.spatialReference = MapProperties.spatialReference
+        collection = FeatureCollection()
+        layer = FeatureCollectionLayer(collection)
+        layer.name = context.resources.getString(R.string.my_points) + "$$##"
+        this.fieldsArray = ClientLayersController.generateFieldsArray(json)
+        this.fields = ClientLayersController.generateGrappiFields(json)
+        this.featureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POINT, spatialReference)
+        pictureMarkerSymbol.width = WIDTH
+        pictureMarkerSymbol.height = HEIGHT
+        this.featureCollectionTable.renderer = renderer
+        this.collection.tables.add(featureCollectionTable)
+        createFeaturesFromJSON(json)
+        addFeatureList()
+    }
+
+    private fun addFeatureList(){
+        featureCollectionTable.addFeaturesAsync(features)
+    }
+    private fun createFeaturesFromJSON(json: JSONObject){
+        val features = json.getJSONArray("features")
+        val gson = Gson()
+        for (i in 0 until features.length()) {
+            val item = features.getJSONObject(i)
+            item.getJSONObject("attributes").remove("OBJECTID")
+            val geometry = item.getJSONObject("geometry")
+            val pointsArray = ClientLayersController.generatePointsArray(SketcherEditorTypes.POINT, geometry, spatialReference)
+            val point = pointsArray[0]
+            val attributesJSON = item.getJSONObject("attributes").toString()
+            val attTypeToken = object : TypeToken<HashMap<String, Any>>() {}.type
+            val mAttMap = gson.fromJson(attributesJSON, attTypeToken) as HashMap<String, Any>
+            addFeaturesFromJSON(mAttMap, point)
+        }
+    }
+    private fun addFeaturesFromJSON(attributes: HashMap<String, Any>, point: Point){
+//        var pictureMarker = PictureMarkerSymbol(pinBlackStarDrawable)
+//        attributes["isUpdated"]?.let {
+//            if (it == "yes") pictureMarker = PictureMarkerSymbol(pinBlueStarDrawable)
+//        }
+//        pictureMarker.height = 40f
+//        pictureMarker.width = 40f
+//        renderer.symbol = pictureMarker
+        val feature = featureCollectionTable.createFeature(attributes,point) as Feature
+        features.add(feature)
+    }
+
     fun createFeature(attributes: HashMap<String, Any>,geometry: Geometry, callback: (()-> Unit)?){
         val newAttributes = attributes.toMutableMap()
         newAttributes["Id"] = UUID.randomUUID().toString()
-        var pictureMarker = PictureMarkerSymbol(pinBlackStarDrawable)
-        newAttributes["isUpdated"]?.let {
-            if (it == "yes") pictureMarker = PictureMarkerSymbol(pinBlueStarDrawable)
-        }
-        pictureMarker.height = 40f
-        pictureMarker.width = 40f
-        renderer.symbol = pictureMarker
+//        var pictureMarker = PictureMarkerSymbol(pinBlackStarDrawable)
+//        newAttributes["isUpdated"]?.let {
+//            if (it == "yes") pictureMarker = PictureMarkerSymbol(pinBlueStarDrawable)
+//        }
+//        pictureMarker.height = 40f
+//        pictureMarker.width = 40f
+//        renderer.symbol = pictureMarker
         val feature = featureCollectionTable.createFeature(newAttributes,geometry) as Feature
         features.add(feature)
         featureCollectionTable.addFeatureAsync(feature).addDoneListener {
@@ -81,10 +132,11 @@ class ClientPointFeatureCollection(val context: Context) {
         if (fields.size > 0){
             fieldsTransform()
         }
-        pictureMarkerSymbol.height = 20f
-        pictureMarkerSymbol.width = 20f
-        featureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POINT, spatialReference)
-        featureCollectionTable.renderer = renderer
+        pictureMarkerSymbol.width = WIDTH
+        pictureMarkerSymbol.height = HEIGHT
+        this.featureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POINT, spatialReference)
+        this.featureCollectionTable.renderer = renderer
+        this.collection.tables.add(featureCollectionTable)
         collection.tables.add(featureCollectionTable)
     }
 

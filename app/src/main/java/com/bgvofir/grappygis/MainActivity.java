@@ -219,6 +219,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private TextView lengthSectionHeadlineTV;
     private ProgressDialog progressDialog;
     private TextView saveShapeTV;
+    private ProgressDialog initializingProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,6 +230,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(getString(R.string.uploading_layer));
         progressDialog.setCancelable(false);
+        initializingProgressDialog = new ProgressDialog(this);
+        initializingProgressDialog.setTitle(getString(R.string.init_dialog_headline));
+        initializingProgressDialog.setMessage(getString(R.string.init_dialog_message));
+        initializingProgressDialog.setCancelable(false);
         displayLegendFlag = false;
         UserPolyline.INSTANCE.initFields();
         UserPoints.INSTANCE.initFields();
@@ -554,6 +559,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem(), clientPoint.getUser());
                     }
                     if (displayLegendFlag) {
+                        initializingProgressDialog.show();
                         ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
                     } else {
                         displayLegendFlag = true;
@@ -662,6 +668,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
                             if (displayLegendFlag){
+                                initializingProgressDialog.show();
                                 ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
 
                             } else {
@@ -1731,23 +1738,26 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         if (animator instanceof SimpleItemAnimator){
             ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
         }
+        initializingProgressDialog.dismiss();
     }
 
     @Override
     public void onClientPolylineJSONDownloaded(@NotNull JSONObject json) {
         UserPolyline.INSTANCE.setUserPolyline(new ClientFeatureCollectionLayer(json, mMapView, this));
         mMapView.getMap().getOperationalLayers().add(UserPolyline.INSTANCE.getUserPolyline().getLayer());
-        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+        ClientLayersController.INSTANCE.fetchClientPoints(this);
+//        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
     }
 
     @Override
     public void onClientPolygonnJSONDownloaded(@NotNull JSONObject json) {
-
+        ClientLayersController.INSTANCE.fetchClientPoints(this);
     }
 
     @Override
     public void onEmptyClientPolylineJSON() {
-        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+        ClientLayersController.INSTANCE.fetchClientPoints(this);
+//        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
     }
 
     @Override
@@ -1820,5 +1830,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onLongPressed(Layer layer) {
         gotoXYBylayer(layer);
+    }
+
+    @Override
+    public void onClientPointsJSONDownloaded(@NotNull JSONObject json) {
+        UserPoints.INSTANCE.setUserPoints(new ClientPointFeatureCollection(this, json));
+        mMapView.getMap().getOperationalLayers().add(UserPoints.INSTANCE.getUserPoints().getLayer());
+        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+    }
+
+    @Override
+    public void onEmptyClientPointsJSON() {
+        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
     }
 }

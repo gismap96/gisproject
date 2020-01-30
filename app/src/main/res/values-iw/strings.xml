@@ -81,4 +81,6 @@
     <string name="my_points">דקירות שלי</string>
     <string name="point_saved">הדקירה נשמרה</string>
     <string name="points_layer">שכבת דקירות</string>
+    <string name="init_dialog_headline">מכין את הקרקע</string>
+    <string name="init_dialog_message">מיד אסיים</string>
 </resources>

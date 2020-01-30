@@ -85,4 +85,6 @@
     <string name="my_points">My Points</string>
     <string name="point_saved">Point saved</string>
     <string name="points_layer">Points Layer</string>
+    <string name="init_dialog_headline">Setting things up</string>
+    <string name="init_dialog_message">please wait</string>
 </resources>

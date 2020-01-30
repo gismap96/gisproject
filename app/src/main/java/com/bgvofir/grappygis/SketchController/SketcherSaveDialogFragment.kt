@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
+import android.text.Editable
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -52,7 +53,7 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
 
     override fun onStart() {
         super.onStart()
-        if (SketchEditorController.isEditMode){
+        if (isEditMode){
             when (FeatureLayerController.shapeType){
                 SketcherEditorTypes.POINT -> {
                     shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.points_layer)
@@ -61,8 +62,20 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
                     shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
 
                 }
-                SketcherEditorTypes.POLYLINE -> {}
-                SketcherEditorTypes.POLYGON -> {}
+                SketcherEditorTypes.POLYLINE -> {
+                    val layerID = FeatureLayerController.layerId
+                    val featureNum = UserPolyline.userPolyline!!.identifyFeatureById(layerID)
+                    if (featureNum >= 0){
+                        val feature = UserPolyline.userPolyline!!.features[featureNum]
+                        val featureAttributes = feature.attributes
+                        addDescriptionSketcherSaveET.setText(featureAttributes["description"].toString())
+                        addCategoryToSketcherSaveET.setText(featureAttributes["category"].toString())
+                        addNumberToSketcherSaveET.setText(featureAttributes["number"].toString())
+                    }
+                }
+                SketcherEditorTypes.POLYGON -> {
+
+                }
             }
             return
         }

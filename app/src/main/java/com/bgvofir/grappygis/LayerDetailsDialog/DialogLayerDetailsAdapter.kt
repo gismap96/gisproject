@@ -67,7 +67,7 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                                     context.resources.getString(R.string.yes)))
                         } else {
                             rowValues.add(RowValue(context.resources.getString(R.string.update_system_show),
-                                    context.resources.getString(R.string.yes)))
+                                    context.resources.getString(R.string.no)))
                         }
                     }
                     "number"-> rowValues.add(RowValue(context.resources.getString(R.string.number), it.value))

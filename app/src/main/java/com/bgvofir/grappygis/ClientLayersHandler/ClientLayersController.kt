@@ -25,6 +25,7 @@ object ClientLayersController {
 
     val TAG = "clientLayerCtrl"
     var localClientPolylineFile = File.createTempFile("polyline", "json")
+    var localPointsFile = File.createTempFile("points", "json")
 
     fun fetchClientPolyline(callback: OnClientLayersJSONDownloaded){
         val mProjectId = ProjectId.projectId
@@ -33,11 +34,24 @@ object ClientLayersController {
         val username = FirebaseAuth.getInstance().uid
         val childRef = storageRef.child("settlements/$mProjectId/userLayers/$username/polyline.json")
         childRef.getFile(localClientPolylineFile).addOnSuccessListener {
-            val json = JSONObject(generateJson())
+            val json = JSONObject(generateJson(localClientPolylineFile))
             callback.onClientPolylineJSONDownloaded(json)
 
         }.addOnFailureListener{
             callback.onEmptyClientPolylineJSON()
+        }
+    }
+    fun fetchClientPoints(callback: OnClientLayersJSONDownloaded){
+        val mProjectId = ProjectId.projectId
+        val firebaseStorage = FirebaseStorage.getInstance()
+        val storageRef = firebaseStorage.reference
+        val username = FirebaseAuth.getInstance().uid
+        val childRef = storageRef.child("settlements/$mProjectId/userLayers/$username/points.json")
+        childRef.getFile(localPointsFile).addOnSuccessListener {
+            val json = JSONObject(generateJson(localPointsFile))
+            callback.onClientPointsJSONDownloaded(json)
+        }.addOnFailureListener{
+            callback.onEmptyClientPointsJSON()
         }
     }
 
@@ -106,16 +120,21 @@ object ClientLayersController {
             SketcherEditorTypes.POLYGON ->{
 
             }
+            SketcherEditorTypes.POINT -> {
+                val x = json.getDouble("x")
+                val y = json.getDouble("y")
+                pointsCollection.add(com.esri.arcgisruntime.geometry.Point(x, y))
+            }
         }
         return pointsCollection
     }
 
-    private fun generateJson(): String{
-        val length = localClientPolylineFile.length().toInt()
+    private fun generateJson(file: File): String{
+        val length = file.length().toInt()
 
         val bytes = ByteArray(length)
 
-        val `in` = FileInputStream(localClientPolylineFile)
+        val `in` = FileInputStream(file)
         try {
             `in`.read(bytes)
         } finally {
@@ -128,5 +147,7 @@ object ClientLayersController {
         fun onClientPolylineJSONDownloaded(json: JSONObject)
         fun onClientPolygonnJSONDownloaded(json: JSONObject)
         fun onEmptyClientPolylineJSON()
+        fun onClientPointsJSONDownloaded(json: JSONObject)
+        fun onEmptyClientPointsJSON()
     }
 }
