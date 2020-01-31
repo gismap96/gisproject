@@ -13,15 +13,22 @@ import android.os.Build
 import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.Toast
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
+import com.bgvofir.grappygis.ClientFeatureLayers.ClientPointFeatureCollection
 import com.bgvofir.grappygis.ClientPoint
+import com.bgvofir.grappygis.ProjectRelated.MapProperties
 import com.bgvofir.grappygis.ProjectRelated.ProjectId
+import com.bgvofir.grappygis.ProjectRelated.UserPoints
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline
 import com.bgvofir.grappygis.R
+import com.bgvofir.grappygis.SketchController.SketchEditorController
 import com.esri.arcgisruntime.geometry.Geometry
+import com.esri.arcgisruntime.geometry.GeometryType
+import com.esri.arcgisruntime.mapping.view.MapView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
@@ -38,6 +45,7 @@ object ClientPhotoController {
     val reference = storage.reference
     lateinit var attributes: HashMap<String, Any>
     lateinit var geometry: Geometry
+    lateinit var type: GeometryType
 
 
     fun editPhoto(context: Activity){
@@ -62,6 +70,7 @@ object ClientPhotoController {
     fun showPhotoQuestionDialog(activity: Activity, attributes: HashMap<String, Any>, geometry: Geometry,callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish, progressDialog: ProgressDialog){
         this.attributes = attributes
         this.geometry = geometry
+        this.type = geometry.geometryType
         val builder: AlertDialog.Builder
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder = AlertDialog.Builder(activity, android.R.style.Theme_Material_Dialog_Alert)
@@ -72,13 +81,39 @@ object ClientPhotoController {
                 .setMessage(R.string.take_photo_prompt)
                 .setPositiveButton(activity.getString(R.string.continue_to_photo)) { dialog, which -> takePhoto(activity) }
                 .setNegativeButton(activity.getString(R.string.no_thank_you)) { dialog, which ->
-                    progressDialog.show()
-                    UserPolyline.userPolyline!!.createFeature(attributes,geometry)
-                    UserPolyline.userPolyline!!.uploadJSON(callback) }
+                    when (type){
+                        GeometryType.POINT -> {
+                            val progressDialog = ProgressDialog(activity)
+                            progressDialog.setTitle(activity.getString(R.string.updating_layer))
+                            progressDialog.setCancelable(false)
+                            progressDialog.show()
+                            UserPoints.userPoints!!.createFeature(attributes, geometry){
+                                UserPoints.userPoints!!.uploadJSON(object: ClientPointFeatureCollection.OnPointsUploaded{
+                                    override fun onPointsUploadFinished() {
+                                        progressDialog.dismiss()
+                                       Toast.makeText(activity, activity.resources.getString(R.string.point_saved),Toast.LENGTH_SHORT).show()
+
+                                    }
+
+                                })
+                            }
+                        }
+                        GeometryType.ENVELOPE -> {}
+                        GeometryType.POLYLINE -> {
+                            progressDialog.show()
+                            UserPolyline.userPolyline!!.createFeature(attributes,geometry)
+                            UserPolyline.userPolyline!!.uploadJSON(callback)
+                        }
+                        GeometryType.POLYGON -> {}
+                        GeometryType.MULTIPOINT -> {}
+                        GeometryType.UNKNOWN -> {}
+                    }
+
+                }
                 .setIcon(R.drawable.ic_add_photo)
                 .show()
     }
-    fun uploadImage(uri: Uri?, context: Activity,callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish){
+    fun uploadImage(uri: Uri?, context: Activity,callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish, callbackPoint: ClientPointFeatureCollection.OnPointsUploaded){
         uri?.let{
             uri->
             val ref = reference.child("settlements/" + ProjectId.projectId + "/images/" + UUID.randomUUID().toString())
@@ -87,8 +122,22 @@ object ClientPhotoController {
                 ref.putFile(it).addOnSuccessListener {
                     ref.downloadUrl.addOnSuccessListener { uri->
                         attributes["imageURL"] = uri.toString()
-                        UserPolyline.userPolyline!!.createFeature(attributes, geometry)
-                        UserPolyline.userPolyline!!.uploadJSON(callback)
+                        UserPoints.userPoints!!.createFeature(attributes, geometry){
+                            UserPoints.userPoints!!.uploadJSON(callbackPoint)
+                        }
+                        when (type){
+                            GeometryType.POINT -> {
+                            }
+                            GeometryType.ENVELOPE -> {}
+                            GeometryType.POLYLINE -> {
+                                UserPolyline.userPolyline!!.createFeature(attributes, geometry)
+                                UserPolyline.userPolyline!!.uploadJSON(callback)
+                            }
+                            GeometryType.POLYGON -> { }
+                            GeometryType.MULTIPOINT -> {}
+                            GeometryType.UNKNOWN -> {}
+                        }
+
                     }
                 }.addOnFailureListener{
                     Toast.makeText(context, context.getString(R.string.uploaded), Toast.LENGTH_SHORT).show()

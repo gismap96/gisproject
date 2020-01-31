@@ -156,7 +156,9 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
-        , LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish, DialogLayerDetailsFragment.OnEditSelectedListener, MapLayerAdapter.OnLegendItemInteraction {
+        , LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish,
+        DialogLayerDetailsFragment.OnEditSelectedListener, MapLayerAdapter.OnLegendItemInteraction
+        , ClientPointFeatureCollection.OnPointsUploaded{
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
@@ -327,9 +329,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             switch (type){
 
                 case POINT:
-                    if (SketchEditorController.INSTANCE.getGeometry() != null){
+                    if (SketchEditorController.INSTANCE.getGeometry() != null && !SketchEditorController.INSTANCE.getGeometry().isEmpty()){
                         SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, MainActivity.this, MainActivity.this, progressDialog, false);
                         layerAttributes.show();
+                    }else {
+                        Toast toast = Toast.makeText(MainActivity.this, R.string.empty_Point, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                        return;
                     }
                     break;
                 case POLYLINE:
@@ -1457,9 +1464,26 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 if (resultCode == Activity.RESULT_OK){
                     this.progressDialog.show();
                     Uri uri = ClientPhotoController.INSTANCE.getImageURI();
-                    ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this);
+                    ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this, MainActivity.this);
                 } else {
-                    UserPolyline.INSTANCE.getUserPolyline().uploadJSON(this);
+                    switch (ClientPhotoController.INSTANCE.getType()){
+                        case POINT:
+                            this.progressDialog.show();
+                            UserPoints.INSTANCE.getUserPoints().uploadJSON(this);
+                            break;
+                        case ENVELOPE:
+                            break;
+                        case POLYLINE:
+                            UserPolyline.INSTANCE.getUserPolyline().uploadJSON(this);
+                            break;
+                        case POLYGON:
+                            break;
+                        case MULTIPOINT:
+                            break;
+                        case UNKNOWN:
+                            break;
+                    }
+
                 }
                 break;
             case TAKE_PICTURE:
@@ -1842,5 +1866,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onEmptyClientPointsJSON() {
         LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+    }
+
+    @Override
+    public void onPointsUploadFinished() {
+        progressDialog.dismiss();
     }
 }

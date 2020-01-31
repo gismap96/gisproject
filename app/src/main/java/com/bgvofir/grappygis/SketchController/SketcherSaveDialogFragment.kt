@@ -148,43 +148,13 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
                     UserPoints.userPoints = ClientPointFeatureCollection(context, context.resources.getString(R.string.my_points),UUID.randomUUID().toString(),
                             UserPoints.grappiFields, MapProperties.spatialReference!!)
                     mMapView.map.operationalLayers.add(UserPoints.userPoints!!.layer)
-                    val progressDialog = ProgressDialog(context)
-                    progressDialog.setTitle(context.getString(R.string.updating_layer))
-                    progressDialog.setCancelable(false)
-                    progressDialog.show()
-                    UserPoints.userPoints!!.createFeature(attributes, geometry){
-                        if (UserPoints.userPoints!!.features.count() > 0){
-                            mMapView.map.retryLoadAsync()
-                            SketchEditorController.clean(mMapView)
-                            UserPoints.userPoints!!.uploadJSON(object: ClientPointFeatureCollection.OnPointsUploaded{
-                                override fun onPointsUploadFinished() {
-                                    progressDialog.dismiss()
-                                    layerListener?.successListener()
-                                    Toast.makeText(context, context.resources.getString(R.string.point_saved),Toast.LENGTH_SHORT).show()
-                                }
+                    layerListener?.successListener()
 
-                            })
 
-                        } else {
-                            Log.d(TAG, "failed to load feature")
-                        }
-                    }
-                    dismiss()
-                    return
                 }
-                UserPoints.userPoints!!.createFeature(attributes,geometry, null)
                 SketchEditorController.clean(mMapView)
-                val progressDialog = ProgressDialog(context)
-                progressDialog.setTitle(context.getString(R.string.updating_layer))
-                progressDialog.setCancelable(false)
-                progressDialog.show()
-                UserPoints.userPoints!!.uploadJSON(object: ClientPointFeatureCollection.OnPointsUploaded{
-                    override fun onPointsUploadFinished() {
-                        progressDialog.dismiss()
-                        Toast.makeText(context, context.resources.getString(R.string.point_saved),Toast.LENGTH_SHORT).show()
-                    }
+                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
 
-                })
             }
         }
         dismiss()
