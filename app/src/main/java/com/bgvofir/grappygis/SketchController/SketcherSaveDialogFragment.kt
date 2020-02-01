@@ -34,8 +34,8 @@ import kotlinx.android.synthetic.main.description_dialog.*
 import kotlinx.android.synthetic.main.fragment_dialog_sketcher_save_input.*
 import java.util.*
 
-class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
-                                 val callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish?, val layerListener: LegendLayerDisplayController.LayerGroupsListener?, val progressDialog: ProgressDialog?, val isEditMode: Boolean): Dialog(context), View.OnClickListener {
+open class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
+                                      val callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish?, val layerListener: LegendLayerDisplayController.LayerGroupsListener?, val progressDialog: ProgressDialog?, val isEditMode: Boolean): Dialog(context), View.OnClickListener {
 
     val TAG = "sketcherSave"
     var mMapView = mMapView
@@ -71,6 +71,11 @@ class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
                         addDescriptionSketcherSaveET.setText(featureAttributes["description"].toString())
                         addCategoryToSketcherSaveET.setText(featureAttributes["category"].toString())
                         addNumberToSketcherSaveET.setText(featureAttributes["number"].toString())
+                        var checked = false
+                        if (featureAttributes["isUpdated"] == "yes"){
+                            checked = true
+                        }
+                        updateToSystemSketchSaveSW.isChecked = checked
                     }
                 }
                 SketcherEditorTypes.POLYGON -> {

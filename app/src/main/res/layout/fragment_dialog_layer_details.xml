@@ -57,6 +57,7 @@
             android:padding="8dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_content_editing"
+            android:tint="@color/colorPrimary"
             app:layout_constraintEnd_toStartOf="@+id/editClientLayerGeometryIV"
             app:layout_constraintTop_toTopOf="@+id/deleteClientLayerIV" />
     </android.support.constraint.ConstraintLayout>

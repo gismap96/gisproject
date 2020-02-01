@@ -10,7 +10,7 @@
         android:id="@+id/selectInputForSketcherSaveTV"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="16dp"
         android:gravity="center"
         android:text="@string/add_data"
         android:textColor="@color/white"
@@ -20,9 +20,9 @@
 
     <ImageView
         android:id="@+id/shapeSymbolForSketcherSaveIV"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
 
         android:layout_marginTop="8dp"
         android:src="@drawable/ic_polyline_soft_red"
@@ -34,7 +34,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@color/white"
         android:gravity="start"
@@ -58,7 +58,7 @@
         android:padding="16dp"
         android:text="@string/save"
         android:textColor="@color/light_blue"
-        android:textSize="40sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/updateToSystemSketchSaveSW" />
 
@@ -67,7 +67,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@color/white"
         android:hint="@string/add_number"
@@ -101,11 +101,12 @@
         android:id="@+id/updateToSystemSketchSaveSW"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
         android:checked="true"
         android:switchPadding="8dp"
         android:text="@string/update_system"
+        android:textSize="16sp"
         android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/addNumberToSketcherSaveET" />
@@ -120,7 +121,7 @@
         android:padding="16dp"
         android:text="@string/cancel"
         android:textColor="@color/white"
-        android:textSize="40sp"
+        android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/updateToSystemSketchSaveSW" />
 

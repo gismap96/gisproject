@@ -60,27 +60,26 @@
         android:id="@+id/etCategory"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/isUpdateSwitch"
-        app:layout_constraintStart_toStartOf="@+id/positiveStart"
-        app:layout_constraintEnd_toEndOf="@+id/negativeEnd"
-        android:layout_marginBottom="14dp"
-        android:hint="@string/add_category"
-        android:textColorHint="@color/white_transparent"
-        android:inputType="text"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="@color/white"
+        android:hint="@string/add_category"
+        android:inputType="text"
         android:textColor="@color/white"
-        />
+        android:textColorHint="@color/white_transparent"
+        app:layout_constraintBottom_toTopOf="@+id/isUpdateSwitch"
+        app:layout_constraintEnd_toEndOf="@+id/negativeEnd"
+        app:layout_constraintStart_toStartOf="@+id/positiveStart" />
 
     <Switch
         android:id="@+id/isUpdateSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@+id/positiveStart"
+        android:checked="true"
+        android:switchPadding="8dp"
         android:text="@string/update_system"
         android:textColor="@color/white"
-        android:switchPadding="8dp"
-        android:checked="true"
-        app:layout_constraintBottom_toTopOf="@+id/btnConfirm"  />
+        app:layout_constraintBottom_toTopOf="@+id/btnConfirm"
+        app:layout_constraintStart_toStartOf="@+id/positiveStart" />
 
 
 
