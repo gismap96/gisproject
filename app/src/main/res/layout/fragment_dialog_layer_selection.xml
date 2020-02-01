@@ -10,7 +10,7 @@
         android:id="@+id/layerCalloutDialogRecyclerview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#CC010b1f"
+        android:background="@color/details_dialog_background"
         android:textAlignment="center"
         app:layout_constraintBottom_toTopOf="@+id/closePopupDialog"
         app:layout_constraintEnd_toEndOf="parent"

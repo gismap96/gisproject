@@ -9,11 +9,12 @@
     <TextView
         android:id="@+id/headlineForSketchModeSelection"
         android:layout_width="0dp"
-        android:layout_height="48dp"
+        android:layout_height="64dp"
         android:background="#010b1f"
         android:gravity="center"
         android:text="@string/choose_a_layer_to_edit"
         android:textColor="#ffffff"
+        android:textStyle="bold"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,11 +23,12 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/sketcherModeSelectionRecyclerView"
         android:layout_width="0dp"
-        android:background="#CC010b1f"
         android:layout_height="wrap_content"
+        android:background="@color/details_dialog_background"
         app:layout_constraintBottom_toTopOf="@+id/closeSketchSelectDialog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:paddingBottom="16dp"
         app:layout_constraintTop_toBottomOf="@+id/headlineForSketchModeSelection" />
 
     <TextView

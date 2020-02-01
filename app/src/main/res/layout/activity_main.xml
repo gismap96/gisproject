@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_percent="0.83" />
 
     <com.esri.arcgisruntime.mapping.view.MapView
         android:id="@+id/mapView"
@@ -171,7 +171,7 @@
         android:layout_margin="25dp"
         android:layout_marginBottom="4dp"
         android:background="@drawable/dark_circle"
-        android:padding="8dp"
+        android:padding="4dp"
         android:src="@drawable/ic_auto_pan"
         app:layout_constraintBottom_toTopOf="@+id/bottomSketcherControllerBarContainer"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -239,19 +239,20 @@
             android:id="@+id/saveShapeTV"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/white_transparent"
+            android:background="@color/white"
             android:gravity="center"
             android:text="@string/save"
             android:textColor="@color/colorPrimary"
-            android:textSize="16sp"
+            android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@+id/saveHorizonalGL"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="123dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/measurementConstraintLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginStart="24dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
@@ -299,7 +300,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:text="אורך:"
                 android:textColor="@color/light_blue"
                 android:textSize="16sp"
@@ -333,7 +334,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.33" />
+            app:layout_constraintGuide_percent="0.4" />
 
     </android.support.constraint.ConstraintLayout>
 

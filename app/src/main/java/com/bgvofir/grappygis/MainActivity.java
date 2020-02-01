@@ -1743,6 +1743,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
         measurementConstraintLayout.setVisibility(View.VISIBLE);
         mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
+        setMeasurementsDisplay(sketcher);
         mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
             @Override
             public void geometryChanged(SketchGeometryChangedEvent sketchGeometryChangedEvent) {
