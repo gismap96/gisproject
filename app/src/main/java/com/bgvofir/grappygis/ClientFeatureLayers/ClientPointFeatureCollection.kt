@@ -1,5 +1,6 @@
 package com.bgvofir.grappygis.ClientFeatureLayers
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -8,6 +9,7 @@ import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.Log
+import android.widget.Toast
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController
 import com.bgvofir.grappygis.ProjectRelated.MapProperties
 import com.bgvofir.grappygis.ProjectRelated.ProjectId
@@ -274,6 +276,40 @@ class ClientPointFeatureCollection(val context: Context) {
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
         return bitmap
+    }
+
+    fun identifyFeatureById(id: String): Int{
+        var count = 0
+        features.forEach {
+            if (it.attributes["Id"] == id) return count
+            count++
+        }
+        return -1
+    }
+
+    fun editFeatureGeometry(context: Context, layerId: String, geometry: Geometry){
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        val featureNum = identifyFeatureById(id)
+        val editFeature = features[featureNum]
+        val attributes = editFeature.attributes
+        val newFeature = featureCollectionTable.createFeature(attributes,geometry) as Feature
+        features.removeAt(featureNum)
+        features.add(newFeature)
+        featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
+            featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
+                uploadJSON(object: OnPointsUploaded{
+                    override fun onPointsUploadFinished() {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.resources.getString(R.string.layer_updated),Toast.LENGTH_SHORT).show()
+                    }
+
+                })
+            }
+        }
+
     }
 
     interface OnPointsUploaded{

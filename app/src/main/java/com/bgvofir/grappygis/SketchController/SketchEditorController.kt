@@ -191,7 +191,7 @@ object SketchEditorController {
         isEditMode = false
         if (!isWorking) return else isWorking = false
         sketchEditor.stop()
-        ObjectAnimator.ofFloat(layout,"translationY", 200f).apply{
+        ObjectAnimator.ofFloat(layout,"translationY", layout.height.toFloat()).apply{
             duration = 500
             start()
         }.addListener(object: Animator.AnimatorListener{
