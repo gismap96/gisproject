@@ -345,9 +345,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                             String layerId = FeatureLayerController.INSTANCE.getLayerId();
                             Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
                             if (geometry != null){
-                                progressDialog.show();
                                 SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
-                                UserPolyline.INSTANCE.getUserPolyline().editFeatureGeometry(layerId,geometry, this);
+                                UserPolyline.INSTANCE.getUserPolyline().editFeatureGeometry(layerId,geometry, MainActivity.this);
                             } else {
                                 Toast.makeText(this, R.string.empty_polyline, Toast.LENGTH_LONG).show();
                             }

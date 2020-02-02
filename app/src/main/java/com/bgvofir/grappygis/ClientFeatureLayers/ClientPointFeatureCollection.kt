@@ -137,7 +137,6 @@ class ClientPointFeatureCollection(val context: Context) {
         this.featureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POINT, spatialReference)
         this.featureCollectionTable.renderer = renderer
         this.collection.tables.add(featureCollectionTable)
-        collection.tables.add(featureCollectionTable)
     }
 
     private fun fieldsTransform(){

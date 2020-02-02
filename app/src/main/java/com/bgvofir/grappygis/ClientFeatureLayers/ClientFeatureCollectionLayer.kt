@@ -332,13 +332,32 @@ class ClientFeatureCollectionLayer () {
         }
 
     }
-    fun editFeatureGeometry(id: String, geometry:Geometry, callback: OnPolylineUploadFinish){
+    fun editFeatureGeometry(id: String, geometry:Geometry, context: Context){
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
         val featureNum = identifyFeatureById(id)
         val editFeature = features[featureNum]
-        editFeature.geometry = geometry
-        featureCollectionTable.updateFeatureAsync(editFeature).addDoneListener{
-            uploadJSON(callback)
+        val attributes = editFeature.attributes
+        val newFeature = featureCollectionTable.createFeature(attributes,geometry) as Feature
+        features.removeAt(featureNum)
+        features.add(newFeature)
+        featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
+            featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
+                uploadJSON(object: OnPolylineUploadFinish{
+                    override fun onPolylineUploadFinish() {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.resources.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                    }
+
+                })
+            }
         }
+//        editFeature.geometry = geometry
+//        featureCollectionTable.updateFeatureAsync(editFeature).addDoneListener{
+//            uploadJSON(callback)
+//        }
 
     }
 
@@ -355,6 +374,7 @@ class ClientFeatureCollectionLayer () {
         val geometry = editFeature.geometry
         val newFeature = featureCollectionTable.createFeature(newAttributes,geometry) as Feature
         features.add(newFeature)
+        features.removeAt(featureNum)
         featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
             featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
                 uploadJSON(object: OnPolylineUploadFinish{
