@@ -37,6 +37,7 @@ import java.util.*
 open class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
                                       val callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish?, val layerListener: LegendLayerDisplayController.LayerGroupsListener?, val progressDialog: ProgressDialog?, val isEditMode: Boolean): Dialog(context), View.OnClickListener {
 
+    val shapeType = FeatureLayerController.shapeType
     val TAG = "sketcherSave"
     var mMapView = mMapView
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,16 +55,32 @@ open class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
     override fun onStart() {
         super.onStart()
         if (isEditMode){
-            when (FeatureLayerController.shapeType){
+            val layerID = FeatureLayerController.layerId
+            when (shapeType){
                 SketcherEditorTypes.POINT -> {
                     shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.points_layer)
                     shapeTypeSketcherSaveTV.setTextColor(context.resources.getColor(R.color.light_blue))
                     val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_star_blue)
                     shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
-
+                    val featureNum = UserPoints.userPoints!!.identifyFeatureById(layerID)
+                    if (featureNum >= 0){
+                        val feature = UserPoints.userPoints!!.features[featureNum]
+                        val featureAttributes = feature.attributes
+                        addDescriptionSketcherSaveET.setText(featureAttributes["description"].toString())
+                        addCategoryToSketcherSaveET.setText(featureAttributes["category"].toString())
+                        addNumberToSketcherSaveET.setText(featureAttributes["number"].toString())
+                        var checked = false
+                        if (featureAttributes["isUpdated"] == "yes"){
+                            checked = true
+                        }
+                        updateToSystemSketchSaveSW.isChecked = checked
+                    }
                 }
                 SketcherEditorTypes.POLYLINE -> {
-                    val layerID = FeatureLayerController.layerId
+//                    shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.polyline_layer)
+//                    shapeTypeSketcherSaveTV.setTextColor(context.resources.getColor(R.color.soft_red))
+//                    val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_polyline_soft_red)
+//                    shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
                     val featureNum = UserPolyline.userPolyline!!.identifyFeatureById(layerID)
                     if (featureNum >= 0){
                         val feature = UserPolyline.userPolyline!!.features[featureNum]
@@ -112,7 +129,17 @@ open class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
         attributes.put("imageURL", "")
         if (isEditMode){
             val layerId = FeatureLayerController.layerId
-            UserPolyline.userPolyline!!.editFeatureAttributes(context, layerId, attributes)
+            val type = FeatureLayerController.shapeType
+            when (type){
+                SketcherEditorTypes.POINT -> {
+                    UserPoints.userPoints!!.editFeatureAttributes(context, layerId, attributes)
+                }
+                SketcherEditorTypes.POLYLINE -> {
+                    UserPolyline.userPolyline!!.editFeatureAttributes(context, layerId, attributes)
+                }
+                SketcherEditorTypes.POLYGON -> { }
+            }
+
             dismiss()
             return
         }
@@ -140,7 +167,7 @@ open class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
                 }
 
                 //UserPolyline.userPolyline!!.createFeature(attributes, geometry)
-                SketchEditorController.clean(mMapView)
+                SketchEditorController.clean()
                 ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
                 //UserPolyline.userPolyline!!.uploadJSON(callback)
             }
@@ -157,7 +184,7 @@ open class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
 
 
                 }
-                SketchEditorController.clean(mMapView)
+                SketchEditorController.clean()
                 ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
 
             }

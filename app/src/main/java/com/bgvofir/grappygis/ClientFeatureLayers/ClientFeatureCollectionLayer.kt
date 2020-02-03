@@ -391,23 +391,50 @@ class ClientFeatureCollectionLayer () {
         fun onPolylineUploadFinish()
     }
     fun editFeatureImage(context: Context, id: String, uri: Uri?){
-        val progressDialog = ProgressDialog(context)
-        progressDialog.setTitle(context.getString(R.string.updating_layer))
-        progressDialog.setCancelable(false)
-        progressDialog.show()
         val featureNum = identifyFeatureById(id)
         uri?.let {mUri ->
             val storage = FirebaseStorage.getInstance()
-            val oldURL = features[featureNum].attributes["imageURL"] as String
-            val ref = storage.getReferenceFromUrl(oldURL)
-            Picasso.get().invalidate(oldURL)
-            val compressedImage = ClientPhotoController.reduceImageSize(mUri)
-            compressedImage?.let{
-                ref.putFile(it).addOnSuccessListener {
-                    progressDialog.dismiss()
-                    Toast.makeText(context, context.getString(R.string.layer_updated),Toast.LENGTH_SHORT)
+            val progressDialog = ProgressDialog(context)
+            progressDialog.setTitle(context.getString(R.string.updating_layer))
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+            var ref = ClientPhotoController.reference.child("settlements/" + ProjectId.projectId + "/images/" + UUID.randomUUID().toString())
+            if (features[featureNum].attributes["imageURL"].toString().trim() != ""){
+                val oldURL = features[featureNum].attributes["imageURL"] as String
+                ref = storage.getReferenceFromUrl(oldURL)
+                Picasso.get().invalidate(oldURL)
+                val compressedImage = ClientPhotoController.reduceImageSize(mUri)
+                compressedImage?.let{
+                    ref.putFile(it).addOnSuccessListener {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.getString(R.string.layer_updated),Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                val feature = features[featureNum]
+                val compressedImage = ClientPhotoController.reduceImageSize(mUri)
+                compressedImage?.let{
+                    ref.putFile(it).addOnSuccessListener {
+                        ref.downloadUrl.addOnSuccessListener {
+                            uri->
+                            features[featureNum].attributes["imageURL"] = uri.toString()
+                            featureCollectionTable.updateFeatureAsync(feature).addDoneListener {
+                                uploadJSON(object: OnPolylineUploadFinish{
+                                    override fun onPolylineUploadFinish() {
+                                        progressDialog.dismiss()
+                                        Toast.makeText(context, context.getString(R.string.layer_updated),Toast.LENGTH_SHORT).show()
+                                    }
+
+                                })
+
+                            }
+
+                        }
+
+                    }
                 }
             }
+
         }
     }
 }

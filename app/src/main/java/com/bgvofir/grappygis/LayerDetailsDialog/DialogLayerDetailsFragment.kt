@@ -132,7 +132,7 @@ class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, inter
             R.id.editClientLayerGeometryIV->{
                 val layerId = FeatureLayerController.layerId
                 if (layerId.count() > 0){
-                    callback.onEditSelectedListener(SketcherEditorTypes.POLYLINE, layerId)
+                    callback.onEditSelectedListener(FeatureLayerController.shapeType, layerId)
                 } else {
                     Log.d(TAG, "error loading feature")
                 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -287,12 +288,20 @@ class ClientPointFeatureCollection(val context: Context) {
         return -1
     }
 
+    fun getFeatureGeometry(id: String):Geometry?{
+        val featureNum = identifyFeatureById(id)
+        if (featureNum >= 0){
+            val mFeature = features[featureNum]
+            return mFeature.geometry
+        }
+        return null
+    }
     fun editFeatureGeometry(context: Context, layerId: String, geometry: Geometry){
         val progressDialog = ProgressDialog(context)
         progressDialog.setTitle(context.getString(R.string.updating_layer))
         progressDialog.setCancelable(false)
         progressDialog.show()
-        val featureNum = identifyFeatureById(id)
+        val featureNum = identifyFeatureById(layerId)
         val editFeature = features[featureNum]
         val attributes = editFeature.attributes
         val newFeature = featureCollectionTable.createFeature(attributes,geometry) as Feature
@@ -311,6 +320,39 @@ class ClientPointFeatureCollection(val context: Context) {
         }
 
     }
+
+    fun editFeatureAttributes(context: Context, layerId: String, attributes: HashMap<String, Any>){
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        val featureNum = identifyFeatureById(layerId)
+        val editFeature = features[featureNum]
+        val newAttributes = attributes.toMutableMap()
+        newAttributes["Id"] = UUID.randomUUID().toString()
+        newAttributes["imageURL"] = editFeature.attributes["imageURL"]!!
+        val geometry = editFeature.geometry
+        val newFeature = featureCollectionTable.createFeature(newAttributes, geometry) as Feature
+        features.add(newFeature)
+        features.removeAt(featureNum)
+        featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
+            featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
+                uploadJSON(object: OnPointsUploaded{
+                    override fun onPointsUploadFinished() {
+                        progressDialog.dismiss()
+                    }
+
+                })
+            }
+        }
+    }
+    fun editFeatureImage(context: Context, id: String, uri: Uri?){
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+    }
+
 
     interface OnPointsUploaded{
         fun onPointsUploadFinished()

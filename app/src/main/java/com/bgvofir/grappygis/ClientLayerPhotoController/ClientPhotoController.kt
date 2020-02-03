@@ -91,8 +91,7 @@ object ClientPhotoController {
                                 UserPoints.userPoints!!.uploadJSON(object: ClientPointFeatureCollection.OnPointsUploaded{
                                     override fun onPointsUploadFinished() {
                                         progressDialog.dismiss()
-                                       Toast.makeText(activity, activity.resources.getString(R.string.point_saved),Toast.LENGTH_SHORT).show()
-
+                                        Toast.makeText(activity, activity.resources.getString(R.string.point_saved),Toast.LENGTH_SHORT).show()
                                     }
 
                                 })
@@ -122,11 +121,11 @@ object ClientPhotoController {
                 ref.putFile(it).addOnSuccessListener {
                     ref.downloadUrl.addOnSuccessListener { uri->
                         attributes["imageURL"] = uri.toString()
-                        UserPoints.userPoints!!.createFeature(attributes, geometry){
-                            UserPoints.userPoints!!.uploadJSON(callbackPoint)
-                        }
                         when (type){
                             GeometryType.POINT -> {
+                                UserPoints.userPoints!!.createFeature(attributes, geometry){
+                                    UserPoints.userPoints!!.uploadJSON(callbackPoint)
+                                }
                             }
                             GeometryType.ENVELOPE -> {}
                             GeometryType.POLYLINE -> {

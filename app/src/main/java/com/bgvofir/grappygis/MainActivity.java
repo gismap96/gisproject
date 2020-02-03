@@ -330,6 +330,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
                 case POINT:
                     if (SketchEditorController.INSTANCE.getGeometry() != null && !SketchEditorController.INSTANCE.getGeometry().isEmpty()){
+                        if (SketchEditorController.INSTANCE.isEditMode()){
+                            String layerId = FeatureLayerController.INSTANCE.getLayerId();
+                            Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
+                            if (geometry != null){
+                                SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
+                                UserPoints.INSTANCE.getUserPoints().editFeatureGeometry(this, layerId, geometry);
+                                resetMenuFunctions();
+                                return;
+                            } else {
+                                Toast.makeText(this, R.string.empty_Point, Toast.LENGTH_LONG).show();
+                            }
+                        }
                         SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, MainActivity.this, MainActivity.this, progressDialog, false);
                         layerAttributes.show();
                     }else {
@@ -347,6 +359,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                             if (geometry != null){
                                 SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
                                 UserPolyline.INSTANCE.getUserPolyline().editFeatureGeometry(layerId,geometry, MainActivity.this);
+                                resetMenuFunctions();
                             } else {
                                 Toast.makeText(this, R.string.empty_polyline, Toast.LENGTH_LONG).show();
                             }
@@ -470,7 +483,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         undoSkecherIV.setOnClickListener(v -> SketchEditorController.INSTANCE.undo());
         cleanSketcherIV = findViewById(R.id.cleanSketcherIV);
         cleanSketcherIV.setOnClickListener(v-> {
-            SketchEditorController.INSTANCE.clean(mMapView);
+            SketchEditorController.INSTANCE.clean();
         });
 //        closeSketcherTV = findViewById(R.id.closeSketcherTV);
 //        closeSketcherTV.setOnClickListener(new View.OnClickListener() {
@@ -1456,7 +1469,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 if (resultCode == Activity.RESULT_OK){
                     Uri uri = ClientPhotoController.INSTANCE.getImageURI();
                     String layerID = FeatureLayerController.INSTANCE.getLayerId();
-                    UserPolyline.INSTANCE.getUserPolyline().editFeatureImage(this, layerID, uri);
+                    switch (FeatureLayerController.INSTANCE.getShapeType()){
+
+                        case POINT:
+//                            UserPoints.INSTANCE.getUserPoints()
+                            break;
+                        case POLYLINE:
+                            UserPolyline.INSTANCE.getUserPolyline().editFeatureImage(this, layerID, uri);
+                            break;
+                        case POLYGON:
+                            break;
+                    }
+
                 }
                 break;
             case TAKE_PHOTO_FOR_LAYER:
@@ -1800,6 +1824,16 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onEditSelectedListener(@NotNull SketcherEditorTypes type, @NotNull String layerId) {
         Geometry editGeometry = UserPolyline.INSTANCE.getUserPolyline().getFeatureGeometry(layerId);
+        switch (type){
+
+            case POINT:
+                editGeometry = UserPoints.INSTANCE.getUserPoints().getFeatureGeometry(layerId);
+                break;
+            case POLYLINE:
+                break;
+            case POLYGON:
+                break;
+        }
         if (editGeometry == null){
             return;
         }
@@ -1808,28 +1842,26 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         deletePointIV.setEnabled(false);
         switch (type){
             case POINT:
-                isAddPointMode = true;
-                return;
+                measurementConstraintLayout.setVisibility(View.INVISIBLE);
+                break;
             case POLYGON:
                 overallSizeHeadlineTV.setText(R.string.dunam);
                 lengthSectionHeadlineTV.setText(R.string.section);
+                measurementConstraintLayout.setVisibility(View.VISIBLE);
                 break;
             case POLYLINE:
                 overallSizeHeadlineTV.setText(R.string.length);
                 lengthSectionHeadlineTV.setText(R.string.section);
+                measurementConstraintLayout.setVisibility(View.VISIBLE);
                 break;
         }
-        measurementConstraintLayout.setVisibility(View.VISIBLE);
         SketchEditorController.INSTANCE.startSketching(type, mMapView, editGeometry);
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
         mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
-        setMeasurementsDisplay(type);
-        mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
-            @Override
-            public void geometryChanged(SketchGeometryChangedEvent sketchGeometryChangedEvent) {
-                setMeasurementsDisplay(type);
-            }
-        });
+        if (type != SketcherEditorTypes.POINT){
+            setMeasurementsDisplay(type);
+            mSketcher.addGeometryChangedListener(sketchGeometryChangedEvent -> setMeasurementsDisplay(type));
+        }
     }
 
     private void setMeasurementsDisplay(@NotNull SketcherEditorTypes type) {

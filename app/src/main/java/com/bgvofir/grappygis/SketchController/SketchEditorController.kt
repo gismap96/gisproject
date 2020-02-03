@@ -40,7 +40,7 @@ object SketchEditorController {
     fun openSketcherBarContainer(layout: ConstraintLayout){
         layout.visibility = View.VISIBLE
         if (isWorking) return else isWorking = true
-        ObjectAnimator.ofFloat(layout,"translationY", 200f).apply {
+        ObjectAnimator.ofFloat(layout,"translationY", layout.height.toFloat()).apply {
             duration = 0
             start()
         }.addListener(object: Animator.AnimatorListener{
@@ -104,13 +104,8 @@ object SketchEditorController {
         sketchEditor.start(geometry, SketchCreationMode.POLYGON)
     }
 
-    fun clean(mMapView: MapView){
+    fun clean(){
         sketchEditor.clearGeometry()
-    }
-
-    fun toJson(geometry: Geometry){
-        FormatJSONGeometry.polygonToJson(geometry)
-        Log.d(TAG, geometry.toString())
     }
 
     fun wertexOriginal(unit: String):String{

@@ -87,5 +87,5 @@
     <string name="points_layer">Points Layer</string>
     <string name="init_dialog_headline">Setting things up</string>
     <string name="init_dialog_message">please wait</string>
-    <string name="empty_Point">Please tap to add a pin</string>
+    <string name="empty_Point">Empty point, Please tap to pin a point</string>
 </resources>
