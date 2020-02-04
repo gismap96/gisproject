@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.Log
 import android.widget.Toast
+import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController
 import com.bgvofir.grappygis.ProjectRelated.MapProperties
 import com.bgvofir.grappygis.ProjectRelated.ProjectId
@@ -28,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.squareup.picasso.Picasso
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -47,8 +49,8 @@ class ClientPointFeatureCollection(val context: Context) {
 //    val pinBlackStarDrawable = BitmapDrawable(context.resources, getBitmapFromVectorDrawable(R.drawable.ic_star_black))
     var pictureMarkerSymbol = PictureMarkerSymbol(pinBlueStarDrawable)
     var renderer = SimpleRenderer(pictureMarkerSymbol)
-    var WIDTH = 40f
-    var HEIGHT = 40f
+    var WIDTH = 20f
+    var HEIGHT = 20f
 
     constructor(context: Context, name: String, id: String, fields: MutableList<GrappiField>, spatialReference: SpatialReference): this(context){
         collection = FeatureCollection()
@@ -347,12 +349,100 @@ class ClientPointFeatureCollection(val context: Context) {
         }
     }
     fun editFeatureImage(context: Context, id: String, uri: Uri?){
+        val featureNum = identifyFeatureById(id)
+        uri?.let {mUri ->
+            val progressDialog = ProgressDialog(context)
+            progressDialog.setTitle(context.getString(R.string.updating_layer))
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+            val storage = FirebaseStorage.getInstance()
+            val reference = storage.reference
+            var ref = reference.child("settlements/" + ProjectId.projectId + "/images/" + UUID.randomUUID().toString())
+            if (features[featureNum].attributes["imageURL"].toString().trim() != ""){
+                val oldURL = features[featureNum].attributes["imageURL"] as String
+                ref = storage.getReferenceFromUrl(oldURL)
+                Picasso.get().invalidate(oldURL)
+                val compressedImage = ClientPhotoController.reduceImageSize(mUri)
+                compressedImage?.let{
+                    ref.putFile(it).addOnSuccessListener {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.getString(R.string.layer_updated),Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                val feature = features[featureNum]
+                val compressedImage = ClientPhotoController.reduceImageSize(mUri)
+                compressedImage?.let{
+                    ref.putFile(it).addOnSuccessListener {
+                        ref.downloadUrl.addOnSuccessListener {
+                            uri->
+                            features[featureNum].attributes["imageURL"] = uri.toString()
+                            featureCollectionTable.updateFeatureAsync(feature).addDoneListener {
+                                uploadJSON(object: OnPointsUploaded {
+                                    override fun onPointsUploadFinished() {
+                                        progressDialog.dismiss()
+                                        Toast.makeText(context, context.getString(R.string.layer_updated),Toast.LENGTH_SHORT).show()
+                                    }
+
+                                })
+
+                            }
+
+                        }
+
+                    }
+                }
+            }
+
+        }
+    }
+
+    fun deleteFeature(layerId: String, context: Context){
         val progressDialog = ProgressDialog(context)
         progressDialog.setTitle(context.getString(R.string.updating_layer))
         progressDialog.setCancelable(false)
         progressDialog.show()
-    }
+        val objectID = identifyFeatureById(layerId)
+        if (objectID < 0){
+            Toast.makeText(context, "failed to update layer", Toast.LENGTH_LONG).show()
+        }
+        featureCollectionTable.deleteFeatureAsync(features[objectID]).addDoneListener{
+            val url = features[objectID].attributes["imageURL"] as String
+            val storage = FirebaseStorage.getInstance()
+            if (url.count() > 5) {
+                val reference = storage.getReferenceFromUrl(url)
+                reference.delete().addOnSuccessListener {
+                    features.removeAt(objectID)
+                    uploadJSON(object: OnPointsUploaded{
+                        override fun onPointsUploadFinished() {
+                            progressDialog.dismiss()
+                            Toast.makeText(context, context.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                        }
 
+                    })
+                }.addOnFailureListener {
+                    features.removeAt(objectID)
+                    uploadJSON(object: OnPointsUploaded{
+                        override fun onPointsUploadFinished() {
+                            progressDialog.dismiss()
+                            Toast.makeText(context, context.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                        }
+
+                    })
+                }
+            } else {
+                features.removeAt(objectID)
+                uploadJSON(object: OnPointsUploaded{
+                    override fun onPointsUploadFinished() {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                    }
+
+                })
+            }
+
+        }
+    }
 
     interface OnPointsUploaded{
         fun onPointsUploadFinished()

@@ -22,6 +22,7 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.Log
 import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController
 import com.bgvofir.grappygis.LayerCalloutControl.FeatureLayerController
+import com.bgvofir.grappygis.ProjectRelated.UserPoints
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes
 import com.bgvofir.grappygis.SketchController.SketcherSaveDialogFragment
@@ -102,22 +103,31 @@ class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, inter
         return bitmap
     }
 
-
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.fragmentDialogLayerDetailsClose ->{
                 dismiss()
             }
             R.id.deleteClientLayerIV->{
+                val layerId = FeatureLayerController.layerId
                // Toast.makeText(context, "objectid: ${FeatureLayerController.layerId}", Toast.LENGTH_LONG).show()
                 val builder = AlertDialog.Builder(context)
                 builder.setMessage(context.getString(R.string.delete_layer_dialog_message))
                         .setTitle(context.getString(R.string.delete_layer_dialog_headline))
                         .setPositiveButton(R.string.yes,
                                 DialogInterface.OnClickListener { dialog, id ->
-                                    UserPolyline.userPolyline?.let {
-                                        it.deleteFeature(FeatureLayerController.layerId, context)
+                                    when (FeatureLayerController.shapeType){
+                                        SketcherEditorTypes.POINT -> {
+                                            UserPoints.userPoints!!.deleteFeature(layerId, context)
+                                        }
+                                        SketcherEditorTypes.POLYLINE -> {
+                                            UserPolyline.userPolyline?.let {
+                                                it.deleteFeature(layerId, context)
+                                            }
+                                        }
+                                        SketcherEditorTypes.POLYGON -> {}
                                     }
+
                                     dismiss()
                                 })
                         .setNegativeButton(R.string.cancel,

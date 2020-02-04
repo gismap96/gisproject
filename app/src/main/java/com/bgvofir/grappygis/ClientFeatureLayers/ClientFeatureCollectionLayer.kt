@@ -393,12 +393,13 @@ class ClientFeatureCollectionLayer () {
     fun editFeatureImage(context: Context, id: String, uri: Uri?){
         val featureNum = identifyFeatureById(id)
         uri?.let {mUri ->
-            val storage = FirebaseStorage.getInstance()
             val progressDialog = ProgressDialog(context)
             progressDialog.setTitle(context.getString(R.string.updating_layer))
             progressDialog.setCancelable(false)
             progressDialog.show()
-            var ref = ClientPhotoController.reference.child("settlements/" + ProjectId.projectId + "/images/" + UUID.randomUUID().toString())
+            val storage = FirebaseStorage.getInstance()
+            val reference = storage.reference
+            var ref = reference.child("settlements/" + ProjectId.projectId + "/images/" + UUID.randomUUID().toString())
             if (features[featureNum].attributes["imageURL"].toString().trim() != ""){
                 val oldURL = features[featureNum].attributes["imageURL"] as String
                 ref = storage.getReferenceFromUrl(oldURL)

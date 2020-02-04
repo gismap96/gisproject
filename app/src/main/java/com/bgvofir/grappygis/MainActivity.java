@@ -172,13 +172,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ProgressBar mapProgress;
     LocationDisplay locationDisplay;
     private boolean isAutoPan;
-    private boolean isAddPointMode;
-    private boolean isDeletePointMode;
+//    private boolean isAddPointMode;
+//    private boolean isDeletePointMode;
     private PointCollection mPolylinePoints;
     private static final int TAKE_PICTURE = 1;
     private static final int TAKE_PHOTO_FOR_LAYER = 2;
     private static final int EDIT_PHOTO_FOR_LAYER = 3;
-    private Uri imageUri;
+//    private Uri imageUri;
     FirebaseStorage storage;
     StorageReference storageReference;
     private GraphicsOverlay pointsOverlay;
@@ -188,19 +188,19 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private String mCurrentDescription;
     private ArrayList<ClientPoint> mClientPoints;
     SharedPreferences mPrefs;
-    private float mCurrentX;
-    private float mCurrentY;
+//    private float mCurrentX;
+//    private float mCurrentY;
     private ImageView toggleMenuBtn;
     private ImageView sketchEditorStartIV;
     private ImageView addPoint;
     private ImageView toggleAutoPanBtn;
-    private ImageView deletePointIV;
+//    private ImageView deletePointIV;
     private ImageView undoSkecherIV;
     private ImageView zift2;
     private String mProjectId;
-    private ListenableFuture<FeatureQueryResult> selectionResult;
-    private String mCurrentCategory;
-    private boolean mCurrentIsUpdateSys;
+//    private ListenableFuture<FeatureQueryResult> selectionResult;
+//    private String mCurrentCategory;
+//    private boolean mCurrentIsUpdateSys;
     private boolean activityAlive;
     private DialogLayerSelectionFragment dialogLayerSelectionFragment;
     private SketcherSelectionDialogFragment sketcherSelectionDialogFragment;
@@ -212,7 +212,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private LegendSidebarAdapter legendAdapter;
     private TextView calculatePolygonAreaTV;
     private ConstraintLayout measurementConstraintLayout;
-    private boolean displayLegendFlag;
+//    private boolean displayLegendFlag;
     private ImageView northBarIV;
     private SketchEditor mSketcher;
     private ImageView cleanSketcherIV;
@@ -236,7 +236,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         initializingProgressDialog.setTitle(getString(R.string.init_dialog_headline));
         initializingProgressDialog.setMessage(getString(R.string.init_dialog_message));
         initializingProgressDialog.setCancelable(false);
-        displayLegendFlag = false;
         UserPolyline.INSTANCE.initFields();
         UserPoints.INSTANCE.initFields();
         storage = FirebaseStorage.getInstance();
@@ -249,7 +248,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         ProjectId.INSTANCE.setProjectId(mProjectId);
 //        addPoint = findViewById(R.id.addPoint);
         displaySectionForShapeTV = findViewById(R.id.displaySectionForShapeTV);
-        deletePointIV = findViewById(R.id.deletePointIV);
+//        deletePointIV = findViewById(R.id.deletePointIV);
         mapProgress = findViewById(R.id.map_progress);
         sketchEditorStartIV = findViewById(R.id.sketchEditorIV);
         northBarIV = findViewById(R.id.northBarIV);
@@ -426,23 +425,23 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
 
-        deletePointIV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                isDeletePointMode = !isDeletePointMode;
-//                if (isDeletePointMode){
+//        deletePointIV.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                isDeletePointMode = !isDeletePointMode;
+////                if (isDeletePointMode){
+////                    deletePointIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+////                }
+////                else{
+////                    deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+////                }
+//                resetMenuFunctions();
+//                if (MainUpperMenu.INSTANCE.trashClicked()){
 //                    deletePointIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+//                    isDeletePointMode = true;
 //                }
-//                else{
-//                    deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-//                }
-                resetMenuFunctions();
-                if (MainUpperMenu.INSTANCE.trashClicked()){
-                    deletePointIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-                    isDeletePointMode = true;
-                }
-            }
-        });
+//            }
+//        });
 
         mMapView = findViewById(R.id.mapView);
         mDistanceOverlay = new GraphicsOverlay();
@@ -496,20 +495,20 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         closeSketcherIV = findViewById(R.id.closeSketcherIV);
         closeSketcherIV.setOnClickListener(v -> {
             resetMenuFunctions();
-            deletePointIV.setEnabled(true);
+//            deletePointIV.setEnabled(true);
             sketchEditorStartIV.setEnabled(true);
         });
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-//        zift.setVisibility(View.GONE);
-        zift.setOnClickListener(v -> {
-            SketchEditorController.INSTANCE.startSketching(SketcherEditorTypes.POINT, mMapView);
-            SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
-            mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
-            measurementConstraintLayout.setVisibility(View.INVISIBLE);
-
-        });
+        zift.setVisibility(View.GONE);
+//        zift.setOnClickListener(v -> {
+//            SketchEditorController.INSTANCE.startSketching(SketcherEditorTypes.POINT, mMapView);
+//            SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
+//            mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
+//            measurementConstraintLayout.setVisibility(View.INVISIBLE);
+//
+//        });
         getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         calculatePolygonAreaTV = findViewById(R.id.displayOverallForShapeTV);
@@ -521,127 +520,20 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         });
     }
 
-    private String getJsonDataFromFile(File file){
-        BufferedReader input = null;
-        try {
-            input = new BufferedReader(new FileReader(file));
-            String line;
-            StringBuffer content = new StringBuffer();
-            char[] buffer = new char[1024];
-            int num;
-            while ((num = input.read(buffer)) > 0) {
-                content.append(buffer, 0, num);
-            }
-            return content.toString();
 
-        }catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     private void resetMenuFunctions(){
         mDistanceOverlay.getGraphics().clear();
         mIsDistance = false;
-        isAddPointMode = false;
-        isDeletePointMode = false;
+//        isAddPointMode = false;
+//        isDeletePointMode = false;
         SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
 //        addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-        deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+//        deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         MainUpperMenu.INSTANCE.resetMenu();
     }
 
-    private void setClientPoints(){
-        mClientPoints = new ArrayList<>();
-        String username = FirebaseAuth.getInstance().getUid();
-        StorageReference pointsRef = storageReference.child("settlements/" + mProjectId + "/layers/"+ username +".json");
-        String pointsFilePath = getPointLocalFilePath();
-        File pointsFile = new File(pointsFilePath);
-        try {
-            pointsFile.getParentFile().mkdirs();
-            pointsFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        pointsRef.getFile(pointsFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                Log.d("MainActivity", "points file: " + pointsFile);
-                try {
-                    JSONArray pointsJson = new JSONArray(getJsonDataFromFile(pointsFile));
-                    for (int i = 0; i < pointsJson.length(); i++){
-                        Gson gson = new Gson();
-                        ClientPoint clientPoint = gson.fromJson(pointsJson.getJSONObject(i).toString(), ClientPoint.class);
-                        mClientPoints.add(clientPoint);
-                        SystemClock.sleep(50);
-                        createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl(), clientPoint.getCategory(), clientPoint.isUpdateSystem(), clientPoint.getUser());
-                    }
-                    if (displayLegendFlag) {
-                        initializingProgressDialog.show();
-                        ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
-                    } else {
-                        displayLegendFlag = true;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
-                Log.d("MainActivity", "points file failed: " + e.getMessage());
-            }
-        });
-
-
-
-/*        mClientPoints = new ArrayList<>();
-        if (mPrefs.contains(ClientPoint.POINTS_DATA_KEY)){
-            Set<String> pointsDataStringSet = mPrefs.getStringSet(ClientPoint.POINTS_DATA_KEY, new HashSet<String>());
-            for (String pointString : pointsDataStringSet){
-                Gson gson = new Gson();
-                ClientPoint clientPoint = gson.fromJson(pointString, ClientPoint.class);
-                mClientPoints.add(clientPoint);
-                createFeatureCollection(clientPoint.getX(), clientPoint.getY(), clientPoint.getDescription(), clientPoint.getImageUrl());
-            }
-        }*/
-    }
-
-    private void saveClientPoints(Boolean isLast){
-        SharedPreferences.Editor editor = mPrefs.edit();
-        Set<String> pointsDatStringSet = new HashSet<String>();
-
-        JSONArray storageArray = new JSONArray();
-
-        for(ClientPoint point : mClientPoints){
-            Gson gson = new Gson();
-            String currentPointString = gson.toJson(point);
-            try {
-                storageArray.put(new JSONObject(currentPointString));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            pointsDatStringSet.add(currentPointString);
-        }
-        editor.putStringSet(ClientPoint.POINTS_DATA_KEY, pointsDatStringSet);
-        editor.apply();
-
-        String userid = FirebaseAuth.getInstance().getUid();
-        StorageReference pointsRef = storageReference.child("settlements/" + mProjectId + "/layers/"+ userid +".json");
-        pointsRef.putBytes(storageArray.toString().getBytes())
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Log.d("FireBase","success add points to firebase");
-                        setClientPoints();
-                        if (isLast) {
-                            mapProgress.setVisibility(View.GONE);
-                        }
-                    }
-                });
-    }
 
     private void gotoXYBylayer(@NonNull Layer layer){
         Envelope myExtents = layer.getFullExtent();
@@ -684,15 +576,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                     mMapView.setViewpoint(new Viewpoint(myExtents));
                                     didZoom[0] = true;
                                 }
-
-
-                            if (displayLegendFlag){
                                 initializingProgressDialog.show();
                                 ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
 
-                            } else {
-                                displayLegendFlag = true;
-                            }
                             }
                         }
                     }, 200);
@@ -856,20 +742,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     }
 
-//    private void toggleAddPoint(boolean isOn){
-//        if (mLayerRecyclerView.getAdapter() == null){
-//            return;
-//        }
-//        resetMenuFunctions();
-//        if (MainUpperMenu.INSTANCE.addPointClicked() && isOn){
-//            addPoint.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-//            isAddPointMode = isOn;
-//            LegendLayerDisplayController.INSTANCE.showLayersFromUser(mMapView);
-//            mLayerRecyclerView.getAdapter().notifyDataSetChanged();
-//        } else {
-//            addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-//        }
-//    }
+
 
     private void initMap(String mmpkFileURL){
 //        String mmpkFileURL = createMobileMapPackageFilePath("shfayim_full");
@@ -932,7 +805,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     public void run() {
 //                        setRaster();
                         checkForRaster();
-                        setClientPoints();
+                        //setClientPoints();
                         setMapListener(mobileMap);
                         Envelope myExtents = mobileMap.getOperationalLayers().get(0).getFullExtent();
                         myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
@@ -968,9 +841,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 if (mIsDistance){
                     calculateDistance(e);
                 }
-                else if (isAddPointMode){
-                    startDescriptionDialog(e);
-                }
+//                else if (isAddPointMode){
+//                    startDescriptionDialog(e);
+//                }
                 else{
                     //showLayerData(e, mobileMap);
                     screenPoint = new android.graphics.Point(Math.round(e.getX()),
@@ -991,89 +864,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         });
     }
 
-    private void startDescriptionDialog(MotionEvent e){
-        DescriptionDialog descriptionDialog = new DescriptionDialog(this, new DescriptionDialog.IDescriptionDialogListener() {
-            @Override
-            public void onConfirm(String description, String category, boolean isUpdateSys) {
-                showTakePhotoAlertDialog(e, description, category, isUpdateSys);
-            }
 
-            @Override
-            public void onCanceled() {
-                resetMenuFunctions();
-            }
-        });
-        descriptionDialog.setCancelable(false);
-        descriptionDialog.show();
-    }
-
-    private void showTakePhotoAlertDialog(MotionEvent e, String description, String category, boolean isUpdateSys){
-        AlertDialog.Builder builder;
-        Point locationPoint = mMapView
-                .screenToLocation(new android.graphics.Point(Math.round(e.getX()), Math.round(e.getY())));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(this);
-        }
-        builder.setTitle(R.string.add_photo)
-                .setMessage(R.string.take_photo_prompt)
-                .setPositiveButton(getString(R.string.continue_to_photo), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        takePhoto((float) locationPoint.getX(), (float) locationPoint.getY(), description, category, isUpdateSys);
-                        resetMenuFunctions();
-                    }
-                })
-                .setNegativeButton(getString(R.string.no_thank_you), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        createFeatureCollection((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys, currentuser);
-                        mClientPoints.add(new ClientPoint((float) locationPoint.getX(), (float) locationPoint.getY(), description, null, category, isUpdateSys, currentuser));
-                        saveClientPoints(false);
-                        resetMenuFunctions();
-                    }
-                })
-                .setIcon(R.drawable.ic_add_photo)
-                .show();
-
-
-    }
-
-    private void showDeletePointDialog(int pointHash){
-        AlertDialog.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(this);
-        }
-        builder.setTitle(R.string.delete_point)
-                .setMessage(R.string.delete_this_point)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        //if (mClientPoints.size() > 0){mapProgress.setVisibility(View.VISIBLE);}
-                        for (int i = 0; i < mClientPoints.size(); i++){
-                            if(mClientPoints.get(i).getPointHash() == pointHash){
-                                mClientPoints.remove(i);
-                                mClientFeatureCollection = null;
-                                mMapView.getMap().getOperationalLayers().remove(mClientFeatureCollectionLayer);
-
-                                saveClientPoints(i == mClientPoints.size());
-
-                                break;
-                            }
-                        }
-                        resetMenuFunctions();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        deletePointIV.performClick();
-                        resetMenuFunctions();
-                    }
-                })
-                .setIcon(R.drawable.ic_trash)
-                .show();
-    }
 
     private void calculateDistance(MotionEvent e){
         if (mFirstDistanceClick == null){
@@ -1209,161 +1000,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         return bitmap;
     }
 
-
-
-    private void createPointTable(FeatureCollection clientFeatureCollection, float x, float y, String description, String imageUrl) {
-        List<Feature> features = new ArrayList<>();
-        List<Field> pointFields = new ArrayList<>();
-        pointFields.add(Field.createString("Description", "Description", 50));
-        pointFields.add(Field.createString("URL", "URL", 255));
-        FeatureCollectionTable pointsTable = new FeatureCollectionTable(pointFields, GeometryType.POINT, mMapView.getSpatialReference());
-        SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.TRIANGLE, 0xFF0000FF, 18);
-        SimpleRenderer renderer = new SimpleRenderer(simpleMarkerSymbol);
-        pointsTable.setRenderer(renderer);
-        clientFeatureCollection.getTables().add(pointsTable);
-
-        Map<String, Object> attributes1 = new HashMap<>();
-        attributes1.put(pointFields.get(0).getName(), description);
-        Point point1 = new Point(x, y, mMapView.getSpatialReference());
-        features.add(pointsTable.createFeature(attributes1, point1));
-
-        pointsTable.addFeaturesAsync(features);
-    }
-
-    private void addPointToLayer(float x, float y){
-        if (pointsOverlay == null){
-            pointsOverlay = new GraphicsOverlay();
-            mMapView.getGraphicsOverlays().add(pointsOverlay);
-        }
-        if (mPointSymbol == null){
-            mPointSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.SQUARE, Color.GREEN, 15);
-        }
-        Point point = mMapView.screenToLocation(new android.graphics.Point(Math.round(x), Math.round(y)));
-
-        pointsOverlay.getGraphics().add(new Graphic(point, mPointSymbol));
-    }
-
-
-
-    private void showLayerData(MotionEvent e, ArcGISMap mobileMap){
-        final Point clickPoint = mMapView
-                .screenToLocation(new android.graphics.Point(Math.round(e.getX()), Math.round(e.getY())));
-        // create a selection tolerance
-        int tolerance = isDeletePointMode ? 20 : 20;
-        double mapTolerance = tolerance * mMapView.getUnitsPerDensityIndependentPixel();
-        // use tolerance to create an envelope to query
-        Envelope envelope = new Envelope(clickPoint.getX() - mapTolerance, clickPoint.getY() - mapTolerance,
-                clickPoint.getX() + mapTolerance, clickPoint.getY() + mapTolerance, mobileMap.getSpatialReference());
-        QueryParameters query = new QueryParameters();
-        query.setGeometry(envelope);
-        // request all available attribute fields
-
-        ArrayList<FeatureLayer> layers = new ArrayList<>();
-
-        for (int i = 0; i < mobileMap.getOperationalLayers().size(); i++){
-            if (mobileMap.getOperationalLayers().get(i) instanceof FeatureLayer){
-                if (mobileMap.getOperationalLayers().get(i).isVisible())
-                    layers.add((FeatureLayer) mobileMap.getOperationalLayers().get(i));
-            }
-        }
-        try{
-            if (mClientFeatureCollectionLayer != null && mClientFeatureCollectionLayer.getLayers() != null)
-                for (FeatureLayer layer :mClientFeatureCollectionLayer.getLayers()){
-                    layers.add(layer);
-                }
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
-
-//        final List<ListenableFuture<FeatureQueryResult>> futures = new ArrayList<>();
-        final boolean[] breakLoop = {false};
-        for (int i = 0; i < layers.size() && !breakLoop[0]; i++){
-//            futures.add(layers.get(i).getFeatureTable().queryFeaturesAsync(query));
-            if (!layers.get(i).isVisible())
-                continue;
-            int finalI = i;
-            layers.get(i).getFeatureTable().queryFeaturesAsync(query).addDoneListener(new Runnable() {
-                @Override
-                public void run() {
-
-
-
-                    try {
-                        //call get on the future to get the result
-                        FeatureQueryResult result = layers.get(finalI).getFeatureTable().queryFeaturesAsync(query).get();
-                        // create an Iterator
-                        Iterator<Feature> iterator = result.iterator();
-                        // create a TextView to display field values
-                        TextView calloutContent = new TextView(getApplicationContext());
-                        calloutContent.setTextColor(Color.BLACK);
-                        calloutContent.setSingleLine(false);
-                        calloutContent.setVerticalScrollBarEnabled(true);
-                        calloutContent.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
-                        calloutContent.setMovementMethod(new ScrollingMovementMethod());
-//                        calloutContent.setLines(5);
-                        // cycle through selections
-                        int counter = 0;
-                        Feature feature;
-                        while (iterator.hasNext() && !breakLoop[0]) {
-                            feature = iterator.next();
-
-
-                            // create a Map of all available attributes as name value pairs
-                            Map<String, Object> attr = feature.getAttributes();
-                            Set<String> keys = attr.keySet();
-                            calloutContent.append(getString(R.string.layer) + ": " + layers.get(finalI).getName());
-                            for (String key : keys) {
-                                if (isDeletePointMode && key.toLowerCase().contains("custompointhash")){
-                                    deletePoint(Integer.parseInt(attr.get(key).toString()));
-                                    breakLoop[0] = true;
-                                    resetMenuFunctions();
-                                    return;
-                                }
-                                if(!key.toLowerCase().contains("fid") && !key.toLowerCase().contains("source") && !key.toLowerCase().contains("custompointhash") && !key.toLowerCase().contains("objectid")) {
-                                    Object value = attr.get(key);
-                                    // format observed field value as date
-                                    if (value instanceof GregorianCalendar) {
-                                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
-                                        value = simpleDateFormat.format(((GregorianCalendar) value).getTime());
-                                    }
-                                    /*if (key.equalsIgnoreCase("url")){
-                                        value = Html.fromHtml("<a href=\"" + value + "\">Website</a>");
-                                    }*/
-
-                                    // append name value pairs to TextView
-                                    calloutContent.setLinksClickable(true);
-                                    calloutContent.setClickable(true);
-                                    calloutContent.setAutoLinkMask(Linkify.WEB_URLS);
-
-                                    calloutContent.append(key + ": " + value + "\n");
-
-
-                                }
-                            }
-                            counter++;
-                            // center the mapview on selected feature
-//                            Envelope envelope = feature.getGeometry().getExtent();
-//                            mMapView.setViewpointGeometryAsync(envelope, 200);
-                            // show CallOut
-                            mCallout.setLocation(clickPoint);
-                            mCallout.setContent(calloutContent);
-                            mCallout.show();
-                            breakLoop[0] = true;
-                        }
-                    } catch (Exception e) {
-                        Log.e(getResources().getString(R.string.app_name), "Select feature failed: " + e.getMessage());
-                    }
-                }
-            });
-        }
-    }
-
-    private void deletePoint(int pointHash){
-        showDeletePointDialog(pointHash);
-
-    }
-
     private String createMobileMapPackageFilePath(String fileName) {
         return getMMPKFolderPath() + File.separator +  fileName
                 + FILE_EXTENSION;
@@ -1393,14 +1029,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void deleteMMPKFolderData(){
-        /*File mmpkFolder = new File(getMMPKFolderPath());
-        if (!mmpkFolder.exists())
-            return false;
-        String mmpkFilePath = createMobileMapPackageFilePath(mProjectId);
-        File mmpkFile = new File(mmpkFilePath);
-        deleteUnpackedMMPKFolderData();
-        mmpkFile.delete();
-        return mmpkFolder.delete();*/
         deleteRecursive(new File(getMMPKFolderPath()));
 
     }
@@ -1444,22 +1072,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
 
-    public void takePhoto(float x, float y, String description, String category, boolean isUpdateSys) {
-        mViewPoint = mMapView.getCurrentViewpoint(Viewpoint.Type.CENTER_AND_SCALE);
-        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-        StrictMode.setVmPolicy(builder.build());
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File photo = new File(Environment.getExternalStorageDirectory(),  "Pic.jpg");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(photo));
-        imageUri = Uri.fromFile(photo);
-        mCurrentX = x;
-        mCurrentY = y;
-        mCurrentDescription = description;
-        mCurrentCategory = category;
-        mCurrentIsUpdateSys = isUpdateSys;
-        startActivityForResult(intent, TAKE_PICTURE);
-    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1472,7 +1085,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     switch (FeatureLayerController.INSTANCE.getShapeType()){
 
                         case POINT:
-//                            UserPoints.INSTANCE.getUserPoints()
+                            UserPoints.INSTANCE.getUserPoints().editFeatureImage(this, layerID, uri);
                             break;
                         case POLYLINE:
                             UserPolyline.INSTANCE.getUserPolyline().editFeatureImage(this, layerID, uri);
@@ -1509,133 +1122,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
                 }
                 break;
-            case TAKE_PICTURE:
-                if (resultCode == Activity.RESULT_OK/* && data != null*/) {
-                    uploadImage(imageUri);
-                    /*Uri selectedImage = imageUri;
-                    getContentResolver().notifyChange(selectedImage, null);
-                    ImageView imageView = (ImageView) findViewById(R.id.ImageView);
-                    ContentResolver cr = getContentResolver();
-                    Bitmap bitmap;
-                    try {
-                        bitmap = android.provider.MediaStore.Images.Media
-                                .getBitmap(cr, selectedImage);
-
-                        imageView.setImageBitmap(bitmap);
-                        Toast.makeText(this, selectedImage.toString(),
-                                Toast.LENGTH_LONG).show();
-                    } catch (Exception e) {
-                        Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT)
-                                .show();
-                        Log.e("Camera", e.toString());
-                    }*/
-                } else {
-                    if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
-                        String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys, currentuser);
-                        mClientPoints.add(new ClientPoint((float) mCurrentX, mCurrentY, mCurrentDescription, null, mCurrentCategory, mCurrentIsUpdateSys, currentuser));
-                        saveClientPoints(false);
-                        resetMenuFunctions();
-                    }
-                }
-        }
-    }
-
-    public Uri reduceImageSize(Uri uri){
-        try {
-
-            // BitmapFactory options to downsize the image
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            o.inSampleSize = 8;
-            // factor of downsizing the image
-
-            File file = new File(uri.getPath());
-
-            FileInputStream inputStream = new FileInputStream(file);
-            //Bitmap selectedBitmap = null;
-            BitmapFactory.decodeStream(inputStream, null, o);
-            inputStream.close();
-
-            final int REQUIRED_SIZE = 80;
-
-            int scale = 1;
-            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
-                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-                scale *= 2;
-            }
-
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            inputStream = new FileInputStream(file);
-
-            Bitmap selectedBitmap = BitmapFactory.decodeStream(inputStream, null, o2);
-            inputStream.close();
-
-            // here i override the original image file
-            file.createNewFile();
-            FileOutputStream outputStream = new FileOutputStream(file);
-
-            selectedBitmap.compress(Bitmap.CompressFormat.JPEG, 100 , outputStream);
-            return Uri.fromFile(file);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-
-    private void uploadImage(Uri uri) {
-
-
-        if(uri != null)
-        {
-            final ProgressDialog progressDialog = new ProgressDialog(this);
-            progressDialog.setTitle(getString(R.string.loading_point_image));
-            progressDialog.show();
-            progressDialog.setCancelable(false);
-            StorageReference ref = storageReference.child("settlements/" + mProjectId + "/images/"+ UUID.randomUUID().toString());
-            ref.putFile(reduceImageSize(uri))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    progressDialog.dismiss();
-                                    if (mViewPoint != null) {
-                                        mMapView.setViewpointAsync(mViewPoint);
-                                    }
-                                    Toast.makeText(MainActivity.this, getString(R.string.uploaded), Toast.LENGTH_SHORT).show();
-                                    if (mCurrentX != 0 && mCurrentY != 0 && !mCurrentDescription.isEmpty()){
-                                        String currentuser = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                        mClientPoints.add(new ClientPoint(mCurrentX,  mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys, currentuser));
-                                        saveClientPoints(false);
-                                        createFeatureCollection(mCurrentX, mCurrentY, mCurrentDescription, uri.toString(), mCurrentCategory, mCurrentIsUpdateSys,currentuser);
-                                        mCurrentX = 0;
-                                        mCurrentY = 0;
-                                        mCurrentDescription = null;
-                                    }
-                                }
-                            });
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            progressDialog.dismiss();
-                            Toast.makeText(MainActivity.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-                                    .getTotalByteCount());
-                            String msg1 = getString(R.string.progress);
-                            progressDialog.setMessage(msg1+(int)progress+"%");
-                        }
-                    });
         }
     }
 
@@ -1720,11 +1206,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     public void onLayerClickListener(@NotNull ArrayList<String> layerNames, @NotNull List<IdentifyLayerResult> identifiedLayers) {
-        if (isDeletePointMode){
-            Integer pointHash = FeatureLayerController.INSTANCE.identifyAttForPointDeletion(identifiedLayers);
-            deletePoint(pointHash);
-            return;
-        }
+//        if (isDeletePointMode){
+//            Integer pointHash = FeatureLayerController.INSTANCE.identifyAttForPointDeletion(identifiedLayers);
+//            deletePoint(pointHash);
+//            return;
+//        }
         if (layerNames.size()>1) {
             DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(this, layerNames, this, identifiedLayers);
             dialogLayerSelectionFragment = new DialogLayerSelectionFragment(MainActivity.this, dialogLayerAdapter);
@@ -1746,13 +1232,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     private void sketcherStart(SketcherEditorTypes sketcher) {
         sketchEditorStartIV.setEnabled(false);
-        deletePointIV.setEnabled(false);
+//        deletePointIV.setEnabled(false);
         switch (sketcher){
             case POINT:
-                isAddPointMode = true;
-                sketchEditorStartIV.setEnabled(true);
-                deletePointIV.setEnabled(true);
-                return;
+                measurementConstraintLayout.setVisibility(View.INVISIBLE);
+                break;
             case POLYGON:
                 overallSizeHeadlineTV.setText(R.string.area);
                 lengthSectionHeadlineTV.setText(R.string.section);
@@ -1764,15 +1248,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         SketchEditorController.INSTANCE.startSketching(sketcher, mMapView);
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
-        measurementConstraintLayout.setVisibility(View.VISIBLE);
+
         mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
         setMeasurementsDisplay(sketcher);
-        mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
-            @Override
-            public void geometryChanged(SketchGeometryChangedEvent sketchGeometryChangedEvent) {
-                setMeasurementsDisplay(sketcher);
-            }
-        });
+        if (sketcher != SketcherEditorTypes.POINT){
+            measurementConstraintLayout.setVisibility(View.VISIBLE);
+            mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
+                @Override
+                public void geometryChanged(SketchGeometryChangedEvent sketchGeometryChangedEvent) {
+                    setMeasurementsDisplay(sketcher);
+                }
+            });
+        }
     }
 
     @Override
@@ -1839,7 +1326,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         sketcherStart(type);
         sketchEditorStartIV.setEnabled(false);
-        deletePointIV.setEnabled(false);
+//        deletePointIV.setEnabled(false);
         switch (type){
             case POINT:
                 measurementConstraintLayout.setVisibility(View.INVISIBLE);
