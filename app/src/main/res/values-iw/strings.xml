@@ -84,4 +84,5 @@
     <string name="init_dialog_headline">מכין את הקרקע</string>
     <string name="init_dialog_message">מיד אסיים</string>
     <string name="empty_Point">דקירה ריקה, נא הקישו על המסך בכדי ליצור דקירה</string>
+    <string name="my_layers">השכבות שלי</string>
 </resources>

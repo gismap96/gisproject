@@ -140,8 +140,10 @@ object LegendLayerDisplayController{
     fun generateLegendGroupList(map: MapView): List<LegendGroup>{
         var orthophotoName = map.context.getString(R.string.orthophoto)
         val otherName = map.context.getString(R.string.other)
+        val myLayers = map.context.getString(R.string.my_layers)
         val layers = map.map.operationalLayers
         var legendGroupMap = mutableMapOf<String, MutableList<Layer>>()
+        legendGroupMap[myLayers] = mutableListOf()
         legendGroupMap[otherName] = mutableListOf()
         legendGroupMap[orthophotoName] = mutableListOf()
         groupNames.forEach {
@@ -158,15 +160,18 @@ object LegendLayerDisplayController{
             else if (legendIds.containsKey(layerid)){
                 val layerGroupName = legendIds[layerid]
                 legendGroupMap[layerGroupName]?.add(it)
-            }
-            else if (layerName.trim().isNotEmpty()){
+            } else if(layerName.contains("$$##")){
+                legendGroupMap[myLayers]?.add(it)
+            } else if (layerName.trim().isNotEmpty()){
                 legendGroupMap[otherName]?.add(it)
             }
         }
         legendGroupMap[otherName]?.let{
             if (it.count() == 0) legendGroupMap.remove(otherName)
         }
-
+        legendGroupMap[myLayers]?.let{
+            if (it.count() == 0) legendGroupMap.remove(myLayers)
+        }
         var legendGroupList = mutableListOf<LegendGroup>()
         legendGroupMap.forEach{
             legendGroupList.add(LegendGroup(it.key, it.value))
