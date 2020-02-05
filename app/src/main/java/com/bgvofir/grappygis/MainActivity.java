@@ -42,6 +42,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer;
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientPointFeatureCollection;
+import com.bgvofir.grappygis.ClientFeatureLayers.GrappiField;
 import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController;
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController;
 import com.bgvofir.grappygis.GeoViewController.GeoViewController;
@@ -233,47 +234,15 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 toggleLayerList();
             }
         });
-
-
-//        addPoint.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                toggleAddPoint(true);
-////                takePhoto();
-//            }
-//        });
         zift2 = findViewById(R.id.zift2);
-        zift2.setVisibility(View.GONE);
-//        zift2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String name = "meow";
-//                String id = "00";
-//                UserPoints.INSTANCE.initFields();
-//                List<GrappiField> fields = UserPoints.INSTANCE.getGrappiFields();
-//                UserPoints.INSTANCE.setUserPoints(new ClientPointFeatureCollection(MainActivity.this, name, id,fields,mMapView.getMap().getSpatialReference()));
-//                Boolean bool = mMapView.getMap().getOperationalLayers().add(UserPoints.INSTANCE.getUserPoints().getLayer());
-//                Log.d("zift",bool.toString());
-//                ClientPointFeatureCollection collection = UserPoints.INSTANCE.getUserPoints();
-//                HashMap<String, Object> attributes = new HashMap<>();
-//                attributes.put("category", "meow");
-//                attributes.put("description", "meow");
-//                attributes.put("number", 1.0);
-//                attributes.put("isUpdated", "meow");
-//                attributes.put("imageURL", "");
-//                Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
-//                collection.createFeature(attributes, geometry);
-//            }
-//        });
+        zift2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         saveShapeTV = findViewById(R.id.saveShapeTV);
         saveShapeTV.setOnClickListener(v->{
-//            Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
-//            if (geometry == null){
-//                Toast toast = Toast.makeText(MainActivity.this, "צורה ריקה", Toast.LENGTH_SHORT);
-//                toast.setGravity(Gravity.CENTER,0,0);
-//                toast.show();
-//                return;
-//            }
             mViewPoint = mMapView.getCurrentViewpoint(Viewpoint.Type.CENTER_AND_SCALE);
             SketcherEditorTypes type = SketchEditorController.INSTANCE.getSketcherEditorTypes();
             switch (type){
@@ -627,16 +596,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     }
 //                    FileMemoryController.INSTANCE.deleteMMPKFile(mmpkFile);
 //                    SystemClock.sleep(2000);
-                    mmpkRef.getFile(mmpkFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                            Log.d("MainActivity", "modified download success: " + mmpkFile.getAbsolutePath());
-                            SharedPreferences.Editor editor = mPrefs.edit();
-                            editor.putLong(Consts.DOWNLOAD_TIME_KEY, System.currentTimeMillis());
-                            editor.apply();
-                            initMap(mmpkFile.getAbsolutePath());
-                            progressDialog.dismiss();
-                        }
+                    mmpkRef.getFile(mmpkFile).addOnSuccessListener(taskSnapshot -> {
+                        Log.d("MainActivity", "modified download success: " + mmpkFile.getAbsolutePath());
+                        SharedPreferences.Editor editor = mPrefs.edit();
+                        editor.putLong(Consts.DOWNLOAD_TIME_KEY, System.currentTimeMillis());
+                        editor.apply();
+                        initMap(mmpkFile.getAbsolutePath());
+                        progressDialog.dismiss();
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -660,12 +626,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
                 }
             }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("MainActivity", "modified download failed", e);
-            }
-        });
+        }).addOnFailureListener(e -> Log.e("MainActivity", "modified download failed", e));
 
 
     }

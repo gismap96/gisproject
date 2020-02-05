@@ -34,12 +34,11 @@ import kotlinx.android.synthetic.main.description_dialog.*
 import kotlinx.android.synthetic.main.fragment_dialog_sketcher_save_input.*
 import java.util.*
 
-open class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
+open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapView,
                                       val callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish?, val layerListener: LegendLayerDisplayController.LayerGroupsListener?, val progressDialog: ProgressDialog?, val isEditMode: Boolean): Dialog(context), View.OnClickListener {
 
     val shapeType = FeatureLayerController.shapeType
     val TAG = "sketcherSave"
-    var mMapView = mMapView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -167,7 +166,7 @@ open class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
                 }
 
                 //UserPolyline.userPolyline!!.createFeature(attributes, geometry)
-                SketchEditorController.clean()
+                SketchEditorController.startSketching(SketcherEditorTypes.POLYLINE, mMapView)
                 ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
                 //UserPolyline.userPolyline!!.uploadJSON(callback)
             }
@@ -184,7 +183,7 @@ open class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
 
 
                 }
-                SketchEditorController.clean()
+                SketchEditorController.startSketching(SketcherEditorTypes.POINT, mMapView)
                 ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
 
             }
