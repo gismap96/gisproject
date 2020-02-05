@@ -882,6 +882,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         switch (requestCode) {
             case EDIT_PHOTO_FOR_LAYER:
                 if (resultCode == Activity.RESULT_OK){
+                    GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView);
                     Uri uri = ClientPhotoController.INSTANCE.getImageURI();
                     String layerID = FeatureLayerController.INSTANCE.getLayerId();
                     switch (FeatureLayerController.INSTANCE.getShapeType()){
@@ -982,6 +983,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     public void onRowClickListener(@NotNull String layerIndex, @NonNull IdentifyLayerResult layerResult) {
+        GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
         dialogLayerSelectionFragment.dismiss();
         showDetailsDialog(layerResult);
 
