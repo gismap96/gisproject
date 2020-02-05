@@ -72,27 +72,22 @@ class DialogLayerAdapter(val context: Context,var layerNames: ArrayList<String>,
 
             val newTitle = layerTitle.replace("\$\$##", "")
             //getting legend image
-            if (newTitle != "Feature Collection") {
-                mTextView.text = newTitle
-                var layerLegend = identifiedLayer.layerContent.fetchLegendInfosAsync()
-                layerLegend.addDoneListener {
-                    try {
-                        var legendInfo = layerLegend.get()
-                        if (legendInfo.size > 0) {
-                            val legendSymbol = legendInfo[0].symbol
-                            val symbolSwatch = legendSymbol.createSwatchAsync(context, Color.TRANSPARENT)
-                            val symbolBitmap = symbolSwatch.get()
-                            mLayerSelectionDialogLegendImage.setImageBitmap(symbolBitmap)
-                        }
-                    } catch (e: InterruptedException) {
-
-                    } catch (e: ExecutionException) {
-
+            mTextView.text = newTitle
+            var layerLegend = identifiedLayer.layerContent.fetchLegendInfosAsync()
+            layerLegend.addDoneListener {
+                try {
+                    var legendInfo = layerLegend.get()
+                    if (legendInfo.size > 0) {
+                        val legendSymbol = legendInfo[0].symbol
+                        val symbolSwatch = legendSymbol.createSwatchAsync(context, Color.TRANSPARENT)
+                        val symbolBitmap = symbolSwatch.get()
+                        mLayerSelectionDialogLegendImage.setImageBitmap(symbolBitmap)
                     }
+                } catch (e: InterruptedException) {
+
+                } catch (e: ExecutionException) {
+
                 }
-            } else {
-                mTextView.text = "דקירה ממשתמש"
-                mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_star_blue))
             }
             //end of legend image
             itemView.setOnClickListener {
@@ -100,6 +95,8 @@ class DialogLayerAdapter(val context: Context,var layerNames: ArrayList<String>,
             }
             if (layerTitle.contains("\$\$##") && layerTitle.contains(context.getString(R.string.polyline_layer))){
                 mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_polyline_soft_red))
+            } else if (layerTitle.contains("\$\$##") && layerTitle.contains(context.getString(R.string.my_points))){
+                mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_star_blue))
             }
         }
     }

@@ -120,6 +120,7 @@ class ClientPointFeatureCollection(val context: Context) {
 //        pictureMarker.height = 40f
 //        pictureMarker.width = 40f
 //        renderer.symbol = pictureMarker
+//        renderer.symbol = pictureMarker
         val feature = featureCollectionTable.createFeature(newAttributes,geometry) as Feature
         features.add(feature)
         featureCollectionTable.addFeatureAsync(feature).addDoneListener {
@@ -427,7 +428,6 @@ class ClientPointFeatureCollection(val context: Context) {
                             progressDialog.dismiss()
                             Toast.makeText(context, context.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
                         }
-
                     })
                 }
             } else {

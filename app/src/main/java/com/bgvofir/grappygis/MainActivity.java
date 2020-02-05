@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -22,9 +21,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.StrictMode;
-import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -35,8 +31,6 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
-import android.text.method.ScrollingMovementMethod;
-import android.text.util.Linkify;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -46,10 +40,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer;
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientPointFeatureCollection;
-import com.bgvofir.grappygis.ClientFeatureLayers.GrappiField;
 import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController;
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController;
 import com.bgvofir.grappygis.GeoViewController.GeoViewController;
@@ -74,9 +66,7 @@ import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.data.Feature;
 import com.esri.arcgisruntime.data.FeatureCollection;
 import com.esri.arcgisruntime.data.FeatureCollectionTable;
-import com.esri.arcgisruntime.data.FeatureQueryResult;
 import com.esri.arcgisruntime.data.Field;
-import com.esri.arcgisruntime.data.QueryParameters;
 import com.esri.arcgisruntime.geometry.Envelope;
 import com.esri.arcgisruntime.geometry.Geometry;
 import com.esri.arcgisruntime.geometry.GeometryEngine;
@@ -85,7 +75,6 @@ import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.geometry.PointCollection;
 import com.esri.arcgisruntime.geometry.Polyline;
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer;
-import com.esri.arcgisruntime.layers.FeatureLayer;
 import com.esri.arcgisruntime.layers.Layer;
 import com.esri.arcgisruntime.layers.RasterLayer;
 import com.esri.arcgisruntime.loadable.LoadStatus;
@@ -99,8 +88,6 @@ import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult;
 import com.esri.arcgisruntime.mapping.view.LocationDisplay;
 import com.esri.arcgisruntime.mapping.view.MapView;
-import com.esri.arcgisruntime.mapping.view.NavigationChangedEvent;
-import com.esri.arcgisruntime.mapping.view.NavigationChangedListener;
 import com.esri.arcgisruntime.mapping.view.SketchEditor;
 import com.esri.arcgisruntime.mapping.view.SketchGeometryChangedEvent;
 import com.esri.arcgisruntime.mapping.view.SketchGeometryChangedListener;
@@ -110,49 +97,29 @@ import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
 import com.esri.arcgisruntime.symbology.SimpleRenderer;
 import com.esri.arcgisruntime.symbology.TextSymbol;
-import com.esri.arcgisruntime.tasks.geocode.LocatorAttribute;
-import com.esri.arcgisruntime.tasks.geocode.LocatorTask;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.BaseMultiplePermissionsListener;
-
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
@@ -162,18 +129,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
-    private static String extSDCardDirName;
     private Callout mCallout;
     private RecyclerView mLayerRecyclerView;
-    private boolean mIsDistance;
-    private Point mFirstDistanceClick;
     private GraphicsOverlay mDistanceOverlay;
     private boolean isAllGranted;
     private ProgressBar mapProgress;
     LocationDisplay locationDisplay;
     private boolean isAutoPan;
-//    private boolean isAddPointMode;
-//    private boolean isDeletePointMode;
     private PointCollection mPolylinePoints;
     private static final int TAKE_PICTURE = 1;
     private static final int TAKE_PHOTO_FOR_LAYER = 2;
@@ -181,15 +143,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //    private Uri imageUri;
     FirebaseStorage storage;
     StorageReference storageReference;
-    private GraphicsOverlay pointsOverlay;
-    private SimpleMarkerSymbol mPointSymbol;
-    private FeatureCollection mClientFeatureCollection;
-    private FeatureCollectionLayer mClientFeatureCollectionLayer;
-    private String mCurrentDescription;
-    private ArrayList<ClientPoint> mClientPoints;
     SharedPreferences mPrefs;
-//    private float mCurrentX;
-//    private float mCurrentY;
     private ImageView toggleMenuBtn;
     private ImageView sketchEditorStartIV;
     private ImageView addPoint;
@@ -198,9 +152,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ImageView undoSkecherIV;
     private ImageView zift2;
     private String mProjectId;
-//    private ListenableFuture<FeatureQueryResult> selectionResult;
-//    private String mCurrentCategory;
-//    private boolean mCurrentIsUpdateSys;
     private boolean activityAlive;
     private DialogLayerSelectionFragment dialogLayerSelectionFragment;
     private SketcherSelectionDialogFragment sketcherSelectionDialogFragment;
@@ -524,14 +475,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     private void resetMenuFunctions(){
         mDistanceOverlay.getGraphics().clear();
-        mIsDistance = false;
-//        isAddPointMode = false;
-//        isDeletePointMode = false;
         SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
-//        addPoint.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-//        deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        sketchEditorStartIV.setEnabled(true);
         MainUpperMenu.INSTANCE.resetMenu();
+
     }
 
 
@@ -837,25 +785,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 if (mCallout.isShowing()) {
                     mCallout.dismiss();
                 }
-                // get the point that was clicked and convert it to a point in map coordinates
-                if (mIsDistance){
-                    calculateDistance(e);
-                }
-//                else if (isAddPointMode){
-//                    startDescriptionDialog(e);
-//                }
                 else{
                     //showLayerData(e, mobileMap);
                     screenPoint = new android.graphics.Point(Math.round(e.getX()),
                             Math.round(e.getY()));
                     FeatureLayerController.INSTANCE.layerClicked(screenPoint, mMapView, MainActivity.this);
-//                    Map<String, String> mMap = ArrayDump.INSTANCE.getItem();
-//                    DialogLayerAdapter dialogLayerAdapter = new DialogLayerAdapter(mMap, MainActivity.this);
-//                    dialogLayerSelectionFragment = new DialogLayerSelectionFragment(MainActivity.this, dialogLayerAdapter);
-//                    dialogLayerSelectionFragment.show();
-
-
-//                    mobileMap.getOperationalLayers().get(0).getFullExtent();
                 }
 
 
@@ -866,139 +800,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
 
-    private void calculateDistance(MotionEvent e){
-        if (mFirstDistanceClick == null){
-            mPolylinePoints = new PointCollection(mMapView.getSpatialReference());
-            mFirstDistanceClick = mMapView
-                    .screenToLocation(new android.graphics.Point(Math.round(e.getX()), Math.round(e.getY())));
-            mPolylinePoints.add(mFirstDistanceClick);
-            SimpleMarkerSymbol markerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.DIAMOND, Color.CYAN, 10);
-            mDistanceOverlay.getGraphics().add(new Graphic(mFirstDistanceClick, markerSymbol));
-        }
-        else{
-            Point secondDistanceClick = mMapView
-                    .screenToLocation(new android.graphics.Point(Math.round(e.getX()), Math.round(e.getY())));
-            mPolylinePoints.add(secondDistanceClick);
 
-            Polyline polyline = new Polyline(mPolylinePoints);
-            SimpleLineSymbol polylineSymbol = new SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, Color.BLUE, 3.0f);
-            Graphic polylineGraphic = new Graphic(polyline, polylineSymbol);
-            mDistanceOverlay.getGraphics().add(polylineGraphic);
-            mDistanceOverlay.getGraphics().add(getTextSymbolForLine(mFirstDistanceClick, secondDistanceClick, "Distance: " + getDistanceBetweenTwoPoints(mFirstDistanceClick, secondDistanceClick)));
-//            getTextSymbolForLine(mFirstDistanceClick, secondDistanceClick, "Distance: " + getDistanceBetweenTwoPoints(mFirstDistanceClick, secondDistanceClick));
-            Snackbar snackbar = Snackbar
-                    .make(findViewById(R.id.mapContainer), getDistanceBetweenTwoPoints(mFirstDistanceClick, secondDistanceClick), Snackbar.LENGTH_LONG);
-            Handler clearOverlayHandler = new Handler();
-//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-//                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            clearOverlayHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mDistanceOverlay.getGraphics().clear();
-                    sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-                    MainUpperMenu.INSTANCE.resetMenu();
-//                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                }
-            }, 5000);
-            snackbar.show();
-            mIsDistance = false;
-            mFirstDistanceClick = null;
-        }
-    }
-
-    private Graphic getTextSymbolForLine(Point a, Point b, String text){
-
-        double x = (a.getX() + b.getX()) / 2;
-        double y = (a.getY() + b.getY()) / 2;
-
-        Point textPoint = new Point(x, y, mMapView.getSpatialReference());
-        TextSymbol textSymbol =
-                new TextSymbol(
-                        20, text, Color.argb(255, 0, 0, 0),
-                        TextSymbol.HorizontalAlignment.CENTER, TextSymbol.VerticalAlignment.BOTTOM);
-
-        return new Graphic(textPoint, textSymbol);
-
-
-    }
-
-    private String getDistanceBetweenTwoPoints(Point a, Point b){
-        double distance = Math.sqrt(Math.pow(a.getX()-b.getX(), 2) + (Math.pow(a.getY() - b.getY(), 2)));
-        return String.format(Locale.ENGLISH, "%.2f Meters", distance);
-    }
-
-
-
-    private synchronized void createFeatureCollection(float x, float y, String description, String imageUrl, String category, boolean isUpdateSys, String uid) {
-        if (!activityAlive) return;
-
-        if (mMapView != null) {
-            if (mClientFeatureCollection == null || mClientFeatureCollectionLayer == null){
-                mClientFeatureCollection = new FeatureCollection();
-                mClientFeatureCollectionLayer = new FeatureCollectionLayer(mClientFeatureCollection );
-                mMapView.getMap().getOperationalLayers().add(mClientFeatureCollectionLayer);
-            }
-
-
-//            createPointTable(mClientFeatureCollection, x, y,description, imageUrl);
-
-            List<Feature> features = new ArrayList<>();
-            List<Field> pointFields = new ArrayList<>();
-            pointFields.add(Field.createString("Description", getString(R.string.description_alias), 50));
-            pointFields.add(Field.createString("URL", getString(R.string.pic_url_alias), 255));
-            pointFields.add(Field.createString("Category", getString(R.string.category), 255));
-            pointFields.add(Field.createString("Update system", getString(R.string.update_system), 50));
-            pointFields.add(Field.createInteger("CustomPointHash", "CustomPointHash"));
-            pointFields.add(Field.createString("uid", "uid", 255));
-            FeatureCollectionTable pointsTable = new FeatureCollectionTable(pointFields, GeometryType.POINT, mMapView.getSpatialReference());
-//            SimpleMarkerSymbol simpleMarkerSymbol = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.TRIANGLE, Color.GREEN, 12);
-
-            BitmapDrawable pinStarDrawable = new BitmapDrawable(getResources(), getBitmapFromVectorDrawable(R.drawable.ic_star_black));
-            if(isUpdateSys){
-                pinStarDrawable = new BitmapDrawable(getResources(), getBitmapFromVectorDrawable(R.drawable.ic_star_blue));
-            }
-            final PictureMarkerSymbol pinStarBlueSymbol = new PictureMarkerSymbol(pinStarDrawable);
-            //Optionally set the size, if not set the image will be auto sized based on its size in pixels,
-            //its appearance would then differ across devices with different resolutions.
-            pinStarBlueSymbol.setHeight(20);
-            pinStarBlueSymbol.setWidth(20);
-
-
-
-            SimpleRenderer renderer = new SimpleRenderer(pinStarBlueSymbol);
-            pointsTable.setRenderer(renderer);
-            mClientFeatureCollection.getTables().add(pointsTable);
-
-            Map<String, Object> attributes1 = new HashMap<>();
-            attributes1.put(pointFields.get(0).getName(), description);
-            attributes1.put(pointFields.get(1).getName(), imageUrl);
-            attributes1.put(pointFields.get(2).getName(), category);
-            attributes1.put(pointFields.get(3).getName(), isUpdateSys ? "Yes" : "No");
-            attributes1.put(pointFields.get(4).getName(), ClientPoint.createPointHash(x, y, imageUrl, description, category, isUpdateSys));
-            attributes1.put(pointFields.get(5).getName(), uid);
-            Point point1 = new Point(x, y, mMapView.getSpatialReference());
-            features.add(pointsTable.createFeature(attributes1, point1));
-            pointsTable.addFeaturesAsync(features);
-
-
-//            saveClientPoints();
-        }
-    }
-
-    private Bitmap getBitmapFromVectorDrawable(int drawableId) {
-        Drawable drawable = ContextCompat.getDrawable(this, drawableId);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
-    }
 
     private String createMobileMapPackageFilePath(String fileName) {
         return getMMPKFolderPath() + File.separator +  fileName
