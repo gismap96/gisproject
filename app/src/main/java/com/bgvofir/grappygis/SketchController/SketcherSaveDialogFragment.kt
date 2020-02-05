@@ -46,7 +46,7 @@ open class SketcherSaveDialogFragment(val context: Activity, mMapView: MapView,
         setContentView(R.layout.fragment_dialog_sketcher_save_input)
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
+        setCanceledOnTouchOutside(false)
         closeSketcherSaveTV.setOnClickListener(this)
         cancelSketcherSaveTV.setOnClickListener(this)
 
