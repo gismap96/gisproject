@@ -52,7 +52,7 @@
     <string name="description">description</string>
     <string name="category">Category</string>
     <string name="polyline_saved">Polyline Saved</string>
-    <string name="my_polyline">My Polyline</string>
+    <string name="my_polyline">My Polylines</string>
     <string name="add_category">Add category</string>
     <string name="add_number">Add number</string>
     <string name="save">Save</string>

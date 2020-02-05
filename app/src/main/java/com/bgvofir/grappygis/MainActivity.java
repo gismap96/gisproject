@@ -374,26 +374,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
 
-
-
-//        deletePointIV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                isDeletePointMode = !isDeletePointMode;
-////                if (isDeletePointMode){
-////                    deletePointIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-////                }
-////                else{
-////                    deletePointIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-////                }
-//                resetMenuFunctions();
-//                if (MainUpperMenu.INSTANCE.trashClicked()){
-//                    deletePointIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-//                    isDeletePointMode = true;
-//                }
-//            }
-//        });
-
         mMapView = findViewById(R.id.mapView);
         mDistanceOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(mDistanceOverlay);
@@ -460,7 +440,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //            measurementConstraintLayout.setVisibility(View.INVISIBLE);
 //
 //        });
-        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+//        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         calculatePolygonAreaTV = findViewById(R.id.displayOverallForShapeTV);
         calculatePolygonAreaTV.setOnClickListener(new View.OnClickListener() {
