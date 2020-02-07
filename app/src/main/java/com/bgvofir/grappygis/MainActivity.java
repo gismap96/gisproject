@@ -9,25 +9,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
@@ -42,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer;
 import com.bgvofir.grappygis.ClientFeatureLayers.ClientPointFeatureCollection;
-import com.bgvofir.grappygis.ClientFeatureLayers.GrappiField;
 import com.bgvofir.grappygis.ClientLayerPhotoController.ClientPhotoController;
 import com.bgvofir.grappygis.ClientLayersHandler.ClientLayersController;
 import com.bgvofir.grappygis.GeoViewController.GeoViewController;
@@ -58,24 +48,18 @@ import com.bgvofir.grappygis.ProjectRelated.MapProperties;
 import com.bgvofir.grappygis.ProjectRelated.ProjectId;
 import com.bgvofir.grappygis.ProjectRelated.UserPoints;
 import com.bgvofir.grappygis.ProjectRelated.UserPolyline;
+import com.bgvofir.grappygis.SearchController.FeatureSearchController;
+import com.bgvofir.grappygis.SearchController.SearchDialogFragment;
 import com.bgvofir.grappygis.SketchController.SketchEditorController;
 import com.bgvofir.grappygis.SketchController.SketcherEditorTypes;
 import com.bgvofir.grappygis.SketchController.SketcherSaveDialogFragment;
 import com.bgvofir.grappygis.SketchController.SketcherSelectionDialogAdapter;
 import com.bgvofir.grappygis.SketchController.SketcherSelectionDialogFragment;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
-import com.esri.arcgisruntime.data.Feature;
-import com.esri.arcgisruntime.data.FeatureCollection;
-import com.esri.arcgisruntime.data.FeatureCollectionTable;
-import com.esri.arcgisruntime.data.Field;
 import com.esri.arcgisruntime.geometry.Envelope;
 import com.esri.arcgisruntime.geometry.Geometry;
 import com.esri.arcgisruntime.geometry.GeometryEngine;
-import com.esri.arcgisruntime.geometry.GeometryType;
-import com.esri.arcgisruntime.geometry.Point;
 import com.esri.arcgisruntime.geometry.PointCollection;
-import com.esri.arcgisruntime.geometry.Polyline;
-import com.esri.arcgisruntime.layers.FeatureCollectionLayer;
 import com.esri.arcgisruntime.layers.Layer;
 import com.esri.arcgisruntime.layers.RasterLayer;
 import com.esri.arcgisruntime.loadable.LoadStatus;
@@ -84,7 +68,6 @@ import com.esri.arcgisruntime.mapping.MobileMapPackage;
 import com.esri.arcgisruntime.mapping.Viewpoint;
 import com.esri.arcgisruntime.mapping.view.Callout;
 import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener;
-import com.esri.arcgisruntime.mapping.view.Graphic;
 import com.esri.arcgisruntime.mapping.view.GraphicsOverlay;
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult;
 import com.esri.arcgisruntime.mapping.view.LocationDisplay;
@@ -93,11 +76,6 @@ import com.esri.arcgisruntime.mapping.view.SketchEditor;
 import com.esri.arcgisruntime.mapping.view.SketchGeometryChangedEvent;
 import com.esri.arcgisruntime.mapping.view.SketchGeometryChangedListener;
 import com.esri.arcgisruntime.raster.Raster;
-import com.esri.arcgisruntime.symbology.PictureMarkerSymbol;
-import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
-import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol;
-import com.esri.arcgisruntime.symbology.SimpleRenderer;
-import com.esri.arcgisruntime.symbology.TextSymbol;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
@@ -117,9 +95,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -235,9 +211,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         zift2 = findViewById(R.id.zift2);
+        //        zift2.setVisibility(View.GONE);
+
         zift2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FeatureSearchController.INSTANCE.turnLayerLabelOn(mMapView);
 
             }
         });
@@ -401,14 +380,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-        zift.setVisibility(View.GONE);
-//        zift.setOnClickListener(v -> {
-//            SketchEditorController.INSTANCE.startSketching(SketcherEditorTypes.POINT, mMapView);
-//            SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
-//            mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
-//            measurementConstraintLayout.setVisibility(View.INVISIBLE);
-//
-//        });
+//        zift.setVisibility(View.GONE);
+        zift.setOnClickListener(v -> {
+            SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this);
+            searchDialogFragment.show();
+
+        });
 //        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         calculatePolygonAreaTV = findViewById(R.id.displayOverallForShapeTV);

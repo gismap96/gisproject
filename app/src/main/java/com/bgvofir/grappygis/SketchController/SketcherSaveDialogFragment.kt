@@ -164,28 +164,21 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                     mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
                     layerListener?.successListener()
                 }
-
-                //UserPolyline.userPolyline!!.createFeature(attributes, geometry)
                 SketchEditorController.startSketching(SketcherEditorTypes.POLYLINE, mMapView)
                 ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
-                //UserPolyline.userPolyline!!.uploadJSON(callback)
             }
             SketcherEditorTypes.POLYGON -> {
 
             }
             SketcherEditorTypes.POINT -> {
-
                 if (UserPoints.userPoints == null){
                     UserPoints.userPoints = ClientPointFeatureCollection(context, context.resources.getString(R.string.my_points),UUID.randomUUID().toString(),
                             UserPoints.grappiFields, MapProperties.spatialReference!!)
                     mMapView.map.operationalLayers.add(UserPoints.userPoints!!.layer)
                     layerListener?.successListener()
-
-
                 }
                 SketchEditorController.startSketching(SketcherEditorTypes.POINT, mMapView)
                 ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
-
             }
         }
         dismiss()

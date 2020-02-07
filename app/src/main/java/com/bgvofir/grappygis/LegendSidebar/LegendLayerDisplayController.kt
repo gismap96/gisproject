@@ -23,6 +23,7 @@ object LegendLayerDisplayController{
     var localFile = File.createTempFile("mmap", "json")
     var legendIds = mutableMapOf<String, String>()
     var groupNames = mutableListOf<String>()
+    var legendGroups = mutableListOf<LegendGroup>()
 
 
     fun fetchMMap(projectID: String, layerListener: LayerGroupsListener){
@@ -180,6 +181,7 @@ object LegendLayerDisplayController{
         legendGroupList.forEach {
             it.layers = it.layers.reversed()
         }
+        this.legendGroups = legendGroupList
         return legendGroupList
     }
 
