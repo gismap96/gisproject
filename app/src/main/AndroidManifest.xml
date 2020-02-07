@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bgvofir.grappygis">
+    package="com.grappiapp.grappygis">
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -21,7 +21,7 @@
             android:value="9d3aebc373bc17a83cb17a59ec156f76606a8763"
             />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.grappiapp.grappygis.LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
+        <activity android:name="com.grappiapp.grappygis.MainActivity"
             android:screenOrientation="portrait"
             >
 

@@ -25,15 +25,50 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "517591486393-osgh0apbe0hlpebb5l0tt9tgdi88vve0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517591486393:android:e57e3321a22077bcc27068",
+        "android_client_info": {
+          "package_name": "com.grappiapp.grappygis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "517591486393-gds5nc8vt8ccpnas3751u0paiagif220.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.grappiapp.grappygis",
+            "certificate_hash": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+          }
         },
-        "ads_service": {
-          "status": 2
+        {
+          "client_id": "517591486393-osgh0apbe0hlpebb5l0tt9tgdi88vve0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbcCeP_Qu817-xWRx44Jb6htkPWEGD24w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "517591486393-osgh0apbe0hlpebb5l0tt9tgdi88vve0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
