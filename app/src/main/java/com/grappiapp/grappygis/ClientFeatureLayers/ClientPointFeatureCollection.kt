@@ -209,11 +209,7 @@ class ClientPointFeatureCollection(val context: Context) {
 
             }
             fields.forEach {
-                if (it.name == "number"){
-                    attributesJSON.put(it.name, attributesMap[it.name] as Double)
-                } else {
-                    attributesJSON.put(it.name, attributesMap[it.name])
-                }
+                attributesJSON.put(it.name, attributesMap[it.name])
             }
             featureJSON.put("attributes", attributesJSON)
             val geometryJson = JSONObject(it.geometry.toJson())

@@ -169,7 +169,8 @@ object SketchEditorController {
 //        FormatJSONGeometry.polylineToJSON(geometry)
     }
     fun isPolylineNotEmpty():Boolean{
-        return distance > 0.0
+        val geometry = getGeometry()
+        return geometry != null && !geometry.isEmpty
     }
 
     fun stopSketcher(layout: ConstraintLayout){

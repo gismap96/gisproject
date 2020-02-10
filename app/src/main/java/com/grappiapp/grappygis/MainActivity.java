@@ -211,15 +211,15 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         zift2 = findViewById(R.id.zift2);
-        //        zift2.setVisibility(View.GONE);
-
-        zift2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FeatureSearchController.INSTANCE.turnLayerLabelOn(mMapView);
-
-            }
-        });
+                zift2.setVisibility(View.GONE);
+//
+//        zift2.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                FeatureSearchController.INSTANCE.turnLayerLabelOn(mMapView);
+//
+//            }
+//        });
         saveShapeTV = findViewById(R.id.saveShapeTV);
         saveShapeTV.setOnClickListener(v->{
             mViewPoint = mMapView.getCurrentViewpoint(Viewpoint.Type.CENTER_AND_SCALE);
@@ -231,7 +231,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         if (SketchEditorController.INSTANCE.isEditMode()){
                             String layerId = FeatureLayerController.INSTANCE.getLayerId();
                             Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
-                            if (geometry != null){
+                            if (!geometry.isEmpty()){
                                 SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
                                 UserPoints.INSTANCE.getUserPoints().editFeatureGeometry(this, layerId, geometry);
                                 resetMenuFunctions();
@@ -254,7 +254,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         if (SketchEditorController.INSTANCE.isEditMode()){
                             String layerId = FeatureLayerController.INSTANCE.getLayerId();
                             Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
-                            if (geometry != null){
+                            if (!geometry.isEmpty()){
                                 SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
                                 UserPolyline.INSTANCE.getUserPolyline().editFeatureGeometry(layerId,geometry, MainActivity.this);
                                 resetMenuFunctions();
@@ -292,14 +292,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
 
         });
-//        zift2.setVisibility(View.GONE);
-//        cleanSketcherTV = findViewById(R.id.cleanSketcherTV);
-//        cleanSketcherTV.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SketchEditorController.INSTANCE.clean(mMapView);
-//            }
-//        });
         toggleAutoPanBtn = findViewById(R.id.toggleAutoPanBtn);
         toggleAutoPanBtn.setOnClickListener(new View.OnClickListener() {
 
@@ -380,21 +372,16 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-//        zift.setVisibility(View.GONE);
+        zift.setVisibility(View.GONE);
         zift.setOnClickListener(v -> {
-            SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this);
+            SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView);
             searchDialogFragment.show();
 
         });
 //        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
         calculatePolygonAreaTV = findViewById(R.id.displayOverallForShapeTV);
-        calculatePolygonAreaTV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FeatureLayerController.INSTANCE.setColor();
-            }
-        });
+        calculatePolygonAreaTV.setOnClickListener(v -> FeatureLayerController.INSTANCE.setColor());
     }
 
 

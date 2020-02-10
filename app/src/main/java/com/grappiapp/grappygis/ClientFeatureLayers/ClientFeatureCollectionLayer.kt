@@ -26,9 +26,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.grappiapp.grappygis.SketchController.SketchEditorController
 import com.squareup.picasso.Picasso
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.DecimalFormat
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -114,9 +116,24 @@ class ClientFeatureCollectionLayer () {
     fun createFeature(attributes: HashMap<String, Any>,geometry: Geometry){
         val newAttributes = attributes.toMutableMap()
         newAttributes["Id"] = UUID.randomUUID().toString()
+        val formatDistance = calculateLength(geometry)
+        newAttributes["length"] = formatDistance
         val feature = featureCollectionTable.createFeature(newAttributes,geometry) as Feature
         features.add(feature)
         featureCollectionTable.addFeatureAsync(feature)
+    }
+
+    private fun calculateLength(geometry: Geometry): String {
+        val polyline = geometry as Polyline
+        var length = GeometryEngine.length(polyline)
+        val decimalFormat = DecimalFormat("#.00")
+        val unit = spatialReference.unit.abbreviation
+        if (unit == "mi") {
+            length *= 1609.344
+        }
+        var formatDistance = decimalFormat.format(length).toString() + "m"
+        if (formatDistance == ".00m") formatDistance = "0.00m"
+        return formatDistance
     }
 
     private fun initProperties(){
@@ -217,11 +234,7 @@ class ClientFeatureCollectionLayer () {
 
             }
             fields.forEach {
-                if (it.name == "number"){
-                    attributesJSON.put(it.name, attributesMap[it.name] as Double)
-                } else {
-                    attributesJSON.put(it.name, attributesMap[it.name])
-                }
+                attributesJSON.put(it.name, attributesMap[it.name])
             }
             featureJSON.put("attributes", attributesJSON)
             val geometryJson = JSONObject(it.geometry.toJson())
@@ -339,6 +352,8 @@ class ClientFeatureCollectionLayer () {
         val featureNum = identifyFeatureById(id)
         val editFeature = features[featureNum]
         val attributes = editFeature.attributes
+        val newLength = calculateLength(geometry)
+        attributes["length"] = newLength
         val newFeature = featureCollectionTable.createFeature(attributes,geometry) as Feature
         features.removeAt(featureNum)
         features.add(newFeature)
@@ -370,6 +385,7 @@ class ClientFeatureCollectionLayer () {
         val newAttributes = attributes.toMutableMap()
         newAttributes["Id"] = UUID.randomUUID().toString()
         newAttributes["imageURL"] = editFeature.attributes["imageURL"]!!
+        newAttributes["length"] = editFeature.attributes["length"]!!
         val geometry = editFeature.geometry
         val newFeature = featureCollectionTable.createFeature(newAttributes,geometry) as Feature
         features.add(newFeature)

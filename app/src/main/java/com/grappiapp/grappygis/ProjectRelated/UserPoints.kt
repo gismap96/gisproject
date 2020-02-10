@@ -13,7 +13,7 @@ object UserPoints {
         grappiFields.clear()
         grappiFields.add(GrappiField("category", "esriFieldTypeString", "category", 255))
         grappiFields.add(GrappiField("description", "esriFieldTypeString", "description", 255))
-        grappiFields.add(GrappiField("number", "esriFieldTypeDouble", "number"))
+        grappiFields.add(GrappiField("number", "esriFieldTypeString", "number", 255))
         grappiFields.add(GrappiField("isUpdated","esriFieldTypeString","isUpdated", 6))
         grappiFields.add(GrappiField("imageURL", "esriFieldTypeString","imageURL", 255))
         Log.d(TAG, grappiFields.toString())

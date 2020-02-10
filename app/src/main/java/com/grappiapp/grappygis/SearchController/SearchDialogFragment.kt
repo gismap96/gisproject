@@ -5,18 +5,22 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import com.esri.arcgisruntime.mapping.view.MapView
 import com.grappiapp.grappygis.R
 import kotlinx.android.synthetic.main.fragment_dialog_search.*
 
-class SearchDialogFragment(context: Context): Dialog(context), AdapterView.OnItemSelectedListener{
+class SearchDialogFragment(context: Context, val mMapView: MapView): Dialog(context), AdapterView.OnItemSelectedListener, View.OnClickListener{
 
     var titles = mutableListOf<String>()
     var groupNum = 0
+    var layerNum = 0
+    val TAG = "searchDialog"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -31,6 +35,7 @@ class SearchDialogFragment(context: Context): Dialog(context), AdapterView.OnIte
             }
             categoryForSearchSpinner.onItemSelectedListener = this
             layerSearchSpinner.onItemSelectedListener = this
+            startSearchTV.setOnClickListener(this)
         }
     }
 
@@ -59,9 +64,33 @@ class SearchDialogFragment(context: Context): Dialog(context), AdapterView.OnIte
 
                 }
                 R.id.layerSearchSpinner->{
-                    FeatureSearchController.searchInLayer("meow",groupNum, position)
+                    layerNum = position
                 }
                 else -> {}
+            }
+        }
+    }
+
+    fun validate(): Boolean{
+        if (searchAttributeInLayerET.text.toString().trim().isEmpty() || searchAttributeInLayerET.text == null){
+            searchAttributeInLayerET.error = context.getString(R.string.field_mandatory)
+            return false
+        }
+        return true
+    }
+
+    override fun onClick(v: View?) {
+        v?.let{
+            when (it.id){
+                R.id.startSearchTV-> {
+                    if (validate()) {
+                        val searchAtt = searchAttributeInLayerET.text.toString()
+                        FeatureSearchController.searchInLayer(searchAtt, groupNum, layerNum){
+                            features->
+                            Log.d(TAG, features.toString())
+                        }
+                    }
+                }
             }
         }
     }

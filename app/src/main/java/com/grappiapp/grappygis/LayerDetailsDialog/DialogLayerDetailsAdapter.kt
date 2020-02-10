@@ -71,6 +71,7 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                         }
                     }
                     "number"-> rowValues.add(RowValue(context.resources.getString(R.string.number), it.value))
+                    "length"-> rowValues.add(RowValue(context.getString(R.string.length), it.value))
                     "imageURL"-> {
                         if (it.value.count() > 4) {
                             imageLocation = rowValues.size

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GrappyGIS</string>
+    <string name="app_name">Grappi GIS</string>
     <string name="title_activity_login">הרשם</string>
     <!-- Strings related to login -->
     <string name="prompt_email">דואר אלקטרוני</string>
@@ -85,4 +85,8 @@
     <string name="init_dialog_message">מיד אסיים</string>
     <string name="empty_Point">דקירה ריקה, נא הקישו על המסך בכדי ליצור דקירה</string>
     <string name="my_layers">השכבות שלי</string>
+    <string name="grappi_app_name">גראפי</string>
+    <string name="search_here">חפש כאן</string>
+    <string name="start_search">חפש</string>
+    <string name="search_hint">ערך חיפוש</string>
 </resources>

@@ -1,10 +1,19 @@
 package com.grappiapp.grappygis.SearchController
 
-import com.grappiapp.grappygis.LegendSidebar.LegendLayerDisplayController
+import android.util.Log
+import android.widget.Toast
+import com.esri.arcgisruntime.concurrent.ListenableFuture
+import com.esri.arcgisruntime.data.Feature
+import com.esri.arcgisruntime.data.FeatureQueryResult
 import com.esri.arcgisruntime.data.FeatureTable
+import com.esri.arcgisruntime.data.QueryParameters
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.layers.Layer
 import com.esri.arcgisruntime.mapping.view.MapView
+import com.grappiapp.grappygis.GeoViewController.GeoViewController
+import com.grappiapp.grappygis.LegendSidebar.LegendLayerDisplayController
+import java.lang.Exception
+
 
 object FeatureSearchController {
 
@@ -39,14 +48,36 @@ object FeatureSearchController {
         return titles
     }
 
-    fun searchInLayer(search: String, groupNum:Int, layerNum: Int): FeatureTable?{
+    fun searchInLayer(search: String, groupNum:Int, layerNum: Int, callback: (MutableList<Feature>) -> Unit )  {
         val legendGroups = LegendLayerDisplayController.legendGroups
         val layer = legendGroups[groupNum].layers[layerNum]
         val featureLayer = layer as FeatureLayer
-        featureLayer
-        return featureLayer.featureTable
+        val extent = featureLayer.fullExtent
+        val query = QueryParameters()
+        query.geometry = extent
+        val future = featureLayer.selectFeaturesAsync(query, FeatureLayer.SelectionMode.NEW)
+        val features = mutableListOf<Feature>()
+        future.addDoneListener {
+            try{
+                val result = future.get()
+                result.forEach {
+                    mFeature->
+                    featureLayer.unselectFeature(mFeature)
+                    mFeature.attributes.forEach { attribute->
+                        val value = attribute.value.toString()
+                        if (value.contains(search, ignoreCase = true)){
+                            features.add(mFeature)
+                        }
+                    }
 
+                }
+                callback(features)
+            } catch (e: Exception){
+                Log.e(TAG, "Select feature failed: $e")
+            }
+        }
     }
+
     fun turnLayerLabelOn(mMapView: MapView){
         val layers = mMapView.map.operationalLayers
         layers.forEach {
@@ -59,3 +90,23 @@ object FeatureSearchController {
         }
     }
 }
+
+//                var flag = false
+//                result.forEach {
+//                    Log.d(TAG, it.attributes.toString())
+//                    if (!flag){
+//                        it.attributes.forEach { att ->
+//                            val value = att.value.toString()
+//                            if (value.contains(search, ignoreCase = true)){
+//                                GeoViewController.moveToLocationByGeometry(it.geometry.extent, 10.0, mMapView)
+//                                flag = !flag
+//                            }
+//                        }
+//                    } else {
+//                        featureLayer.unselectFeature(it)
+//                    }
+//                }
+//                if (!flag){
+//                    val context = mMapView.context
+//                    Toast.makeText(context, "לא נמצאה ישות", Toast.LENGTH_SHORT).show()
+//                }

@@ -111,7 +111,7 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
     fun setGeometry(){
         val type = SketchEditorController.sketcherEditorTypes
         val category = addCategoryToSketcherSaveET.text.toString()
-        val number = addNumberToSketcherSaveET.text.toString().toDouble()
+        val number = addNumberToSketcherSaveET.text.toString()
         val description = addDescriptionSketcherSaveET.text.toString()
         var isUpdated = "no"
         if (updateToSystemSketchSaveSW.isChecked) isUpdated = "yes"
