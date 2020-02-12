@@ -1,16 +1,10 @@
 package com.grappiapp.grappygis.SearchController
 
 import android.util.Log
-import android.widget.Toast
-import com.esri.arcgisruntime.concurrent.ListenableFuture
-import com.esri.arcgisruntime.data.Feature
-import com.esri.arcgisruntime.data.FeatureQueryResult
-import com.esri.arcgisruntime.data.FeatureTable
 import com.esri.arcgisruntime.data.QueryParameters
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.layers.Layer
 import com.esri.arcgisruntime.mapping.view.MapView
-import com.grappiapp.grappygis.GeoViewController.GeoViewController
 import com.grappiapp.grappygis.LegendSidebar.LegendLayerDisplayController
 import java.lang.Exception
 
@@ -19,6 +13,8 @@ object FeatureSearchController {
 
     val TAG = "featureSearch"
     var flag = false
+    var featureLayerResult: FeatureLayer? = null
+    var searchResults = mutableListOf<SearchResult>()
 
     fun getGroupTitles(): MutableList<String>{
         val legendGroups = LegendLayerDisplayController.legendGroups
@@ -48,15 +44,17 @@ object FeatureSearchController {
         return titles
     }
 
-    fun searchInLayer(search: String, groupNum:Int, layerNum: Int, callback: (MutableList<Feature>) -> Unit )  {
+    fun searchInLayer(search: String, groupNum:Int, layerNum: Int, callback: (MutableList<SearchResult>) -> Unit )  {
         val legendGroups = LegendLayerDisplayController.legendGroups
         val layer = legendGroups[groupNum].layers[layerNum]
         val featureLayer = layer as FeatureLayer
+        this.featureLayerResult = featureLayer
         val extent = featureLayer.fullExtent
         val query = QueryParameters()
         query.geometry = extent
         val future = featureLayer.selectFeaturesAsync(query, FeatureLayer.SelectionMode.NEW)
-        val features = mutableListOf<Feature>()
+        val searchResults = mutableListOf<SearchResult>()
+        this.searchResults = mutableListOf()
         future.addDoneListener {
             try{
                 val result = future.get()
@@ -66,12 +64,16 @@ object FeatureSearchController {
                     mFeature.attributes.forEach { attribute->
                         val value = attribute.value.toString()
                         if (value.contains(search, ignoreCase = true)){
-                            features.add(mFeature)
+                            val fid = mFeature.attributes["FID"]
+                            val fieldName = attribute.key
+                            val fieldValue = attribute.value
+                            val result = SearchResult(fid?.toString(), fieldName, fieldValue.toString(), mFeature)
+                            searchResults.add(result)
                         }
                     }
-
                 }
-                callback(features)
+                this.searchResults = searchResults
+                callback(searchResults)
             } catch (e: Exception){
                 Log.e(TAG, "Select feature failed: $e")
             }

@@ -11,7 +11,11 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
+import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.view.MapView
+import com.grappiapp.grappygis.GeoViewController.GeoViewController
+import com.grappiapp.grappygis.LegendSidebar.LegendLayerDisplayController
 import com.grappiapp.grappygis.R
 import kotlinx.android.synthetic.main.fragment_dialog_search.*
 
@@ -86,8 +90,29 @@ class SearchDialogFragment(context: Context, val mMapView: MapView): Dialog(cont
                     if (validate()) {
                         val searchAtt = searchAttributeInLayerET.text.toString()
                         FeatureSearchController.searchInLayer(searchAtt, groupNum, layerNum){
-                            features->
-                            Log.d(TAG, features.toString())
+                            results->
+                            if (results.count() == 0){
+                                Toast.makeText(context, context.getString(R.string.search_no_results), Toast.LENGTH_LONG).show()
+                            } else {
+                                if (results.count() > 1){
+                                    results.forEach {
+
+                                    }
+                                } else {
+                                    val legendGroups = LegendLayerDisplayController.legendGroups
+                                    val layer = legendGroups[groupNum].layers[layerNum]
+                                    val feature = results[0].feature
+                                    val envelope = feature.geometry.extent
+                                    val featureLayer = layer as FeatureLayer
+                                    featureLayer.selectFeature(feature)
+                                    val PADDING = 3.0
+                                    GeoViewController.moveToLocationByGeometry(envelope, PADDING, mMapView)
+                                    dismiss()
+                                }
+
+                                Log.d(TAG, results.toString())
+                            }
+
                         }
                     }
                 }

@@ -376,7 +376,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         zift.setOnClickListener(v -> {
             SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView);
             searchDialogFragment.show();
-
         });
 //        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
@@ -1019,13 +1018,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     public void onEditSelectedListener(@NotNull SketcherEditorTypes type, @NotNull String layerId) {
-        Geometry editGeometry = UserPolyline.INSTANCE.getUserPolyline().getFeatureGeometry(layerId);
+        Geometry editGeometry = null;
         switch (type){
 
             case POINT:
                 editGeometry = UserPoints.INSTANCE.getUserPoints().getFeatureGeometry(layerId);
                 break;
             case POLYLINE:
+                editGeometry = UserPolyline.INSTANCE.getUserPolyline().getFeatureGeometry(layerId);
                 break;
             case POLYGON:
                 break;

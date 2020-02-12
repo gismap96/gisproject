@@ -89,4 +89,7 @@
     <string name="search_here">חפש כאן</string>
     <string name="start_search">חפש</string>
     <string name="search_hint">ערך חיפוש</string>
+    <string name="search_no_results">לא נמצאו תוצאות לחיפוש</string>
+    <string name="key">מפתח</string>
+    <string name="value">ערך</string>
 </resources>

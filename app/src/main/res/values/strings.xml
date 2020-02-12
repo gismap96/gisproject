@@ -90,5 +90,8 @@
     <string name="search_here">Search here</string>
     <string name="start_search">Search</string>
     <string name="search_hint">Search Value</string>
+    <string name="search_no_results">Search found no results</string>
+    <string name="key">Key</string>
+    <string name="value">Value</string>
 
 </resources>
