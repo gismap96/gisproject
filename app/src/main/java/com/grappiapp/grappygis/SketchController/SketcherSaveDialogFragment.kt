@@ -108,11 +108,14 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
         shapeTypeSketcherSaveTV.text
     }
 
+    fun removeUnsupportedCharacters(string: String): String{
+        return string.replace("[\\\\\\\\/:*?\\\"<>|]", "")
+    }
     fun setGeometry(){
         val type = SketchEditorController.sketcherEditorTypes
-        val category = addCategoryToSketcherSaveET.text.toString()
-        val number = addNumberToSketcherSaveET.text.toString()
-        val description = addDescriptionSketcherSaveET.text.toString()
+        val category = removeUnsupportedCharacters(addCategoryToSketcherSaveET.text.toString())
+        val number = removeUnsupportedCharacters(addNumberToSketcherSaveET.text.toString())
+        var description = removeUnsupportedCharacters(addDescriptionSketcherSaveET.text.toString())
         var isUpdated = "no"
         if (updateToSystemSketchSaveSW.isChecked) isUpdated = "yes"
         val attributes = hashMapOf<String, Any>()

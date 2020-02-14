@@ -92,4 +92,5 @@
     <string name="search_no_results">לא נמצאו תוצאות לחיפוש</string>
     <string name="key">מפתח</string>
     <string name="value">ערך</string>
+    <string name="search_headline">חיפוש ישויות</string>
 </resources>

@@ -44,7 +44,7 @@
     <string name="measure_polygon_area">measure polygon area</string>
     <string name="choose_a_layer">Choose a layer</string>
     <string name="choose_a_layer_to_edit">Select layer type</string>
-    <string name="close">close</string>
+    <string name="close">Close</string>
     <string name="client_point">User Pin</string>
     <string name="description">description</string>
     <string name="category">Category</string>
@@ -93,5 +93,6 @@
     <string name="search_no_results">Search found no results</string>
     <string name="key">Key</string>
     <string name="value">Value</string>
+    <string name="search_headline">Search Features</string>
 
 </resources>

@@ -5,6 +5,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -17,9 +19,11 @@ import com.esri.arcgisruntime.mapping.view.MapView
 import com.grappiapp.grappygis.GeoViewController.GeoViewController
 import com.grappiapp.grappygis.LegendSidebar.LegendLayerDisplayController
 import com.grappiapp.grappygis.R
+import kotlinx.android.synthetic.main.fragment_dialog_layer_details.*
+import kotlinx.android.synthetic.main.fragment_dialog_layer_selection.*
 import kotlinx.android.synthetic.main.fragment_dialog_search.*
 
-class SearchDialogFragment(context: Context, val mMapView: MapView): Dialog(context), AdapterView.OnItemSelectedListener, View.OnClickListener{
+class SearchDialogFragment(context: Context, val mMapView: MapView, val callback: OnMultipleSearchResults): Dialog(context), AdapterView.OnItemSelectedListener, View.OnClickListener{
 
     var titles = mutableListOf<String>()
     var groupNum = 0
@@ -40,6 +44,7 @@ class SearchDialogFragment(context: Context, val mMapView: MapView): Dialog(cont
             categoryForSearchSpinner.onItemSelectedListener = this
             layerSearchSpinner.onItemSelectedListener = this
             startSearchTV.setOnClickListener(this)
+            closeSearchDialogTV.setOnClickListener(this)
         }
     }
 
@@ -86,6 +91,9 @@ class SearchDialogFragment(context: Context, val mMapView: MapView): Dialog(cont
     override fun onClick(v: View?) {
         v?.let{
             when (it.id){
+                R.id.closeSearchDialogTV->{
+                    dismiss()
+                }
                 R.id.startSearchTV-> {
                     if (validate()) {
                         val searchAtt = searchAttributeInLayerET.text.toString()
@@ -95,9 +103,16 @@ class SearchDialogFragment(context: Context, val mMapView: MapView): Dialog(cont
                                 Toast.makeText(context, context.getString(R.string.search_no_results), Toast.LENGTH_LONG).show()
                             } else {
                                 if (results.count() > 1){
-                                    results.forEach {
-
-                                    }
+                                    var layoutManager = LinearLayoutManager(context)
+                                    var recycler = searchMultiResultsRecyclerV
+                                    recycler.layoutManager = layoutManager
+                                    val adapter = SearchResultsAdapter(context, results)
+                                    recycler.adapter = adapter
+                                    recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
+                                    window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+//                                    dismiss()
+//                                    callback.onMultipleSearchResults()
+//                                    return@searchInLayer
                                 } else {
                                     val legendGroups = LegendLayerDisplayController.legendGroups
                                     val layer = legendGroups[groupNum].layers[layerNum]
@@ -118,5 +133,8 @@ class SearchDialogFragment(context: Context, val mMapView: MapView): Dialog(cont
                 }
             }
         }
+    }
+    interface OnMultipleSearchResults{
+        fun onMultipleSearchResults()
     }
 }

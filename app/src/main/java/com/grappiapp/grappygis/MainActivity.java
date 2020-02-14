@@ -50,6 +50,7 @@ import com.grappiapp.grappygis.ProjectRelated.UserPoints;
 import com.grappiapp.grappygis.ProjectRelated.UserPolyline;
 import com.grappiapp.grappygis.SearchController.FeatureSearchController;
 import com.grappiapp.grappygis.SearchController.SearchDialogFragment;
+import com.grappiapp.grappygis.SearchController.SearchResultsDialogFragment;
 import com.grappiapp.grappygis.SketchController.SketchEditorController;
 import com.grappiapp.grappygis.SketchController.SketcherEditorTypes;
 import com.grappiapp.grappygis.SketchController.SketcherSaveDialogFragment;
@@ -101,7 +102,7 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
         , LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish,
-        DialogLayerDetailsFragment.OnEditSelectedListener, MapLayerAdapter.OnLegendItemInteraction
+        DialogLayerDetailsFragment.OnEditSelectedListener, MapLayerAdapter.OnLegendItemInteraction, SearchDialogFragment.OnMultipleSearchResults
         , ClientPointFeatureCollection.OnPointsUploaded{
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
@@ -372,9 +373,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-        zift.setVisibility(View.GONE);
+//        zift.setVisibility(View.GONE);
         zift.setOnClickListener(v -> {
-            SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView);
+            SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView, this);
             searchDialogFragment.show();
         });
 //        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
@@ -1099,5 +1100,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onPointsUploadFinished() {
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void onMultipleSearchResults() {
+        SearchResultsDialogFragment searchResultsDialogFragment = new SearchResultsDialogFragment(this);
+        searchResultsDialogFragment.show();
     }
 }

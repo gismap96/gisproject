@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.grappiapp.grappygis.R
 import kotlinx.android.synthetic.main.row_for_search_dialog_result.view.*
 
-class SearchResultsAdapter(val context: Context, val results: MutableList<SearchResult>): RecyclerView.Adapter<SearchResultsAdapter.SearchResultsAdapterViewHolder>() {
+class SearchResultsAdapter(val context: Context, var results: MutableList<SearchResult>): RecyclerView.Adapter<SearchResultsAdapter.SearchResultsAdapterViewHolder>() {
 
 
 

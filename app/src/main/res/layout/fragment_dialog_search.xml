@@ -2,9 +2,10 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/dark_blue_transparent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:background="@color/dark_blue_transparent">
 
     <Spinner
         android:id="@+id/categoryForSearchSpinner"
@@ -14,16 +15,16 @@
         android:minWidth="80dp"
         android:popupBackground="@color/dark_blue_transparent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/searchHeadlineTV" />
 
     <Spinner
         android:id="@+id/layerSearchSpinner"
         android:layout_width="wrap_content"
-        android:popupBackground="@color/colorPrimary"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:minWidth="80dp"
         android:layout_marginTop="16dp"
+        android:minWidth="80dp"
+        android:popupBackground="@color/colorPrimary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/categoryForSearchSpinner" />
 
@@ -34,26 +35,63 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:hint="@string/search_hint"
         android:backgroundTint="@color/white"
-        android:textColorHint="@color/white_transparent"
-        android:textColor="@color/white"
         android:ems="10"
+        android:hint="@string/search_hint"
         android:inputType="textPersonName"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white_transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/layerSearchSpinner" />
 
     <TextView
         android:id="@+id/startSearchTV"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="@string/start_search"
-        android:textSize="24sp"
-        android:textColor="@color/white"
+        android:gravity="center"
         android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="@+id/searchAttributeInLayerET"
+        android:text="@string/start_search"
+        android:textColor="@color/white"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/searchAttributeInLayerET"
         app:layout_constraintTop_toBottomOf="@+id/searchAttributeInLayerET" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/searchMultiResultsRecyclerV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/closeSearchDialogTV"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/startSearchTV" />
+
+    <TextView
+        android:id="@+id/closeSearchDialogTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_opacity"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/close"
+        android:textColor="@color/light_blue"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/searchHeadlineTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_opacity"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/search_headline"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
