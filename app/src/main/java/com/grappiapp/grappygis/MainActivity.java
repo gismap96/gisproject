@@ -31,6 +31,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.esri.arcgisruntime.data.Feature;
+import com.esri.arcgisruntime.layers.FeatureLayer;
+import com.esri.arcgisruntime.mapping.view.GeoView;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPointFeatureCollection;
 import com.grappiapp.grappygis.ClientLayerPhotoController.ClientPhotoController;
@@ -50,7 +54,7 @@ import com.grappiapp.grappygis.ProjectRelated.UserPoints;
 import com.grappiapp.grappygis.ProjectRelated.UserPolyline;
 import com.grappiapp.grappygis.SearchController.FeatureSearchController;
 import com.grappiapp.grappygis.SearchController.SearchDialogFragment;
-import com.grappiapp.grappygis.SearchController.SearchResultsDialogFragment;
+import com.grappiapp.grappygis.SearchController.SearchResultsAdapter;
 import com.grappiapp.grappygis.SketchController.SketchEditorController;
 import com.grappiapp.grappygis.SketchController.SketcherEditorTypes;
 import com.grappiapp.grappygis.SketchController.SketcherSaveDialogFragment;
@@ -102,7 +106,7 @@ import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
         , LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish,
-        DialogLayerDetailsFragment.OnEditSelectedListener, MapLayerAdapter.OnLegendItemInteraction, SearchDialogFragment.OnMultipleSearchResults
+        DialogLayerDetailsFragment.OnEditSelectedListener, MapLayerAdapter.OnLegendItemInteraction, SearchResultsAdapter.OnSearchResultClicked
         , ClientPointFeatureCollection.OnPointsUploaded{
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
@@ -1104,8 +1108,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     @Override
-    public void onMultipleSearchResults() {
-        SearchResultsDialogFragment searchResultsDialogFragment = new SearchResultsDialogFragment(this);
-        searchResultsDialogFragment.show();
+    public void jumpToSearchResultFeature(@NotNull Envelope envelope) {
+        GeoViewController.INSTANCE.moveToLocationByGeometry(envelope, mMapView);
     }
 }

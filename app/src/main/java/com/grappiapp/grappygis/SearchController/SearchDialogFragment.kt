@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.fragment_dialog_layer_details.*
 import kotlinx.android.synthetic.main.fragment_dialog_layer_selection.*
 import kotlinx.android.synthetic.main.fragment_dialog_search.*
 
-class SearchDialogFragment(context: Context, val mMapView: MapView, val callback: OnMultipleSearchResults): Dialog(context), AdapterView.OnItemSelectedListener, View.OnClickListener{
+class SearchDialogFragment(context: Context, val mMapView: MapView, val callback: SearchResultsAdapter.OnSearchResultClicked): Dialog(context), AdapterView.OnItemSelectedListener, View.OnClickListener{
 
     var titles = mutableListOf<String>()
     var groupNum = 0
@@ -42,6 +42,7 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         titles = FeatureSearchController.getGroupTitles()
         if (titles.count() > 0){
+            titles.add(0, context.getString(R.string.select_category))
             ArrayAdapter(context, R.layout.search_category_spinner_item, titles).also {
                 arrayAdapter ->  categoryForSearchSpinner.adapter = arrayAdapter
 
@@ -69,11 +70,23 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
         parent?.let{
             when (it.id){
                 R.id.categoryForSearchSpinner->{
-                    val groupTitle = titles[position]
-                    groupNum = position
-                    val layerNames = FeatureSearchController.getLayerTitlesForCategory(groupTitle)
-                    ArrayAdapter(context, R.layout.search_category_spinner_item, layerNames).also {
-                        arrayAdapter -> layerSearchSpinner.adapter = arrayAdapter
+                    if (position == 0){
+                        val layerNames = mutableListOf<String>()
+                        layerNames.add(context.getString(R.string.select_layer))
+                        ArrayAdapter(context, R.layout.search_category_spinner_item, layerNames).also { arrayAdapter ->
+                            layerSearchSpinner.adapter = arrayAdapter
+                        }
+                        startSearchTV.isEnabled = false
+                        searchAttributeInLayerET.isEnabled = false
+                    } else {
+                        val groupTitle = titles[position]
+                        groupNum = position - 1
+                        val layerNames = FeatureSearchController.getLayerTitlesForCategory(groupTitle)
+                        ArrayAdapter(context, R.layout.search_category_spinner_item, layerNames).also { arrayAdapter ->
+                            layerSearchSpinner.adapter = arrayAdapter
+                        }
+                        startSearchTV.isEnabled = true
+                        searchAttributeInLayerET.isEnabled = true
                     }
 
                 }
@@ -137,7 +150,9 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
                 var layoutManager = LinearLayoutManager(context)
                 var recycler = searchMultiResultsRecyclerV
                 recycler.layoutManager = layoutManager
-                val adapter = SearchResultsAdapter(context, results)
+                val adapter = SearchResultsAdapter(context, results, callback){
+                    dismiss()
+                }
                 recycler.adapter = adapter
                 recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
             } else {
@@ -150,18 +165,13 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
                 } else if (layer is FeatureCollectionLayer){
                     layer.layers[0].selectFeature(feature)
                 }
-
-                val PADDING = 3.0
-                GeoViewController.moveToLocationByGeometry(envelope, PADDING, mMapView)
+                layer.isVisible = true
+                GeoViewController.moveToLocationByGeometry(envelope, mMapView)
                 FeatureSearchController.isFeatureSelected = true
                 dismiss()
             }
 
             Log.d(TAG, results.toString())
         }
-    }
-
-    interface OnMultipleSearchResults{
-        fun onMultipleSearchResults()
     }
 }

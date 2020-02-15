@@ -93,4 +93,6 @@
     <string name="key">מפתח</string>
     <string name="value">ערך</string>
     <string name="search_headline">חיפוש ישויות</string>
+    <string name="select_category">בחר קטגוריה</string>
+    <string name="select_layer">בחר שכבה</string>
 </resources>
