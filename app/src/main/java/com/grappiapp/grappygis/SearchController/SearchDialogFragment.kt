@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -15,6 +16,7 @@ import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import com.esri.arcgisruntime.data.Feature
 import com.esri.arcgisruntime.data.FeatureCollection
@@ -70,6 +72,8 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
         parent?.let{
             when (it.id){
                 R.id.categoryForSearchSpinner->{
+                    val textView = parent.getChildAt(0) as TextView
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.white))
                     if (position == 0){
                         val layerNames = mutableListOf<String>()
                         layerNames.add(context.getString(R.string.select_layer))
@@ -91,6 +95,8 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
 
                 }
                 R.id.layerSearchSpinner->{
+                    val textView = parent.getChildAt(0) as TextView
+                    textView.setTextColor(ContextCompat.getColor(context, R.color.white))
                     layerNum = position
                 }
                 else -> {}
