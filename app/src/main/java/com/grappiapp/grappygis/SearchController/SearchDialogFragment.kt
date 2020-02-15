@@ -5,15 +5,20 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.support.v4.content.ContextCompat.getSystemService
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import com.esri.arcgisruntime.data.Feature
+import com.esri.arcgisruntime.data.FeatureCollection
+import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.grappiapp.grappygis.GeoViewController.GeoViewController
@@ -96,37 +101,26 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
                 }
                 R.id.startSearchTV-> {
                     if (validate()) {
+                        val view = this.currentFocus
+                        view?.let { v ->
+                            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                            imm?.hideSoftInputFromWindow(v.windowToken, 0)
+                        }
                         val searchAtt = searchAttributeInLayerET.text.toString()
-                        FeatureSearchController.searchInLayer(searchAtt, groupNum, layerNum){
-                            results->
-                            if (results.count() == 0){
-                                Toast.makeText(context, context.getString(R.string.search_no_results), Toast.LENGTH_LONG).show()
-                            } else {
-                                if (results.count() > 1){
-                                    var layoutManager = LinearLayoutManager(context)
-                                    var recycler = searchMultiResultsRecyclerV
-                                    recycler.layoutManager = layoutManager
-                                    val adapter = SearchResultsAdapter(context, results)
-                                    recycler.adapter = adapter
-                                    recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
-                                    window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-//                                    dismiss()
-//                                    callback.onMultipleSearchResults()
-//                                    return@searchInLayer
-                                } else {
-                                    val legendGroups = LegendLayerDisplayController.legendGroups
-                                    val layer = legendGroups[groupNum].layers[layerNum]
-                                    val feature = results[0].feature
-                                    val envelope = feature.geometry.extent
-                                    val featureLayer = layer as FeatureLayer
-                                    featureLayer.selectFeature(feature)
-                                    val PADDING = 3.0
-                                    GeoViewController.moveToLocationByGeometry(envelope, PADDING, mMapView)
-                                    dismiss()
-                                }
-
-                                Log.d(TAG, results.toString())
+                        if (searchAtt.toLowerCase() == "meow" || searchAtt.toLowerCase() == "מיאו"){
+                            Toast.makeText(context, "Meow ~", Toast.LENGTH_LONG).show()
+                        }
+                        val legendGroups = LegendLayerDisplayController.legendGroups
+                        val layer = legendGroups[groupNum].layers[layerNum]
+                        if (layer is FeatureLayer) {
+                            FeatureSearchController.searchInLayer(searchAtt, layer, false, context) { results ->
+                                processSearchResults(results)
                             }
+                        } else if (layer is FeatureCollectionLayer){
+                            FeatureSearchController.searchInLayer(searchAtt, layer.layers[0], true, context){results->
+                                processSearchResults(results)
+                            }
+
 
                         }
                     }
@@ -134,6 +128,39 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
             }
         }
     }
+
+    private fun processSearchResults(results: MutableList<SearchResult>) {
+        if (results.count() == 0) {
+            Toast.makeText(context, context.getString(R.string.search_no_results), Toast.LENGTH_LONG).show()
+        } else {
+            if (results.count() > 1) {
+                var layoutManager = LinearLayoutManager(context)
+                var recycler = searchMultiResultsRecyclerV
+                recycler.layoutManager = layoutManager
+                val adapter = SearchResultsAdapter(context, results)
+                recycler.adapter = adapter
+                recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
+            } else {
+                val legendGroups = LegendLayerDisplayController.legendGroups
+                val layer = legendGroups[groupNum].layers[layerNum]
+                val feature = results[0].feature
+                val envelope = feature.geometry.extent
+                if (layer is FeatureLayer){
+                    layer.selectFeature(feature)
+                } else if (layer is FeatureCollectionLayer){
+                    layer.layers[0].selectFeature(feature)
+                }
+
+                val PADDING = 3.0
+                GeoViewController.moveToLocationByGeometry(envelope, PADDING, mMapView)
+                FeatureSearchController.isFeatureSelected = true
+                dismiss()
+            }
+
+            Log.d(TAG, results.toString())
+        }
+    }
+
     interface OnMultipleSearchResults{
         fun onMultipleSearchResults()
     }

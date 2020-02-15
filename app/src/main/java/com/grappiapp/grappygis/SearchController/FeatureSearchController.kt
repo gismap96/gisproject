@@ -1,11 +1,14 @@
 package com.grappiapp.grappygis.SearchController
 
+import android.content.Context
 import android.util.Log
 import com.esri.arcgisruntime.data.QueryParameters
+import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.layers.Layer
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.grappiapp.grappygis.LegendSidebar.LegendLayerDisplayController
+import com.grappiapp.grappygis.R
 import java.lang.Exception
 
 
@@ -15,6 +18,18 @@ object FeatureSearchController {
     var flag = false
     var featureLayerResult: FeatureLayer? = null
     var searchResults = mutableListOf<SearchResult>()
+    var isFeatureSelected = false
+
+    fun unselectFeature(){
+        featureLayerResult?.let{
+            if (isFeatureSelected){
+                searchResults.forEach {
+                    featureLayerResult!!.unselectFeature(it.feature)
+                    isFeatureSelected = false
+                }
+            }
+        }
+    }
 
     fun getGroupTitles(): MutableList<String>{
         val legendGroups = LegendLayerDisplayController.legendGroups
@@ -44,10 +59,8 @@ object FeatureSearchController {
         return titles
     }
 
-    fun searchInLayer(search: String, groupNum:Int, layerNum: Int, callback: (MutableList<SearchResult>) -> Unit )  {
-        val legendGroups = LegendLayerDisplayController.legendGroups
-        val layer = legendGroups[groupNum].layers[layerNum]
-        val featureLayer = layer as FeatureLayer
+
+    fun searchInLayer(search: String, featureLayer: FeatureLayer, isUserLayer: Boolean, context: Context, callback: (MutableList<SearchResult>) -> Unit )  {
         this.featureLayerResult = featureLayer
         val extent = featureLayer.fullExtent
         val query = QueryParameters()
@@ -64,11 +77,36 @@ object FeatureSearchController {
                     mFeature.attributes.forEach { attribute->
                         val value = attribute.value.toString()
                         if (value.contains(search, ignoreCase = true)){
-                            val fid = mFeature.attributes["FID"]
-                            val fieldName = attribute.key
+                            var fid = mFeature.attributes["FID"]
+                            if (fid == null){
+                                fid = mFeature.attributes["ObjectId"]
+                            }
+                            var fieldName = attribute.key
                             val fieldValue = attribute.value
-                            val result = SearchResult(fid?.toString(), fieldName, fieldValue.toString(), mFeature)
-                            searchResults.add(result)
+                            featureLayer.featureTable.fields.forEach {
+                                if (it.name == fieldName) {
+                                    var alias = it.alias
+                                    if (isUserLayer){
+                                        when (fieldName){
+                                            "category" -> alias = context.getString(R.string.category)
+                                            "description" -> alias = context.getString(R.string.description_alias)
+                                            "isUpdated" -> {
+                                                if (fieldValue == "yes"){
+                                                    alias = context.getString(R.string.yes)
+                                                } else {
+                                                    alias = context.getString(R.string.no)
+                                                }
+                                            }
+                                            "imageURL" -> return@forEach
+                                            "length" -> alias = context.getString(R.string.length)
+                                        }
+                                    }
+                                    val result = SearchResult(fid?.toString(), alias, fieldValue.toString(), mFeature)
+                                    searchResults.add(result)
+                                    return@forEach
+                                }
+                            }
+
                         }
                     }
                 }

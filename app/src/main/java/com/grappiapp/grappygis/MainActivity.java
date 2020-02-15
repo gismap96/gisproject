@@ -377,6 +377,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         zift.setOnClickListener(v -> {
             SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView, this);
             searchDialogFragment.show();
+            FeatureSearchController.INSTANCE.unselectFeature();
         });
 //        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
