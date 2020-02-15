@@ -42,6 +42,7 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
         setContentView(R.layout.fragment_dialog_search)
         window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        setCancelable(false)
         titles = FeatureSearchController.getGroupTitles()
         if (titles.count() > 0){
             titles.add(0, context.getString(R.string.select_category))
@@ -116,6 +117,7 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
         v?.let{
             when (it.id){
                 R.id.closeSearchDialogTV->{
+                    callback.jumpToSearchResultFeature(null)
                     dismiss()
                 }
                 R.id.startSearchTV-> {
@@ -162,20 +164,20 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
                 recycler.adapter = adapter
                 recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
             } else {
-                val legendGroups = LegendLayerDisplayController.legendGroups
-                val layer = legendGroups[groupNum].layers[layerNum]
-                val feature = results[0].feature
-                val envelope = feature.geometry.extent
-                if (layer is FeatureLayer){
+                val mResult = results[0]
+                val envelope = mResult.feature.geometry.extent
+                val layer = FeatureSearchController.featureLayerResult
+                val feature = mResult.feature
+                layer?.let {
                     layer.selectFeature(feature)
-                } else if (layer is FeatureCollectionLayer){
-                    layer.layers[0].selectFeature(feature)
+                    layer.isVisible = true
+                    callback.jumpToSearchResultFeature(envelope)
+                    FeatureSearchController.isFeatureSelected = true
+                    dismiss()
                 }
-                layer.isVisible = true
-                GeoViewController.moveToLocationByGeometry(envelope, mMapView)
-                FeatureSearchController.isFeatureSelected = true
-                dismiss()
+
             }
+
 
             Log.d(TAG, results.toString())
         }

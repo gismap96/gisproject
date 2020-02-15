@@ -51,6 +51,6 @@ class SearchResultsAdapter(val context: Context, var results: MutableList<Search
     }
 
     interface OnSearchResultClicked{
-        fun jumpToSearchResultFeature(envelope: Envelope)
+        fun jumpToSearchResultFeature(envelope: Envelope?)
     }
 }

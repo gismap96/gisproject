@@ -32,9 +32,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.esri.arcgisruntime.data.Feature;
-import com.esri.arcgisruntime.layers.FeatureLayer;
-import com.esri.arcgisruntime.mapping.view.GeoView;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPointFeatureCollection;
 import com.grappiapp.grappygis.ClientLayerPhotoController.ClientPhotoController;
@@ -149,6 +146,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ImageView northBarIV;
     private SketchEditor mSketcher;
     private ImageView cleanSketcherIV;
+    private ImageView searchFeatureIV;
     private TextView displaySectionForShapeTV;
     private TextView overallSizeHeadlineTV;
     private TextView lengthSectionHeadlineTV;
@@ -200,7 +198,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             @Override
             public void onClick(View view) {
                 resetMenuFunctions();
-                if (MainUpperMenu.INSTANCE.measureLine()) {
+                if (MainUpperMenu.INSTANCE.featureEdit()) {
 //                    sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
 //                    mIsDistance = true;
 
@@ -221,7 +219,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         zift2 = findViewById(R.id.zift2);
-//                zift2.setVisibility(View.GONE);
+        zift2.setVisibility(View.GONE);
 //
         zift2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -383,11 +381,23 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
         zift = findViewById(R.id.toggleZift);
-//        zift.setVisibility(View.GONE);
+        zift.setVisibility(View.GONE);
         zift.setOnClickListener(v -> {
             SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView, this);
             searchDialogFragment.show();
             FeatureSearchController.INSTANCE.unselectFeature();
+        });
+
+        searchFeatureIV = findViewById(R.id.searchFeatureIV);
+        searchFeatureIV.setOnClickListener(v->{
+            resetMenuFunctions();
+            if (MainUpperMenu.INSTANCE.searchClicked()) {
+                searchFeatureIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView, this);
+                searchDialogFragment.show();
+                FeatureSearchController.INSTANCE.unselectFeature();
+            }
+
         });
 //        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 
@@ -402,6 +412,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
         sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         sketchEditorStartIV.setEnabled(true);
+        searchFeatureIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         MainUpperMenu.INSTANCE.resetMenu();
 
     }
@@ -1114,7 +1125,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     @Override
-    public void jumpToSearchResultFeature(@NotNull Envelope envelope) {
-        GeoViewController.INSTANCE.moveToLocationByGeometry(envelope, mMapView);
+    public void jumpToSearchResultFeature(Envelope envelope) {
+        if (envelope != null){
+            GeoViewController.INSTANCE.moveToLocationByGeometry(envelope, mMapView);
+        }
+        searchFeatureIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
     }
 }

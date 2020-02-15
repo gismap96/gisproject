@@ -5,11 +5,11 @@ object MainUpperMenu{
     private var itemNumber = 0
     /***
      * 0 - nothing selected
-     * 1 - measure line
-     * 2 - trash
+     * 1 - feature edits
+     * 2 - search
      */
 
-    fun measureLine(): Boolean{
+    fun featureEdit(): Boolean{
         if (checkIfSelected(1)) {
             resetMenu()
             return false
@@ -17,7 +17,7 @@ object MainUpperMenu{
         changeSelected(1)
         return true
     }
-    fun trashClicked(): Boolean{
+    fun searchClicked(): Boolean{
         if (checkIfSelected(2)) {
             resetMenu()
             return false
