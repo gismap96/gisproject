@@ -159,6 +159,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
+        String selectedLocale = mPrefs.getString(Consts.CHOSEN_LANG_KEY, null);
+        if (selectedLocale != null) {
+            Utils.setLanguage(MainActivity.this, selectedLocale);
+        }
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         FirebaseApp.initializeApp(this);
@@ -216,15 +221,16 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         zift2 = findViewById(R.id.zift2);
-                zift2.setVisibility(View.GONE);
+//                zift2.setVisibility(View.GONE);
 //
-//        zift2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
+        zift2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 //                FeatureSearchController.INSTANCE.turnLayerLabelOn(mMapView);
-//
-//            }
-//        });
+                Utils.openLanguageDialog(MainActivity.this, mPrefs.edit());
+
+            }
+        });
         saveShapeTV = findViewById(R.id.saveShapeTV);
         saveShapeTV.setOnClickListener(v->{
             mViewPoint = mMapView.getCurrentViewpoint(Viewpoint.Type.CENTER_AND_SCALE);
