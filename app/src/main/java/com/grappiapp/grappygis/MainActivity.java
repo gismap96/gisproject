@@ -131,6 +131,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ImageView undoSkecherIV;
     private ImageView zift2;
     private String mProjectId;
+    private ConstraintLayout legendDetailsConstraintsLayout;
     private boolean activityAlive;
     private DialogLayerSelectionFragment dialogLayerSelectionFragment;
     private SketcherSelectionDialogFragment sketcherSelectionDialogFragment;
@@ -150,6 +151,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private TextView displaySectionForShapeTV;
     private TextView overallSizeHeadlineTV;
     private TextView lengthSectionHeadlineTV;
+    private TextView makeLegendGreatAgainTV;
     private ProgressDialog progressDialog;
     private TextView saveShapeTV;
     private ProgressDialog initializingProgressDialog;
@@ -179,6 +181,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         measurementConstraintLayout = findViewById(R.id.measurementConstraintLayout);
         overallSizeHeadlineTV = findViewById(R.id.overallSizeHeadlineTV);
         lengthSectionHeadlineTV = findViewById(R.id.lengthSectionHeadlineTV);
+        makeLegendGreatAgainTV = findViewById(R.id.makeAllLayersInvisibleTV);
         mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
         mProjectId = mPrefs.getString(Consts.PROJECT_ID_KEY, "default");
         ProjectId.INSTANCE.setProjectId(mProjectId);
@@ -186,6 +189,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         displaySectionForShapeTV = findViewById(R.id.displaySectionForShapeTV);
 //        deletePointIV = findViewById(R.id.deletePointIV);
         mapProgress = findViewById(R.id.map_progress);
+        legendDetailsConstraintsLayout = findViewById(R.id.legendDetailsConstraintsLayout);
         sketchEditorStartIV = findViewById(R.id.sketchEditorIV);
         northBarIV = findViewById(R.id.northBarIV);
         northBarIV.setOnClickListener(new View.OnClickListener() {
@@ -387,7 +391,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             searchDialogFragment.show();
             FeatureSearchController.INSTANCE.unselectFeature();
         });
-
+        makeLegendGreatAgainTV.setOnClickListener(v -> {
+            FeatureLayerController.INSTANCE.makeAllLayersInvisible(mMapView, legendAdapter);
+        });
         searchFeatureIV = findViewById(R.id.searchFeatureIV);
         searchFeatureIV.setOnClickListener(v->{
             searchFeatureIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
@@ -773,21 +779,21 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private void toggleLayerList() {
 
         //TransitionManager.beginDelayedTransition(findViewById(R.id.mapContainer));
-        if (mLayerRecyclerView.getVisibility() == android.view.View.GONE){
+        if (legendDetailsConstraintsLayout.getVisibility() == android.view.View.GONE){
             //final ViewGroup.LayoutParams params = mLayerRecyclerView.getLayoutParams();
 /*            mLayerRecyclerView.setLayoutParams(new ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));*/
 
             toggleMenuBtn.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
 
-            mLayerRecyclerView.setVisibility(android.view.View.VISIBLE);
-            LegendLayerDisplayController.INSTANCE.animateOpen(mLayerRecyclerView);
+            legendDetailsConstraintsLayout.setVisibility(android.view.View.VISIBLE);
+            LegendLayerDisplayController.INSTANCE.animateOpen(legendDetailsConstraintsLayout);
             //mLayerRecyclerView.requestLayout();
 
 
             
         }else{
-            LegendLayerDisplayController.INSTANCE.animateClose(mLayerRecyclerView);
+            LegendLayerDisplayController.INSTANCE.animateClose(legendDetailsConstraintsLayout);
 /*            mLayerRecyclerView.setLayoutParams(new LinearLayout.LayoutParams(0,
                     ViewGroup.LayoutParams.MATCH_PARENT, 4));*/
             toggleMenuBtn.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);

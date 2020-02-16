@@ -19,6 +19,7 @@ class LegendSidebarAdapter(var context: Context, val interactionListener: MapLay
 
     val TAG = "Sidebaradapter"
     var mLayers = layers.toMutableList()
+    var layerAdapters = mutableListOf<MapLayerAdapter>()
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): LegendSidebarViewHolder {
         val v = LayoutInflater.from(context).inflate(R.layout.legend_sidebar_group_overlay, p0, false)
         return LegendSidebarViewHolder(v)
@@ -38,7 +39,9 @@ class LegendSidebarAdapter(var context: Context, val interactionListener: MapLay
     }
 
     override fun onBindViewHolder(p0: LegendSidebarViewHolder, p1: Int) {
-        p0.bind(mLayers[p1], context, interactionListener)
+        val adapter = MapLayerAdapter(context, interactionListener)
+        layerAdapters.add(adapter)
+        p0.bind(adapter, mLayers[p1], context)
         p0.setIsRecyclable(false)
         p0.itemView.setOnClickListener {
             if (p0.legendDetailsRecyclerView.visibility == View.GONE){
@@ -60,10 +63,8 @@ class LegendSidebarAdapter(var context: Context, val interactionListener: MapLay
 //        var legendGroupsCheckBox = v.legendGroupsCheckBox
         var legendDetailsRecyclerView = v.legendDetailsRecyclerView
         var legendIconIV = v.legendIconIV
-
-        fun bind(group: LegendGroup, context: Context, interactionListener: MapLayerAdapter.OnLegendItemInteraction){
+        fun bind(adapter: MapLayerAdapter, group: LegendGroup, context: Context){
             legendGroupNameTV.text = group.title
-            val adapter = MapLayerAdapter(context, interactionListener)
             adapter.setLayerList(group.layers)
             val layoutManager = LinearLayoutManager(context)
             legendDetailsRecyclerView.layoutManager = layoutManager

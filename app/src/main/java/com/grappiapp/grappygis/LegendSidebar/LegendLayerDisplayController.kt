@@ -2,6 +2,7 @@ package com.grappiapp.grappygis.LegendSidebar
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.support.constraint.ConstraintLayout
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
@@ -41,7 +42,9 @@ object LegendLayerDisplayController{
     fun makeLayersInvisible(mMap: MapView){
         val layers = mMap.map.operationalLayers
         layers.forEach {
-            it.isVisible = false
+            if (!it.name.contains(".jpg") && !it.name.contains(".tif") && !it.name.contains(".ecw")){
+                it.isVisible = false
+            }
         }
     }
     fun showLayersFromUser(mMap: MapView){
@@ -67,7 +70,7 @@ object LegendLayerDisplayController{
         return String(bytes)
     }
 
-    fun animateOpen(layout: RecyclerView){
+    fun animateOpen(layout: ConstraintLayout){
         val width = layout.width.toFloat()
         ObjectAnimator.ofFloat(layout,"translationX", width).apply {
             duration = 0
@@ -94,7 +97,7 @@ object LegendLayerDisplayController{
         })
     }
 
-    fun animateClose(layout: RecyclerView){
+    fun animateClose(layout: ConstraintLayout){
         val width = layout.width.toFloat()
         ObjectAnimator.ofFloat(layout,"translationX", width).apply{
             duration = 500

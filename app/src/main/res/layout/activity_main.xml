@@ -24,7 +24,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="198dp" />
+        tools:layout_editor_absoluteY="198dp" >
+
+
+    </com.esri.arcgisruntime.mapping.view.MapView>
 
     <android.support.constraint.Guideline
         android:id="@+id/legendGuideEnd"
@@ -63,7 +66,7 @@
             android:layout_marginBottom="8dp"
             android:src="@drawable/ic_star_black"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/northBarIV"
+            app:layout_constraintEnd_toStartOf="@+id/upperBar73GL"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -168,16 +171,6 @@
     </android.support.constraint.ConstraintLayout>
 
     <!-- Layer list -->
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/mapLayerRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/white_transparent"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/legendGuideEnd"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topBarContainer"></android.support.v7.widget.RecyclerView>
 
     <ImageView
         android:id="@+id/toggleAutoPanBtn"
@@ -353,6 +346,43 @@
 
     </android.support.constraint.ConstraintLayout>
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/legendDetailsConstraintsLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topBarContainer"
+        app:layout_constraintEnd_toStartOf="@+id/legendGuideEnd"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/makeAllLayersInvisibleTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/all_invisible"
+            android:gravity="center"
+            android:padding="8dp"
+            android:textSize="16sp"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            android:background="@color/white_90"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mapLayerRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white_transparent"
+            android:visibility="visible"
+            app:layout_constrainedHeight="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/makeAllLayersInvisibleTV" />
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>
 

@@ -15,6 +15,8 @@ import java.util.concurrent.ExecutionException
 import com.esri.arcgisruntime.data.*
 import com.esri.arcgisruntime.geometry.Geometry
 import com.esri.arcgisruntime.geometry.GeometryType
+import com.grappiapp.grappygis.LegendSidebar.LegendLayerDisplayController
+import com.grappiapp.grappygis.LegendSidebar.LegendSidebarAdapter
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
@@ -29,6 +31,12 @@ object FeatureLayerController {
     var clientFeatureCollection: ClientFeatureCollectionLayer? = null
     var collection2: ClientFeatureCollectionLayer? = null
 
+    fun makeAllLayersInvisible(mMapView: MapView, adapter: LegendSidebarAdapter){
+        LegendLayerDisplayController.makeLayersInvisible(mMapView)
+        adapter.layerAdapters.forEach {
+            it.notifyDataSetChanged()
+        }
+    }
     fun layerClicked(point: android.graphics.Point, mMap: MapView, onLayerClickListener: OnLayerClickListener){
         this.point = point
         identifyClickedLayerResults(point,mMap) { res ->
