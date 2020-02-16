@@ -390,13 +390,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
         searchFeatureIV = findViewById(R.id.searchFeatureIV);
         searchFeatureIV.setOnClickListener(v->{
-            resetMenuFunctions();
-            if (MainUpperMenu.INSTANCE.searchClicked()) {
-                searchFeatureIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
-                SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView, this);
-                searchDialogFragment.show();
-                FeatureSearchController.INSTANCE.unselectFeature();
-            }
+            searchFeatureIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+            SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView, this);
+            searchDialogFragment.show();
+            FeatureSearchController.INSTANCE.unselectFeature();
 
         });
 //        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);

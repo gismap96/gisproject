@@ -19,6 +19,8 @@ object FeatureSearchController {
     var featureLayerResult: FeatureLayer? = null
     var searchResults = mutableListOf<SearchResult>()
     var isFeatureSelected = false
+    var groupNumber = 0
+    var layerNumber = 0
 
     fun unselectFeature(){
         featureLayerResult?.let{
@@ -130,23 +132,3 @@ object FeatureSearchController {
         }
     }
 }
-
-//                var flag = false
-//                result.forEach {
-//                    Log.d(TAG, it.attributes.toString())
-//                    if (!flag){
-//                        it.attributes.forEach { att ->
-//                            val value = att.value.toString()
-//                            if (value.contains(search, ignoreCase = true)){
-//                                GeoViewController.moveToLocationByGeometry(it.geometry.extent, 10.0, mMapView)
-//                                flag = !flag
-//                            }
-//                        }
-//                    } else {
-//                        featureLayer.unselectFeature(it)
-//                    }
-//                }
-//                if (!flag){
-//                    val context = mMapView.context
-//                    Toast.makeText(context, "לא נמצאה ישות", Toast.LENGTH_SHORT).show()
-//                }

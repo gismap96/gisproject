@@ -35,6 +35,7 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
     var titles = mutableListOf<String>()
     var groupNum = 0
     var layerNum = 0
+    var isOldSearch = false
     val TAG = "searchDialog"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,10 +51,15 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
                 arrayAdapter ->  categoryForSearchSpinner.adapter = arrayAdapter
 
             }
+            val previousResults = FeatureSearchController.searchResults
+
             categoryForSearchSpinner.onItemSelectedListener = this
             layerSearchSpinner.onItemSelectedListener = this
             startSearchTV.setOnClickListener(this)
             closeSearchDialogTV.setOnClickListener(this)
+            if (previousResults.count() > 1){
+                setLastSearch()
+            }
         }
     }
 
@@ -92,6 +98,10 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
                         }
                         startSearchTV.isEnabled = true
                         searchAttributeInLayerET.isEnabled = true
+                        if (isOldSearch){
+                            layerSearchSpinner.setSelection(FeatureSearchController.layerNumber)
+                            isOldSearch = !isOldSearch
+                        }
                     }
 
                 }
@@ -103,6 +113,24 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
                 else -> {}
             }
         }
+    }
+
+    fun setLastSearch(){
+        val results = FeatureSearchController.searchResults
+        var layoutManager = LinearLayoutManager(context)
+        var recycler = searchMultiResultsRecyclerV
+        recycler.layoutManager = layoutManager
+        val adapter = SearchResultsAdapter(context, results, callback){
+            dismiss()
+        }
+        recycler.adapter = adapter
+        recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
+        val groupNumber = FeatureSearchController.groupNumber + 1
+        isOldSearch = true
+        categoryForSearchSpinner.setSelection(groupNumber)
+
+
+
     }
 
     fun validate(): Boolean{
@@ -163,6 +191,8 @@ class SearchDialogFragment(context: Context, val mMapView: MapView, val callback
                 }
                 recycler.adapter = adapter
                 recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
+                FeatureSearchController.groupNumber = groupNum
+                FeatureSearchController.layerNumber = layerNum
             } else {
                 val mResult = results[0]
                 val envelope = mResult.feature.geometry.extent
