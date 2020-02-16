@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Environment
 import android.os.StrictMode
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPointFeatureCollection
@@ -21,12 +22,14 @@ import com.grappiapp.grappygis.R
 import com.esri.arcgisruntime.geometry.Geometry
 import com.esri.arcgisruntime.geometry.GeometryType
 import com.google.firebase.storage.FirebaseStorage
+import com.grappiapp.grappygis.ProjectRelated.UserPolygon
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
 
 object ClientPhotoController {
+    val TAG = "PhotoCTRL"
     private const val TAKE_PHOTO_FOR_LAYER = 2
     private const val EDIT_PHOTO_FOR_LAYER = 3
     lateinit var imageURI: Uri
@@ -92,7 +95,20 @@ object ClientPhotoController {
                             UserPolyline.userPolyline!!.createFeature(attributes,geometry)
                             UserPolyline.userPolyline!!.uploadJSON(callback)
                         }
-                        GeometryType.POLYGON -> {}
+                        GeometryType.POLYGON -> {
+                            val progressDialog = ProgressDialog(activity)
+                            progressDialog.setTitle(activity.getString(R.string.updating_layer))
+                            progressDialog.setCancelable(false)
+                            progressDialog.show()
+                            UserPolygon.userPolygon!!.createFeature(attributes,geometry){
+                                UserPolygon.userPolygon!!.uploadJSON {
+                                    progressDialog.hide()
+                                    Log.d(TAG, geometry.toJson())
+                                    Toast.makeText(activity, activity.resources.getString(R.string.polygon_saved),Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
+                        }
                         GeometryType.MULTIPOINT -> {}
                         GeometryType.UNKNOWN -> {}
                     }

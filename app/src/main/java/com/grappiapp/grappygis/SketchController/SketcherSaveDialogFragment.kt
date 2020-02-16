@@ -26,6 +26,8 @@ import com.grappiapp.grappygis.ProjectRelated.UserPoints
 import com.grappiapp.grappygis.ProjectRelated.UserPolyline
 import com.grappiapp.grappygis.R
 import com.esri.arcgisruntime.mapping.view.MapView
+import com.grappiapp.grappygis.ClientFeatureLayers.ClientPolygonFeatureCollection
+import com.grappiapp.grappygis.ProjectRelated.UserPolygon
 import kotlinx.android.synthetic.main.fragment_dialog_sketcher_save_input.*
 import java.util.*
 
@@ -103,7 +105,12 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                 shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
             }
             SketcherEditorTypes.POLYLINE -> {}
-            SketcherEditorTypes.POLYGON -> {}
+            SketcherEditorTypes.POLYGON -> {
+                shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.polygon_layer)
+                shapeTypeSketcherSaveTV.setTextColor(context.resources.getColor(R.color.colorAccent))
+                val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_polygon_area_measurement)
+                shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
+            }
         }
         shapeTypeSketcherSaveTV.text
     }
@@ -163,9 +170,19 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                     layerListener?.successListener()
                 }
                 SketchEditorController.startSketching(SketcherEditorTypes.POLYLINE, mMapView)
+                UserPolyline.userPolyline!!.layer.isVisible = true
                 ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
             }
             SketcherEditorTypes.POLYGON -> {
+                if (UserPolygon.userPolygon == null){
+                    UserPolygon.userPolygon = ClientPolygonFeatureCollection(context, context.resources.getString(R.string.my_polyline),UUID.randomUUID().toString(),
+                            UserPolygon.grappiFields, MapProperties.spatialReference!!)
+                    mMapView.map.operationalLayers.add(UserPolygon.userPolygon!!.layer)
+                    layerListener?.successListener()
+                }
+                SketchEditorController.startSketching(SketcherEditorTypes.POLYGON, mMapView)
+                UserPolygon.userPolygon!!.layer.isVisible = true
+                ClientPhotoController.showPhotoQuestionDialog(context, attributes, geometry, callback!!, progressDialog!!)
 
             }
             SketcherEditorTypes.POINT -> {
@@ -176,6 +193,7 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                     layerListener?.successListener()
                 }
                 SketchEditorController.startSketching(SketcherEditorTypes.POINT, mMapView)
+                UserPoints.userPoints!!.layer.isVisible = true
                 ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
             }
         }

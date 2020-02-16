@@ -34,6 +34,8 @@ import android.widget.Toast;
 
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPointFeatureCollection;
+import com.grappiapp.grappygis.ClientFeatureLayers.ClientPolygonFeatureCollection;
+import com.grappiapp.grappygis.ClientFeatureLayers.GrappiField;
 import com.grappiapp.grappygis.ClientLayerPhotoController.ClientPhotoController;
 import com.grappiapp.grappygis.ClientLayersHandler.ClientLayersController;
 import com.grappiapp.grappygis.GeoViewController.GeoViewController;
@@ -48,6 +50,7 @@ import com.grappiapp.grappygis.LegendSidebar.LegendSidebarAdapter;
 import com.grappiapp.grappygis.ProjectRelated.MapProperties;
 import com.grappiapp.grappygis.ProjectRelated.ProjectId;
 import com.grappiapp.grappygis.ProjectRelated.UserPoints;
+import com.grappiapp.grappygis.ProjectRelated.UserPolygon;
 import com.grappiapp.grappygis.ProjectRelated.UserPolyline;
 import com.grappiapp.grappygis.SearchController.FeatureSearchController;
 import com.grappiapp.grappygis.SearchController.SearchDialogFragment;
@@ -175,6 +178,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         initializingProgressDialog.setMessage(getString(R.string.init_dialog_message));
         initializingProgressDialog.setCancelable(false);
         UserPolyline.INSTANCE.initFields();
+        UserPolygon.INSTANCE.initFields();
         UserPoints.INSTANCE.initFields();
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
@@ -287,21 +291,23 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     }
                     break;
                 case POLYGON:
-                    AlertDialog builder = new AlertDialog.Builder(this)
-                            .setTitle(R.string.coming_soon)
-                            .setMessage(R.string.no_support)
-
-                            // Specifying a listener allows you to take an action before dismissing the dialog.
-                            // The dialog is automatically dismissed when a dialog button is clicked.
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            })
-
-                            // A null listener allows the button to dismiss the dialog and take no further action.
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
-                    break;
+                    SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, MainActivity.this, MainActivity.this, progressDialog, false);
+                    layerAttributes.show();
+//                    AlertDialog builder = new AlertDialog.Builder(this)
+//                            .setTitle(R.string.coming_soon)
+//                            .setMessage(R.string.no_support)
+//
+//                            // Specifying a listener allows you to take an action before dismissing the dialog.
+//                            // The dialog is automatically dismissed when a dialog button is clicked.
+//                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                }
+//                            })
+//
+//                            // A null listener allows the button to dismiss the dialog and take no further action.
+//                            .setIcon(android.R.drawable.ic_dialog_alert)
+//                            .show();
+//                    break;
             }
 
         });
@@ -400,7 +406,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView, this);
             searchDialogFragment.show();
             FeatureSearchController.INSTANCE.unselectFeature();
-
         });
 //        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
 

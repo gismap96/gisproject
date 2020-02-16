@@ -1,2 +1,205 @@
 package com.grappiapp.grappygis.ClientFeatureLayers
 
+import android.content.Context
+import android.graphics.Color
+import android.support.v4.content.ContextCompat
+import android.util.Log
+import com.esri.arcgisruntime.data.Feature
+import com.esri.arcgisruntime.data.FeatureCollection
+import com.esri.arcgisruntime.data.FeatureCollectionTable
+import com.esri.arcgisruntime.data.Field
+import com.esri.arcgisruntime.geometry.*
+import com.esri.arcgisruntime.layers.FeatureCollectionLayer
+import com.esri.arcgisruntime.symbology.SimpleFillSymbol
+import com.esri.arcgisruntime.symbology.SimpleLineSymbol
+import com.esri.arcgisruntime.symbology.SimpleRenderer
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
+import com.grappiapp.grappygis.ProjectRelated.ProjectId
+import com.grappiapp.grappygis.R
+import org.json.JSONArray
+import org.json.JSONObject
+import java.text.DecimalFormat
+import java.util.*
+
+class ClientPolygonFeatureCollection(context: Context){
+    val TAG = "PolygonCollection"
+    var collection = FeatureCollection()
+    var layer = FeatureCollectionLayer(collection)
+    var features = mutableListOf<Feature>()
+    private var name = "$$##"
+    var spatialReference = SpatialReference.create(2039)
+    var id = UUID.randomUUID().toString()
+    var fields = mutableListOf<GrappiField>()
+    private var fieldsArray = mutableListOf<Field>()
+    private lateinit var featureCollectionTable: FeatureCollectionTable
+    var lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, ContextCompat.getColor(context, R.color.white) ,2f)
+    var fillSymbol = SimpleFillSymbol(SimpleFillSymbol.Style.VERTICAL, ContextCompat.getColor(context, R.color.colorAccent), lineSymbol)
+    var renderer = SimpleRenderer(fillSymbol)
+    constructor(context: Context, name: String, id: String, fields: MutableList<GrappiField>, spatialReference: SpatialReference): this(context){
+        collection = FeatureCollection()
+        layer = FeatureCollectionLayer(collection)
+        this.name = name
+        layer.name = "$name$$##"
+        generateIDField()
+        this.id = id
+        this.fields.plusAssign(fields)
+        this.spatialReference = spatialReference
+        initProperties()
+    }
+
+    fun createFeature(attributes: HashMap<String, Any>,geometry: Geometry){
+        val newAttributes = attributes.toMutableMap()
+        newAttributes["Id"] = UUID.randomUUID().toString()
+        val formatArea = calculateArea(geometry)
+        newAttributes["area"] = formatArea
+        val feature = featureCollectionTable.createFeature(newAttributes,geometry) as Feature
+        features.add(feature)
+        featureCollectionTable.addFeatureAsync(feature)
+    }
+    fun createFeature(attributes: HashMap<String, Any>,geometry: Geometry, callback: ()-> Unit){
+        val newAttributes = attributes.toMutableMap()
+        newAttributes["Id"] = UUID.randomUUID().toString()
+        val formatArea = calculateArea(geometry)
+        newAttributes["area"] = formatArea
+        val feature = featureCollectionTable.createFeature(newAttributes,geometry) as Feature
+        features.add(feature)
+        featureCollectionTable.addFeatureAsync(feature).addDoneListener(callback)
+    }
+
+    fun uploadJSON(callback: () -> Unit){
+        val mProjectId = ProjectId.projectId
+        val firebaseStorage = FirebaseStorage.getInstance()
+        val storageRef = firebaseStorage.reference
+        val username = FirebaseAuth.getInstance().uid
+        val childRef = storageRef.child("settlements/$mProjectId/userLayers/$username/polygon.json")
+        val json = generateARCGISJSON().toString().toByteArray()
+        childRef.putBytes(json).addOnSuccessListener {
+            callback()
+        }.addOnFailureListener{
+            e->
+            Log.d(TAG,e.toString())
+        }
+    }
+    private fun calculateArea(geometry: Geometry): String {
+        val polygon = geometry as Polygon
+        var area = GeometryEngine.area(polygon)
+        val decimalFormat = DecimalFormat("#.00")
+        val unit = spatialReference.unit.abbreviation
+        if (unit == "mi") {
+            area *= 1609.344
+        }
+        var formatArea = decimalFormat.format(area).toString() + "m²"
+        if (formatArea == ".00m") formatArea = "0.00m"
+        return formatArea
+    }
+    private fun initProperties(){
+        val setFields = fields.toSet()
+        fields.clear()
+        fields = setFields.toMutableList()
+        if (fields.size > 0){
+            fieldsTransform()
+        }
+        featureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POLYGON, spatialReference)
+        featureCollectionTable.renderer = renderer
+        collection.tables.add(featureCollectionTable)
+    }
+
+    private fun generateIDField(){
+        fields.add(GrappiField("Id", "esriFieldTypeString", "Id", 50))
+
+    }
+
+    private fun fieldsTransform(){
+        fields.forEach {
+            when {
+                it.type.contains("String") -> {
+                    var length = 255
+                    it.length?.let{
+                        length = it
+                    }
+                    fieldsArray.add(Field.createString(it.name,it.alias, length))
+                }
+                it.type.contains("Integer") -> fieldsArray.add(Field.createInteger(it.name,it.alias))
+                it.type.contains("Double") -> fieldsArray.add(Field.createDouble(it.name,it.alias))
+            }
+        }
+
+    }
+
+    fun generateARCGISJSON(): JSONObject{
+        var resultJson = JSONObject()
+        resultJson.put("displayFieldName", "")
+        resultJson.put("fieldAliases", generateFieldAliasesForJSON())
+        resultJson.put("geometryType", "esriGeometryPolygon")
+        resultJson.put("spatialReference", generateSpatialReferenceJSON())
+        resultJson.put("fields", generateFieldsElementForJSON())
+        resultJson.put("features", generateFeaturesForJSON())
+        return resultJson
+    }
+
+    private fun generateFeaturesForJSON(): JSONArray{
+        val json = JSONArray()
+        var objectIdNum = 1
+        features.forEach {
+            var featureJSON = JSONObject()
+            var attributesJSON = JSONObject()
+            attributesJSON.put("OBJECTID", objectIdNum)
+            val attributesMap = mutableMapOf<String, Any>()
+            it.attributes.forEach{
+                //if (it.key != "ObjectID") attributesJSON.put(it.key, it.value)
+                if (it.value != null){
+                    if (it.key != "ObjectID") attributesMap[it.key] = it.value
+                }
+
+            }
+            fields.forEach {
+                attributesJSON.put(it.name, attributesMap[it.name])
+            }
+            featureJSON.put("attributes", attributesJSON)
+            val geometryJson = JSONObject(it.geometry.toJson())
+            val geometryJSONArray = geometryJson.getJSONArray("rings")
+            val geometryWrapperJSON = JSONObject().put("rings", geometryJSONArray)
+            featureJSON.put("geometry", geometryWrapperJSON)
+            json.put(featureJSON)
+            objectIdNum ++
+        }
+        return json
+    }
+    private fun generateFieldAliasesForJSON(): JSONObject{
+        val json = JSONObject()
+        json.put("OBJECTID", "OBJECTID")
+        fieldsArray.forEach {
+            json.put(it.name, it.alias)
+        }
+        return json
+    }
+
+    private fun generateSpatialReferenceJSON():JSONObject{
+        val sr = JSONObject()
+        sr.put("wkid", spatialReference.wkid)
+        sr.put("latestWkid", spatialReference.wkid)
+        return sr
+    }
+
+    private fun generateFieldsElementForJSON(): JSONArray {
+        val json = JSONArray()
+        val objectid = JSONObject()
+        objectid.put("name", "OBJECTID")
+        objectid.put("type", "esriFieldTypeOID")
+        objectid.put("alias", "OBJECTID")
+        json.put(objectid)
+        fields.forEach {
+            val temp = JSONObject()
+            temp.put("name", it.name)
+            temp.put("type", it.type)
+            temp.put("alias", it.alias)
+            it.length?.let {
+                length-> temp.put("length", length)
+            }
+            json.put(temp)
+        }
+        return json
+
+    }
+}
