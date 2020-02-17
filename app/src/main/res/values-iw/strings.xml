@@ -97,4 +97,5 @@
     <string name="select_layer">בחר שכבה</string>
     <string name="all_invisible">כבה כל השכבות</string>
     <string name="polygon_saved">פוליגון נשמר</string>
+    <string name="my_polygon">הפוליגון שלי</string>
 </resources>

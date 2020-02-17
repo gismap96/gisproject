@@ -20,6 +20,7 @@ object ClientLayersController {
     val TAG = "clientLayerCtrl"
     var localClientPolylineFile = File.createTempFile("polyline", "json")
     var localPointsFile = File.createTempFile("points", "json")
+    var localPolygonFile = File.createTempFile("polygon", "json")
 
     fun fetchClientPolyline(callback: OnClientLayersJSONDownloaded){
         val mProjectId = ProjectId.projectId
@@ -46,6 +47,20 @@ object ClientLayersController {
             callback.onClientPointsJSONDownloaded(json)
         }.addOnFailureListener{
             callback.onEmptyClientPointsJSON()
+        }
+    }
+
+    fun fetchClientPolygon(callback: OnClientLayersJSONDownloaded){
+        val mProjectId = ProjectId.projectId
+        val firebaseStorage = FirebaseStorage.getInstance()
+        val storageRef = firebaseStorage.reference
+        val username = FirebaseAuth.getInstance().uid
+        val childRef = storageRef.child("settlements/$mProjectId/userLayers/$username/polygon.json")
+        childRef.getFile(localPolygonFile).addOnSuccessListener {
+            val json = JSONObject(generateJson(localPolygonFile))
+            callback.onClientPolygonJSONDownloaded(json)
+        }.addOnFailureListener{
+            callback.onEmptyClientPolygon()
         }
     }
 
@@ -112,7 +127,16 @@ object ClientLayersController {
                 }
             }
             SketcherEditorTypes.POLYGON ->{
-
+                val rings = json.getJSONArray("rings")
+                for (i in 0 until rings.length()){
+                    val innerArray = rings.getJSONArray(i)
+                    for (j in 0 until innerArray.length()){
+                        val x = innerArray.getJSONArray(j).get(0) as Double
+                        val y = innerArray.getJSONArray(j).get(1) as Double
+                        val point = PointBuilder(x, y).toGeometry()
+                        pointsCollection.add(point)
+                    }
+                }
             }
             SketcherEditorTypes.POINT -> {
                 val x = json.getDouble("x")
@@ -139,9 +163,10 @@ object ClientLayersController {
     }
     interface OnClientLayersJSONDownloaded{
         fun onClientPolylineJSONDownloaded(json: JSONObject)
-        fun onClientPolygonnJSONDownloaded(json: JSONObject)
         fun onEmptyClientPolylineJSON()
         fun onClientPointsJSONDownloaded(json: JSONObject)
         fun onEmptyClientPointsJSON()
+        fun onClientPolygonJSONDownloaded(json: JSONObject)
+        fun onEmptyClientPolygon()
     }
 }

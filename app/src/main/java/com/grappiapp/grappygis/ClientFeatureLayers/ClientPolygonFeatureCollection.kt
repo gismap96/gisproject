@@ -15,8 +15,14 @@ import com.esri.arcgisruntime.symbology.SimpleLineSymbol
 import com.esri.arcgisruntime.symbology.SimpleRenderer
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
+import com.grappiapp.grappygis.ClientLayersHandler.ClientLayersController
+import com.grappiapp.grappygis.ProjectRelated.MapProperties
 import com.grappiapp.grappygis.ProjectRelated.ProjectId
 import com.grappiapp.grappygis.R
+import com.grappiapp.grappygis.SketchController.SketcherEditorTypes
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.DecimalFormat
@@ -36,6 +42,7 @@ class ClientPolygonFeatureCollection(context: Context){
     var lineSymbol = SimpleLineSymbol(SimpleLineSymbol.Style.SOLID, ContextCompat.getColor(context, R.color.white) ,2f)
     var fillSymbol = SimpleFillSymbol(SimpleFillSymbol.Style.VERTICAL, ContextCompat.getColor(context, R.color.colorAccent), lineSymbol)
     var renderer = SimpleRenderer(fillSymbol)
+
     constructor(context: Context, name: String, id: String, fields: MutableList<GrappiField>, spatialReference: SpatialReference): this(context){
         collection = FeatureCollection()
         layer = FeatureCollectionLayer(collection)
@@ -47,7 +54,43 @@ class ClientPolygonFeatureCollection(context: Context){
         this.spatialReference = spatialReference
         initProperties()
     }
-
+    constructor(context: Context, json: JSONObject): this(context){
+        this.spatialReference = MapProperties.spatialReference
+        collection = FeatureCollection()
+        layer = FeatureCollectionLayer(collection)
+        layer.name = context.getString(R.string.my_polygon) + "$$##"
+        this.fieldsArray = ClientLayersController.generateFieldsArray(json)
+        this.fields = ClientLayersController.generateGrappiFields(json)
+        this.featureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POLYGON, spatialReference)
+        this.featureCollectionTable.renderer = renderer
+        this.collection.tables.add(featureCollectionTable)
+        createFeaturesFromJSON(json)
+        addFeatureList()
+    }
+    fun addFeatureList(){
+        featureCollectionTable.addFeaturesAsync(features)
+    }
+    fun createFeaturesFromJSON(json: JSONObject){
+        val features = json.getJSONArray("features")
+        val gson = Gson()
+        for (i in 0 until features.length()){
+            val item = features.getJSONObject(i)
+            item.getJSONObject("attributes").remove("OBJECTID")
+            val geometry = item.getJSONObject("geometry")
+            val pointsArray = ClientLayersController.generatePointsArray(SketcherEditorTypes.POLYGON, geometry, spatialReference)
+            val pointsCollection = PointCollection(pointsArray)
+            val polygon = PolygonBuilder(pointsCollection)
+            val polygonGeometry = polygon.toGeometry()
+            val attributesJSON = item.getJSONObject("attributes").toString()
+            val attTypeToken = object : TypeToken<HashMap<String, Any>>() {}.type
+            val mAttMap = gson.fromJson(attributesJSON, attTypeToken) as HashMap<String, Any>
+            generateFeatureForJSON(mAttMap, polygonGeometry)
+        }
+    }
+    fun generateFeatureForJSON(attributes: HashMap<String, Any>, geometry: Geometry){
+        val feature = featureCollectionTable.createFeature(attributes, geometry) as Feature
+        this.features.add(feature)
+    }
     fun createFeature(attributes: HashMap<String, Any>,geometry: Geometry){
         val newAttributes = attributes.toMutableMap()
         newAttributes["Id"] = UUID.randomUUID().toString()

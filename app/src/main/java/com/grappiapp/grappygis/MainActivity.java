@@ -1024,11 +1024,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     @Override
-    public void onClientPolygonnJSONDownloaded(@NotNull JSONObject json) {
-        ClientLayersController.INSTANCE.fetchClientPoints(this);
-    }
-
-    @Override
     public void onEmptyClientPolylineJSON() {
         ClientLayersController.INSTANCE.fetchClientPoints(this);
 //        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
@@ -1119,12 +1114,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     public void onClientPointsJSONDownloaded(@NotNull JSONObject json) {
         UserPoints.INSTANCE.setUserPoints(new ClientPointFeatureCollection(this, json));
         mMapView.getMap().getOperationalLayers().add(UserPoints.INSTANCE.getUserPoints().getLayer());
-        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+        ClientLayersController.INSTANCE.fetchClientPolygon(this);
     }
 
     @Override
     public void onEmptyClientPointsJSON() {
-        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+        ClientLayersController.INSTANCE.fetchClientPolygon(this);
     }
 
     @Override
@@ -1138,5 +1133,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             GeoViewController.INSTANCE.moveToLocationByGeometry(envelope, mMapView);
         }
         searchFeatureIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+    }
+
+    @Override
+    public void onClientPolygonJSONDownloaded(@NotNull JSONObject json) {
+        UserPolygon.INSTANCE.setUserPolygon(new ClientPolygonFeatureCollection(this, json));
+        mMapView.getMap().getOperationalLayers().add(UserPolygon.INSTANCE.getUserPolygon().getLayer());
+        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+    }
+
+    @Override
+    public void onEmptyClientPolygon() {
+        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
     }
 }

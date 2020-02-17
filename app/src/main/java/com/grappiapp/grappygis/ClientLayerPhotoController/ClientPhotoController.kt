@@ -106,7 +106,6 @@ object ClientPhotoController {
                                     Log.d(TAG, geometry.toJson())
                                     Toast.makeText(activity, activity.resources.getString(R.string.polygon_saved),Toast.LENGTH_SHORT).show()
                                 }
-
                             }
                         }
                         GeometryType.MULTIPOINT -> {}

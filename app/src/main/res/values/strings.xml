@@ -98,6 +98,7 @@
     <string name="select_layer">Select Layer</string>
     <string name="all_invisible">Uncheck All</string>
     <string name="polygon_saved">Polygon Saved</string>
+    <string name="my_polygon">My Polygon</string>
 
 
 </resources>
