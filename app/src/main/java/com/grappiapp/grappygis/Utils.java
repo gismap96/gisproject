@@ -7,9 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
@@ -55,6 +57,10 @@ public class Utils {
         builder.show();
     }
 
+    public static boolean isRTL(Context context){
+        Configuration config = context.getResources().getConfiguration();
+        return config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+    }
     public static void setLanguage(Context context, String selectedLocale){
         Resources res = context.getResources();
 // Change locale settings in the app.

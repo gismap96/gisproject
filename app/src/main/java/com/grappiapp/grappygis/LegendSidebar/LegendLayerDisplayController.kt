@@ -13,6 +13,7 @@ import com.esri.arcgisruntime.mapping.view.MapView
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.JsonParser
+import com.grappiapp.grappygis.Utils
 import java.io.File
 import java.io.FileInputStream
 
@@ -71,7 +72,12 @@ object LegendLayerDisplayController{
     }
 
     fun animateOpen(layout: ConstraintLayout){
-        val width = layout.width.toFloat()
+        var width = layout.width.toFloat()
+        var direction = -1f
+        if (Utils.isRTL(layout.context)){
+            direction = 1f
+        }
+        width *= direction
         ObjectAnimator.ofFloat(layout,"translationX", width).apply {
             duration = 0
             start()
@@ -98,7 +104,12 @@ object LegendLayerDisplayController{
     }
 
     fun animateClose(layout: ConstraintLayout){
-        val width = layout.width.toFloat()
+        var width = layout.width.toFloat()
+        var direction = -1f
+        if (Utils.isRTL(layout.context)){
+            direction = 1f
+        }
+        width *= direction
         ObjectAnimator.ofFloat(layout,"translationX", width).apply{
             duration = 500
             start()

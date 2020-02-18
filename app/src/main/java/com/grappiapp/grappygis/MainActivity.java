@@ -163,10 +163,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mPrefs = getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE);
-        String selectedLocale = mPrefs.getString(Consts.CHOSEN_LANG_KEY, null);
-        if (selectedLocale != null) {
-            Utils.setLanguage(MainActivity.this, selectedLocale);
-        }
+//        String selectedLocale = mPrefs.getString(Consts.CHOSEN_LANG_KEY, null);
+//        if (selectedLocale != null) {
+//            Utils.setLanguage(MainActivity.this, selectedLocale);
+//        }
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         FirebaseApp.initializeApp(this);
