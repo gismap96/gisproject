@@ -99,4 +99,5 @@
     <string name="all_invisible">Uncheck All</string>
     <string name="polygon_saved">Polygon Saved</string>
     <string name="my_polygon">My Polygon</string>
+    <string name="empty_polygon">Empty Polygon</string>
 </resources>

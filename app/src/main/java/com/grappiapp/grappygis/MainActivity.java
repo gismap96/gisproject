@@ -107,7 +107,7 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
         , LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish,
         DialogLayerDetailsFragment.OnEditSelectedListener, MapLayerAdapter.OnLegendItemInteraction, SearchResultsAdapter.OnSearchResultClicked
-        , ClientPointFeatureCollection.OnPointsUploaded{
+        , ClientPointFeatureCollection.OnPointsUploaded, ClientPolygonFeatureCollection.OnClientPolygonUploadFinished{
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
@@ -283,6 +283,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                             SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, MainActivity.this, MainActivity.this, progressDialog, false);
                             layerAttributes.show();
                         }
+                        //end of edit mode
                     } else {
                         Toast toast = Toast.makeText(MainActivity.this, R.string.empty_polyline, Toast.LENGTH_SHORT);
                         toast.setGravity(Gravity.CENTER,0,0);
@@ -291,23 +292,24 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     }
                     break;
                 case POLYGON:
-                    SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, MainActivity.this, MainActivity.this, progressDialog, false);
-                    layerAttributes.show();
-//                    AlertDialog builder = new AlertDialog.Builder(this)
-//                            .setTitle(R.string.coming_soon)
-//                            .setMessage(R.string.no_support)
-//
-//                            // Specifying a listener allows you to take an action before dismissing the dialog.
-//                            // The dialog is automatically dismissed when a dialog button is clicked.
-//                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                }
-//                            })
-//
-//                            // A null listener allows the button to dismiss the dialog and take no further action.
-//                            .setIcon(android.R.drawable.ic_dialog_alert)
-//                            .show();
-//                    break;
+                    Geometry geometry = SketchEditorController.INSTANCE.getGeometry();
+                    if (geometry != null && !geometry.isEmpty()) {
+                        if (SketchEditorController.INSTANCE.isEditMode()) {
+                            String layerId = FeatureLayerController.INSTANCE.getLayerId();
+                            SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
+                            UserPolygon.INSTANCE.getUserPolygon().editFeatureGeometry(layerId, geometry, MainActivity.this);
+                            resetMenuFunctions();
+                        } else {
+                            SketcherSaveDialogFragment layerAttributes = new SketcherSaveDialogFragment(MainActivity.this, mMapView, MainActivity.this, MainActivity.this, progressDialog, false);
+                            layerAttributes.show();
+                        }
+                        //end edit mode
+                    } else {
+                        Toast toast = Toast.makeText(MainActivity.this, R.string.empty_polygon, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                        return;
+                    }
             }
 
         });
@@ -337,7 +339,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         mDistanceOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(mDistanceOverlay);
         locationDisplay = mMapView.getLocationDisplay();
-        mMapView.addNavigationChangedListener(navigationChangedEvent -> GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView));
+//        mMapView.addNavigationChangedListener(navigationChangedEvent -> GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView));
 
 //        ArcGISMap map = new ArcGISMap(Basemap.Type.TOPOGRAPHIC, 34.056295, -117.195800, 16);
 
@@ -816,8 +818,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case EDIT_PHOTO_FOR_LAYER:
+                GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
                 if (resultCode == Activity.RESULT_OK){
-                    GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView);
                     Uri uri = ClientPhotoController.INSTANCE.getImageURI();
                     String layerID = FeatureLayerController.INSTANCE.getLayerId();
                     switch (FeatureLayerController.INSTANCE.getShapeType()){
@@ -829,16 +831,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                             UserPolyline.INSTANCE.getUserPolyline().editFeatureImage(this, layerID, uri);
                             break;
                         case POLYGON:
+                            UserPolygon.INSTANCE.getUserPolygon().editFeatureImage(this, layerID, uri);
                             break;
                     }
 
                 }
                 break;
             case TAKE_PHOTO_FOR_LAYER:
+                GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView);
                 if (resultCode == Activity.RESULT_OK){
                     this.progressDialog.show();
                     Uri uri = ClientPhotoController.INSTANCE.getImageURI();
-                    ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this, MainActivity.this);
+                    ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this, MainActivity.this, MainActivity.this);
                 } else {
                     switch (ClientPhotoController.INSTANCE.getType()){
                         case POINT:
@@ -851,6 +855,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                             UserPolyline.INSTANCE.getUserPolyline().uploadJSON(this);
                             break;
                         case POLYGON:
+                            UserPolygon.INSTANCE.getUserPolygon().uploadJSON(this);
                             break;
                         case MULTIPOINT:
                             break;
@@ -866,6 +871,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     protected void onPause(){
+        GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView);
         mMapView.pause();
         super.onPause();
     }
@@ -1054,6 +1060,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 editGeometry = UserPolyline.INSTANCE.getUserPolyline().getFeatureGeometry(layerId);
                 break;
             case POLYGON:
+                editGeometry = UserPolygon.INSTANCE.getUserPolygon().getFeatureGeometry(layerId);
                 break;
         }
         if (editGeometry == null){
@@ -1145,5 +1152,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onEmptyClientPolygon() {
         LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+    }
+
+    @Override
+    public void onClientPolygonUploaded() {
+        progressDialog.dismiss();
     }
 }

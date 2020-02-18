@@ -78,6 +78,7 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                             rowValues.add(RowValue("imageURL", it.value))
                         }
                     }
+                    "area"-> rowValues.add(RowValue(context.getString(R.string.area), it.value))
                 }
             }
         }

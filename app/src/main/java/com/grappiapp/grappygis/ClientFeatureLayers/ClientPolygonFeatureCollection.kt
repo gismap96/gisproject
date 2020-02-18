@@ -1,15 +1,20 @@
 package com.grappiapp.grappygis.ClientFeatureLayers
 
+import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.Color
+import android.net.Uri
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.widget.Toast
 import com.esri.arcgisruntime.data.Feature
 import com.esri.arcgisruntime.data.FeatureCollection
 import com.esri.arcgisruntime.data.FeatureCollectionTable
 import com.esri.arcgisruntime.data.Field
 import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer
+import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.symbology.SimpleFillSymbol
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol
 import com.esri.arcgisruntime.symbology.SimpleRenderer
@@ -18,11 +23,14 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
+import com.grappiapp.grappygis.ClientLayerPhotoController.ClientPhotoController
 import com.grappiapp.grappygis.ClientLayersHandler.ClientLayersController
+import com.grappiapp.grappygis.GeoViewController.GeoViewController
 import com.grappiapp.grappygis.ProjectRelated.MapProperties
 import com.grappiapp.grappygis.ProjectRelated.ProjectId
 import com.grappiapp.grappygis.R
 import com.grappiapp.grappygis.SketchController.SketcherEditorTypes
+import com.squareup.picasso.Picasso
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.DecimalFormat
@@ -124,6 +132,22 @@ class ClientPolygonFeatureCollection(context: Context){
             Log.d(TAG,e.toString())
         }
     }
+    fun uploadJSON(callback: OnClientPolygonUploadFinished){
+        val mProjectId = ProjectId.projectId
+        val firebaseStorage = FirebaseStorage.getInstance()
+        val storageRef = firebaseStorage.reference
+        val username = FirebaseAuth.getInstance().uid
+        val childRef = storageRef.child("settlements/$mProjectId/userLayers/$username/polygon.json")
+        val json = generateARCGISJSON().toString().toByteArray()
+        childRef.putBytes(json).addOnSuccessListener {
+            callback.onClientPolygonUploaded()
+        }.addOnFailureListener{
+            e->
+            callback.onClientPolygonUploaded()
+            Log.d(TAG,e.toString())
+        }
+    }
+
     private fun calculateArea(geometry: Geometry): String {
         val polygon = geometry as Polygon
         var area = GeometryEngine.area(polygon)
@@ -244,5 +268,154 @@ class ClientPolygonFeatureCollection(context: Context){
         }
         return json
 
+    }
+    fun identifyFeatureById(id: String): Int{
+        var count = 0
+        features.forEach {
+            if (it.attributes["Id"] == id) return count
+            count++
+        }
+        return -1
+    }
+    fun editFeatureGeometry(id: String, geometry: Geometry, context: Context){
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        val featureNum = identifyFeatureById(id)
+        val editFeature = features[featureNum]
+        val attributes = editFeature.attributes
+        val newArea = calculateArea(geometry)
+        attributes["area"] = newArea
+        val newFeature = featureCollectionTable.createFeature(attributes,geometry) as Feature
+        features.removeAt(featureNum)
+        features.add(newFeature)
+        featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
+            featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
+                uploadJSON{
+                    progressDialog.dismiss()
+                    Toast.makeText(context, context.resources.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    fun editFeatureAttributes(context: Context,id: String, attributes: HashMap<String, Any>){
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        val featureNum = identifyFeatureById(id)
+        val editFeature = features[featureNum]
+        val newAttributes = attributes.toMutableMap()
+        newAttributes["Id"] = UUID.randomUUID().toString()
+        newAttributes["imageURL"] = editFeature.attributes["imageURL"]!!
+        newAttributes["area"] = editFeature.attributes["area"]!!
+        val geometry = editFeature.geometry
+        val newFeature = featureCollectionTable.createFeature(newAttributes, geometry) as Feature
+        features.add(newFeature)
+        features.removeAt(featureNum)
+        featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
+            featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
+                uploadJSON {
+                    progressDialog.dismiss()
+                }
+            }
+        }
+    }
+    fun getFeatureGeometry(id: String):Geometry?{
+        val featureNum = identifyFeatureById(id)
+        if (featureNum >= 0){
+            val mFeature = features[featureNum]
+            return mFeature.geometry
+        }
+        return null
+    }
+
+    fun deleteFeature(layerId: String, context: Activity){
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        val objectID = identifyFeatureById(layerId)
+        if (objectID < 0){
+            Toast.makeText(context, "failed to update layer", Toast.LENGTH_LONG).show()
+        }
+        featureCollectionTable.deleteFeatureAsync(features[objectID]).addDoneListener{
+            val url = features[objectID].attributes["imageURL"] as String
+            val storage = FirebaseStorage.getInstance()
+            if (url.count() > 5) {
+                val reference = storage.getReferenceFromUrl(url)
+                reference.delete().addOnSuccessListener {
+                    features.removeAt(objectID)
+                    uploadJSON{
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                    }
+                }.addOnFailureListener {
+                    features.removeAt(objectID)
+                    uploadJSON{
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                features.removeAt(objectID)
+                uploadJSON{
+                    progressDialog.dismiss()
+                    Toast.makeText(context, context.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }
+
+    }
+    fun editFeatureImage(context: Context, id: String, uri: Uri?){
+        val featureNum = identifyFeatureById(id)
+        uri?.let {mUri ->
+            val progressDialog = ProgressDialog(context)
+            progressDialog.setTitle(context.getString(R.string.updating_layer))
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+            val storage = FirebaseStorage.getInstance()
+            val reference = storage.reference
+            var ref = reference.child("settlements/" + ProjectId.projectId + "/images/" + UUID.randomUUID().toString())
+            if (features[featureNum].attributes["imageURL"].toString().trim() != ""){
+                val oldURL = features[featureNum].attributes["imageURL"] as String
+                ref = storage.getReferenceFromUrl(oldURL)
+                Picasso.get().invalidate(oldURL)
+                val compressedImage = ClientPhotoController.reduceImageSize(mUri)
+                compressedImage?.let{
+                    ref.putFile(it).addOnSuccessListener {
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.getString(R.string.layer_updated),Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } else {
+                val feature = features[featureNum]
+                val compressedImage = ClientPhotoController.reduceImageSize(mUri)
+                compressedImage?.let{
+                    ref.putFile(it).addOnSuccessListener {
+                        ref.downloadUrl.addOnSuccessListener {
+                            uri->
+                            features[featureNum].attributes["imageURL"] = uri.toString()
+                            featureCollectionTable.updateFeatureAsync(feature).addDoneListener {
+                                uploadJSON{
+                                    progressDialog.dismiss()
+                                    Toast.makeText(context, context.getString(R.string.layer_updated),Toast.LENGTH_SHORT).show()
+                                }
+
+                            }
+
+                        }
+
+                    }
+                }
+            }
+
+        }
+    }
+    interface OnClientPolygonUploadFinished{
+        fun onClientPolygonUploaded()
     }
 }

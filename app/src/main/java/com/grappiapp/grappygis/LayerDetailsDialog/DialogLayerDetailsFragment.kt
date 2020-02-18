@@ -28,6 +28,8 @@ import com.grappiapp.grappygis.SketchController.SketcherEditorTypes
 import com.grappiapp.grappygis.SketchController.SketcherSaveDialogFragment
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import com.esri.arcgisruntime.mapping.view.MapView
+import com.grappiapp.grappygis.GeoViewController.GeoViewController
+import com.grappiapp.grappygis.ProjectRelated.UserPolygon
 import java.util.concurrent.ExecutionException
 
 
@@ -49,27 +51,35 @@ class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, inter
         recycler.adapter = adapter
         recycler.addItemDecoration(DividerItemDecoration(recycler.context, DividerItemDecoration.VERTICAL))
         var finalHeadline = headline.replace("\$\$##", "")
-        if (headline.contains(activity.resources.getString(R.string.my_points))) {
-            finalHeadline = context.resources.getString(R.string.my_points)
-            layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_star_blue))
-        } else if (headline.contains(activity.resources.getString(R.string.my_polyline))){
-            finalHeadline = activity.resources.getString(R.string.my_polyline)
-            layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_polyline_soft_red))
-        } else {
-            var layerLegend = identifiedLayer.layerContent.fetchLegendInfosAsync()
-            layerLegend.addDoneListener {
-                try {
-                    var legendInfo = layerLegend.get()
-                    if (legendInfo.size > 0) {
-                        val legendSymbol = legendInfo[0].symbol
-                        val symbolSwatch = legendSymbol.createSwatchAsync(context, Color.TRANSPARENT)
-                        val symbolBitmap = symbolSwatch.get()
-                        layerIconForDetailsDialog.setImageBitmap(symbolBitmap)
+        when {
+            headline.contains(activity.resources.getString(R.string.my_points)) -> {
+                finalHeadline = context.resources.getString(R.string.my_points)
+                layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_star_blue))
+            }
+            headline.contains(activity.resources.getString(R.string.my_polyline)) -> {
+                finalHeadline = activity.resources.getString(R.string.my_polyline)
+                layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_polyline_soft_red))
+            }
+            headline.contains(context.getString(R.string.my_polygon)) -> {
+                finalHeadline = context.getString(R.string.my_polygon)
+                layerIconForDetailsDialog.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_polygon_area_measurement))
+            }
+            else -> {
+                var layerLegend = identifiedLayer.layerContent.fetchLegendInfosAsync()
+                layerLegend.addDoneListener {
+                    try {
+                        var legendInfo = layerLegend.get()
+                        if (legendInfo.size > 0) {
+                            val legendSymbol = legendInfo[0].symbol
+                            val symbolSwatch = legendSymbol.createSwatchAsync(context, Color.TRANSPARENT)
+                            val symbolBitmap = symbolSwatch.get()
+                            layerIconForDetailsDialog.setImageBitmap(symbolBitmap)
+                        }
+                    } catch (e: InterruptedException) {
+
+                    } catch (e: ExecutionException) {
+
                     }
-                } catch (e: InterruptedException) {
-
-                } catch (e: ExecutionException) {
-
                 }
             }
         }
@@ -125,7 +135,11 @@ class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, inter
                                                 it.deleteFeature(layerId, context)
                                             }
                                         }
-                                        SketcherEditorTypes.POLYGON -> {}
+                                        SketcherEditorTypes.POLYGON -> {
+                                            UserPolygon.userPolygon?.let{
+                                                it.deleteFeature(layerId, context)
+                                            }
+                                        }
                                     }
 
                                     dismiss()
@@ -155,6 +169,7 @@ class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, inter
             }
             R.id.editFeatureImageIV->{
                 dismiss()
+                GeoViewController.calculateAndSetCurrentLocation(mMap)
                 ClientPhotoController.editPhoto(context)
             }
         }

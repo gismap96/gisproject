@@ -21,7 +21,10 @@ import com.grappiapp.grappygis.ProjectRelated.UserPolyline
 import com.grappiapp.grappygis.R
 import com.esri.arcgisruntime.geometry.Geometry
 import com.esri.arcgisruntime.geometry.GeometryType
+import com.esri.arcgisruntime.mapping.view.GeoView
 import com.google.firebase.storage.FirebaseStorage
+import com.grappiapp.grappygis.ClientFeatureLayers.ClientPolygonFeatureCollection
+import com.grappiapp.grappygis.GeoViewController.GeoViewController
 import com.grappiapp.grappygis.ProjectRelated.UserPolygon
 import java.io.File
 import java.io.FileInputStream
@@ -38,7 +41,6 @@ object ClientPhotoController {
     lateinit var attributes: HashMap<String, Any>
     lateinit var geometry: Geometry
     lateinit var type: GeometryType
-
 
     fun editPhoto(context: Activity){
         val builder = StrictMode.VmPolicy.Builder() // for image intent
@@ -116,7 +118,9 @@ object ClientPhotoController {
                 .setIcon(R.drawable.ic_add_photo)
                 .show()
     }
-    fun uploadImage(uri: Uri?, context: Activity,callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish, callbackPoint: ClientPointFeatureCollection.OnPointsUploaded){
+
+
+    fun uploadImage(uri: Uri?, context: Activity,callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish, callbackPoint: ClientPointFeatureCollection.OnPointsUploaded, callbackPolygon: ClientPolygonFeatureCollection.OnClientPolygonUploadFinished){
         uri?.let{
             uri->
             val ref = reference.child("settlements/" + ProjectId.projectId + "/images/" + UUID.randomUUID().toString())
@@ -136,7 +140,11 @@ object ClientPhotoController {
                                 UserPolyline.userPolyline!!.createFeature(attributes, geometry)
                                 UserPolyline.userPolyline!!.uploadJSON(callback)
                             }
-                            GeometryType.POLYGON -> { }
+                            GeometryType.POLYGON -> {
+                                UserPolygon.userPolygon!!.createFeature(attributes, geometry){
+                                    UserPolygon.userPolygon!!.uploadJSON(callbackPolygon)
+                                }
+                            }
                             GeometryType.MULTIPOINT -> {}
                             GeometryType.UNKNOWN -> {}
                         }

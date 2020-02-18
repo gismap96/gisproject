@@ -133,7 +133,9 @@ object FeatureLayerController {
             GeometryType.POLYLINE -> {
                 shapeType = SketcherEditorTypes.POLYLINE
             }
-            GeometryType.POLYGON -> {}
+            GeometryType.POLYGON -> {
+                shapeType = SketcherEditorTypes.POLYGON
+            }
             GeometryType.MULTIPOINT -> {}
             GeometryType.UNKNOWN -> {}
         }

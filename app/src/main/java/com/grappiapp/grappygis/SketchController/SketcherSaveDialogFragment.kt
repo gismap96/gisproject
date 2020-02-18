@@ -27,6 +27,7 @@ import com.grappiapp.grappygis.ProjectRelated.UserPolyline
 import com.grappiapp.grappygis.R
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPolygonFeatureCollection
+import com.grappiapp.grappygis.GeoViewController.GeoViewController
 import com.grappiapp.grappygis.ProjectRelated.UserPolygon
 import kotlinx.android.synthetic.main.fragment_dialog_sketcher_save_input.*
 import java.util.*
@@ -55,7 +56,7 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
             when (shapeType){
                 SketcherEditorTypes.POINT -> {
                     shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.points_layer)
-                    shapeTypeSketcherSaveTV.setTextColor(context.resources.getColor(R.color.light_blue))
+                    shapeTypeSketcherSaveTV.setTextColor(ContextCompat.getColor(context, R.color.light_blue))
                     val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_star_blue)
                     shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
                     val featureNum = UserPoints.userPoints!!.identifyFeatureById(layerID)
@@ -92,7 +93,23 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                     }
                 }
                 SketcherEditorTypes.POLYGON -> {
-
+                    shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.polygon_layer)
+                    shapeTypeSketcherSaveTV.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+                    val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_polygon_area_measurement)
+                    shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
+                    val featureNum = UserPolygon.userPolygon!!.identifyFeatureById(layerID)
+                    if (featureNum >= 0 ){
+                        val feature = UserPolygon.userPolygon!!.features[featureNum]
+                        val featureAttributes = feature.attributes
+                        addDescriptionSketcherSaveET.setText(featureAttributes["description"].toString())
+                        addCategoryToSketcherSaveET.setText(featureAttributes["category"].toString())
+                        addNumberToSketcherSaveET.setText(featureAttributes["number"].toString())
+                        var checked = false
+                        if (featureAttributes["isUpdated"] == "yes"){
+                            checked = true
+                        }
+                        updateToSystemSketchSaveSW.isChecked = checked
+                    }
                 }
             }
             return
@@ -100,14 +117,14 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
         when (SketchEditorController.sketcherEditorTypes){
             SketcherEditorTypes.POINT -> {
                 shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.points_layer)
-                shapeTypeSketcherSaveTV.setTextColor(context.resources.getColor(R.color.light_blue))
+                shapeTypeSketcherSaveTV.setTextColor(ContextCompat.getColor(context, R.color.light_blue))
                 val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_star_blue)
                 shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
             }
             SketcherEditorTypes.POLYLINE -> {}
             SketcherEditorTypes.POLYGON -> {
                 shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.polygon_layer)
-                shapeTypeSketcherSaveTV.setTextColor(context.resources.getColor(R.color.colorAccent))
+                shapeTypeSketcherSaveTV.setTextColor(ContextCompat.getColor(context, R.color.colorAccent))
                 val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_polygon_area_measurement)
                 shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
             }
@@ -131,6 +148,7 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
         attributes.put("number", number)
         attributes.put("isUpdated", isUpdated)
         attributes.put("imageURL", "")
+        GeoViewController.calculateAndSetCurrentLocation(mMapView)
         if (isEditMode){
             val layerId = FeatureLayerController.layerId
             val type = FeatureLayerController.shapeType
@@ -141,7 +159,9 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                 SketcherEditorTypes.POLYLINE -> {
                     UserPolyline.userPolyline!!.editFeatureAttributes(context, layerId, attributes)
                 }
-                SketcherEditorTypes.POLYGON -> { }
+                SketcherEditorTypes.POLYGON -> {
+                    UserPolygon.userPolygon!!.editFeatureAttributes(context, layerId, attributes)
+                }
             }
 
             dismiss()
