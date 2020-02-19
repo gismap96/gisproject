@@ -92,6 +92,8 @@ class DialogLayerAdapter(val context: Context,var layerNames: ArrayList<String>,
                 mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_polyline_soft_red))
             } else if (layerTitle.contains("\$\$##") && layerTitle.contains(context.getString(R.string.my_points))){
                 mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_star_blue))
+            } else if (layerTitle.contains("\$\$##") && layerTitle.contains(context.getString(R.string.my_polygon))) {
+                mLayerSelectionDialogLegendImage.setImageBitmap(getBitmapFromVectorDrawable(R.drawable.ic_polygon_area_measurement))
             }
         }
     }
