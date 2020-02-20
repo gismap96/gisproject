@@ -9,14 +9,14 @@ import android.os.Build
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import com.esri.arcgisruntime.data.*
-import com.esri.arcgisruntime.geometry.GeometryType
-import com.esri.arcgisruntime.geometry.SpatialReference
+import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.layers.FeatureLayer
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.symbology.*
 import com.grappiapp.grappygis.R
 import com.grappiapp.grappygis.SketchController.SketcherEditorTypes
+import java.text.DecimalFormat
 import java.util.*
 
 class FlexibleFeatureLayer (val context: Context){
@@ -30,6 +30,7 @@ class FlexibleFeatureLayer (val context: Context){
     var features = mutableListOf<Feature>()
     private var name = "$$##"
     var id = UUID.randomUUID().toString()
+    var hasCalculatedAttribute = false
     var fields = mutableListOf<GrappiField>()
     val featureSearchMap = mutableMapOf<String, Feature>() // <ID, Feature>
     private var fieldsArray = mutableListOf<Field>()
@@ -38,41 +39,93 @@ class FlexibleFeatureLayer (val context: Context){
     lateinit var spatialReference: SpatialReference
     lateinit var renderer: SimpleRenderer
 
-    constructor(context: Context, name: String, grappiFields: MutableList<GrappiField>, spatialReference: SpatialReference, type: SketcherEditorTypes, mapView: MapView): this(context){
+    constructor(context: Context, name: String, grappiFields: MutableList<GrappiField>, spatialReference: SpatialReference, type: SketcherEditorTypes, mapView: MapView, hasCalculatedAttribute: Boolean): this(context) {
         collection = FeatureCollection() //create feature collection
-        layer = FeatureCollectionLayer(collection) //create layer
+        //create layer:
+        layer = FeatureCollectionLayer(collection)
         this.name = name
-        this. fields = grappiFields
+        this.layer.name = "$name##$$"
+        //initializing fields:
+        this.fields = grappiFields
         generateIDField()
         val setFields = fields.toSet()
-        this.type = type
         this.spatialReference = spatialReference
         fields.clear()
         fields = setFields.toMutableList()
         fieldsTransform()
+        this.hasCalculatedAttribute = hasCalculatedAttribute
+        this.id = UUID.randomUUID().toString() //for future identification
+        //generate renderer according to type:
+        this.type = type // geometry type -> Grappi enum
         generateRenderer(context)
-        this.spatialReference = spatialReference
-        //create feature collction table
-        createFeatureCollectionTable()
+        //create feature collction table:
+        featureCollectionTable = FeatureCollectionTable(fieldsArray, type.getARCGISGeometryType(), spatialReference)
         featureCollectionTable.renderer = renderer
         this.collection.tables.add(featureCollectionTable)
+        //add layer to map view:
         mapView.map.operationalLayers.add(layer)
     }
 
-    private fun createFeatureCollectionTable(){
-        var mFeatureCollectionTable: FeatureCollectionTable? = null
-        when (type){
+    fun createFeature(attributes: HashMap<String, Any>, geometry: Geometry, callback: ()-> Unit){
+        val newAttributes = attributes.toMutableMap()
+        newAttributes["Id"] = UUID.randomUUID().toString()
+        if (hasCalculatedAttribute){
+            val calculatedAtt = addCalculatedAttribute(geometry)
+            when (type){
+                SketcherEditorTypes.POINT -> {}
+                SketcherEditorTypes.POLYLINE -> {
+                    newAttributes["length"] = calculatedAtt
+                }
+                SketcherEditorTypes.POLYGON -> {
+                    newAttributes["area"] = calculatedAtt
+                }
+            }
+
+
+        }
+        val feature = featureCollectionTable.createFeature(newAttributes, geometry)
+        features.add(feature)
+        featureCollectionTable.addFeatureAsync(feature).addDoneListener {
+            callback()
+        }
+    }
+    private fun addCalculatedAttribute(geometry: Geometry): String{
+        return when (type){
             SketcherEditorTypes.POINT -> {
-                mFeatureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POINT, spatialReference)
+                ""
             }
             SketcherEditorTypes.POLYLINE -> {
-                mFeatureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POLYLINE, spatialReference)
+                calculateLength(geometry)
             }
             SketcherEditorTypes.POLYGON -> {
-                mFeatureCollectionTable = FeatureCollectionTable(fieldsArray, GeometryType.POLYGON, spatialReference)
+                calculateArea(geometry)
             }
         }
-        featureCollectionTable = mFeatureCollectionTable
+    }
+    private fun calculateLength(geometry: Geometry): String {
+        val polyline = geometry as Polyline
+        var length = GeometryEngine.length(polyline)
+        val decimalFormat = DecimalFormat("#.00")
+        val unit = spatialReference.unit.abbreviation
+        if (unit == "mi") {
+            length *= 1609.344
+        }
+        var formatDistance = decimalFormat.format(length).toString() + "m"
+        if (formatDistance == ".00m") formatDistance = "0.00m"
+        return formatDistance
+    }
+
+    private fun calculateArea(geometry: Geometry): String {
+        val polygon = geometry as Polygon
+        var area = GeometryEngine.area(polygon)
+        val decimalFormat = DecimalFormat("#.00")
+        val unit = spatialReference.unit.abbreviation
+        if (unit == "mi") {
+            area *= 1609.344
+        }
+        var formatArea = decimalFormat.format(area).toString() + "m²"
+        if (formatArea == ".00m") formatArea = "0.00m"
+        return formatArea
     }
     fun generateRenderer(context: Context){
         when (type){
@@ -143,6 +196,4 @@ class FlexibleFeatureLayer (val context: Context){
         }
 
     }
-
-
 }
