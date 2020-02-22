@@ -12,7 +12,7 @@ object GeoViewController{
     val TAG = "geoViewController"
     var padding = 20.0
 
-    fun calculateAndSetCurrentLocation(mMap: MapView){
+    fun setNewSavedViewPoint(mMap: MapView){
         val mType = Viewpoint.Type.CENTER_AND_SCALE
         currentViewPoint = mMap.getCurrentViewpoint(mType)
     }

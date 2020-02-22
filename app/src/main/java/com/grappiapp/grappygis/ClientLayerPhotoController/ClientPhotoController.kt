@@ -22,6 +22,7 @@ import com.grappiapp.grappygis.R
 import com.esri.arcgisruntime.geometry.Geometry
 import com.esri.arcgisruntime.geometry.GeometryType
 import com.esri.arcgisruntime.mapping.view.GeoView
+import com.esri.arcgisruntime.mapping.view.MapView
 import com.google.firebase.storage.FirebaseStorage
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPolygonFeatureCollection
 import com.grappiapp.grappygis.GeoViewController.GeoViewController
@@ -120,7 +121,8 @@ object ClientPhotoController {
     }
 
 
-    fun uploadImage(uri: Uri?, context: Activity,callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish, callbackPoint: ClientPointFeatureCollection.OnPointsUploaded, callbackPolygon: ClientPolygonFeatureCollection.OnClientPolygonUploadFinished){
+    fun uploadImage(uri: Uri?, context: Activity,callback: ClientFeatureCollectionLayer.OnPolylineUploadFinish, callbackPoint: ClientPointFeatureCollection.OnPointsUploaded, callbackPolygon: ClientPolygonFeatureCollection.OnClientPolygonUploadFinished,
+                    mapView: MapView){
         uri?.let{
             uri->
             val ref = reference.child("settlements/" + ProjectId.projectId + "/images/" + UUID.randomUUID().toString())
@@ -132,16 +134,19 @@ object ClientPhotoController {
                         when (type){
                             GeometryType.POINT -> {
                                 UserPoints.userPoints!!.createFeature(attributes, geometry){
+                                    GeoViewController.setCurrentViewPointForMap(mapView)
                                     UserPoints.userPoints!!.uploadJSON(callbackPoint)
                                 }
                             }
                             GeometryType.ENVELOPE -> {}
                             GeometryType.POLYLINE -> {
                                 UserPolyline.userPolyline!!.createFeature(attributes, geometry)
+                                GeoViewController.setCurrentViewPointForMap(mapView)
                                 UserPolyline.userPolyline!!.uploadJSON(callback)
                             }
                             GeometryType.POLYGON -> {
                                 UserPolygon.userPolygon!!.createFeature(attributes, geometry){
+                                    GeoViewController.setCurrentViewPointForMap(mapView)
                                     UserPolygon.userPolygon!!.uploadJSON(callbackPolygon)
                                 }
                             }
@@ -152,8 +157,6 @@ object ClientPhotoController {
                     }
                 }.addOnFailureListener{
                     Toast.makeText(context, context.getString(R.string.uploaded), Toast.LENGTH_SHORT).show()
-                    UserPolyline.userPolyline!!.createFeature(attributes, geometry)
-                    UserPolyline.userPolyline!!.uploadJSON(callback)
                 }
             }
         }

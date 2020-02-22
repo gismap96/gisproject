@@ -3,10 +3,8 @@ package com.grappiapp.grappygis;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -35,7 +33,6 @@ import android.widget.Toast;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPointFeatureCollection;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPolygonFeatureCollection;
-import com.grappiapp.grappygis.ClientFeatureLayers.GrappiField;
 import com.grappiapp.grappygis.ClientLayerPhotoController.ClientPhotoController;
 import com.grappiapp.grappygis.ClientLayersHandler.ClientLayersController;
 import com.grappiapp.grappygis.GeoViewController.GeoViewController;
@@ -241,6 +238,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         saveShapeTV.setOnClickListener(v->{
             mViewPoint = mMapView.getCurrentViewpoint(Viewpoint.Type.CENTER_AND_SCALE);
             SketcherEditorTypes type = SketchEditorController.INSTANCE.getSketcherEditorTypes();
+            GeoViewController.INSTANCE.setNewSavedViewPoint(mMapView);
             switch (type){
 
                 case POINT:
@@ -468,6 +466,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                     didZoom[0] = true;
                                 }
                                 initializingProgressDialog.show();
+                                rotateMap(0);
                                 ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
                             }
                         }
@@ -833,12 +832,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 }
                 break;
             case TAKE_PHOTO_FOR_LAYER:
-                GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView);
                 if (resultCode == Activity.RESULT_OK){
                     this.progressDialog.show();
                     Uri uri = ClientPhotoController.INSTANCE.getImageURI();
-                    ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this, MainActivity.this, MainActivity.this);
+                    ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this, MainActivity.this, MainActivity.this, mMapView);
                 } else {
+                    GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
                     switch (ClientPhotoController.INSTANCE.getType()){
                         case POINT:
                             this.progressDialog.show();
@@ -866,7 +865,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     protected void onPause(){
-        GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView);
+//        GeoViewController.INSTANCE.setSavedViewPoint(mMapView);
         mMapView.pause();
         super.onPause();
     }
@@ -875,7 +874,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     protected void onResume(){
         super.onResume();
         mMapView.resume();
-        GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
+//        GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
 
     }
 
@@ -919,7 +918,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     public void onRowClickListener(@NotNull String layerIndex, @NonNull IdentifyLayerResult layerResult) {
-        GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
+//        GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
         dialogLayerSelectionFragment.dismiss();
         showDetailsDialog(layerResult);
 

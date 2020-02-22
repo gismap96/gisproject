@@ -148,7 +148,7 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
         attributes.put("number", number)
         attributes.put("isUpdated", isUpdated)
         attributes.put("imageURL", "")
-        GeoViewController.calculateAndSetCurrentLocation(mMapView)
+//        GeoViewController.setSavedViewPoint(mMapView)
         if (isEditMode){
             val layerId = FeatureLayerController.layerId
             val type = FeatureLayerController.shapeType

@@ -169,7 +169,7 @@ class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, inter
             }
             R.id.editFeatureImageIV->{
                 dismiss()
-                GeoViewController.calculateAndSetCurrentLocation(mMap)
+                GeoViewController.setNewSavedViewPoint(mMap)
                 ClientPhotoController.editPhoto(context)
             }
         }

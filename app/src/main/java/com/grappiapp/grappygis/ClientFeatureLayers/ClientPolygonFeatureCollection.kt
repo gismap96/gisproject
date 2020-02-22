@@ -149,8 +149,8 @@ class ClientPolygonFeatureCollection(context: Context){
     }
 
     private fun calculateArea(geometry: Geometry): String {
-        val polygon = geometry as Polygon
-        var area = GeometryEngine.area(polygon)
+        val envelope = geometry.extent
+        var area = GeometryEngine.area(envelope)
         val decimalFormat = DecimalFormat("#.00")
         val unit = spatialReference.unit.abbreviation
         if (unit == "mi") {
