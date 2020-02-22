@@ -5,7 +5,9 @@ import android.animation.ObjectAnimator
 import android.support.constraint.ConstraintLayout
 import android.view.View
 import com.esri.arcgisruntime.geometry.*
+import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.mapping.view.*
+import com.grappiapp.grappygis.LayerCalloutControl.FeatureLayerController
 import java.text.DecimalFormat
 
 
@@ -23,6 +25,28 @@ object SketchEditorController {
     var formatDistance = ""
     var isWorking = false
     var isEditMode = false
+
+
+    fun getGeometryLastPoint(): Point{
+        val geometry = sketchEditor.geometry
+        when (sketcherEditorTypes){
+            SketcherEditorTypes.POINT -> {
+                return geometry as Point
+            }
+            SketcherEditorTypes.POLYLINE -> {
+                val polyline = geometry as Polyline
+                return getGeometryLastPoint(polyline)
+            }
+            SketcherEditorTypes.POLYGON -> {
+                val polygon = geometry as Polygon
+                return getGeometryLastPoint(polygon.toPolyline())
+            }
+        }
+    }
+    fun getGeometryLastPoint(polyline: Polyline): Point{
+        val points = polyline.parts.partsAsPoints
+        return points.last()
+    }
 
     fun getGeometry():Geometry?{
         return sketchEditor.geometry

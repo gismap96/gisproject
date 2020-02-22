@@ -16,4 +16,6 @@
     <color name="details_dialog_key_text_color">#3fadf8</color>
     <color name="soft_red">#FF6161</color>
     <color name="white_90">#E6FFFFFF</color>
+    <color name="dark_green">#3e7e1e</color>
+    <color name="bright_green_90">#E680D25B</color>
 </resources>

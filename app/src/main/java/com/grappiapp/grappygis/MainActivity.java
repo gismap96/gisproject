@@ -395,9 +395,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         zift = findViewById(R.id.toggleZift);
         zift.setVisibility(View.GONE);
         zift.setOnClickListener(v -> {
-            SearchDialogFragment searchDialogFragment = new SearchDialogFragment(this, mMapView, this);
-            searchDialogFragment.show();
-            FeatureSearchController.INSTANCE.unselectFeature();
+
         });
         makeLegendGreatAgainTV.setOnClickListener(v -> {
             FeatureLayerController.INSTANCE.makeAllLayersInvisible(mMapView, legendAdapter);
@@ -471,7 +469,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                 }
                                 initializingProgressDialog.show();
                                 ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
-
                             }
                         }
                     }, 200);
@@ -623,8 +620,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 }
             }
         }).addOnFailureListener(e -> Log.e("MainActivity", "modified download failed", e));
-
-
     }
 
 

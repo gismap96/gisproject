@@ -89,6 +89,7 @@ class FlexibleFeatureLayer (val context: Context){
             callback()
         }
     }
+
     private fun addCalculatedAttribute(geometry: Geometry): String{
         return when (type){
             SketcherEditorTypes.POINT -> {
@@ -165,7 +166,6 @@ class FlexibleFeatureLayer (val context: Context){
     }
     private fun generateIDField(){
         fields.add(GrappiField("Id", "esriFieldTypeString", "Id", 50))
-
     }
 
     private fun getBitmapFromVectorDrawable(drawableId: Int): Bitmap? {
