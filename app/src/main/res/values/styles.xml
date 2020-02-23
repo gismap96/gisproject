@@ -25,4 +25,8 @@
         <item name="windowMinWidthMajor">100%</item>
         <item name="windowMinWidthMinor">100%</item>
     </style>
+    <style name="ExitDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/white_transparent</item>
+        <item name="android:textColor">@color/soft_red</item>
+    </style>
 </resources>

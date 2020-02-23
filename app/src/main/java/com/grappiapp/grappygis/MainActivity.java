@@ -3,8 +3,10 @@ package com.grappiapp.grappygis;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -1151,5 +1153,19 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     public void onClientPolygonUploaded() {
         progressDialog.dismiss();
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(getString(R.string.closing_app)).setMessage(R.string.closing_message)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.no, null)
+                .show();
     }
 }

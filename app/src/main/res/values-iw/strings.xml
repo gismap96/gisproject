@@ -99,4 +99,6 @@
     <string name="polygon_saved">פוליגון נשמר</string>
     <string name="my_polygon">הפוליגון שלי</string>
     <string name="empty_polygon">צורה ריקה, אנא ציירו פוליגון</string>
+    <string name="closing_app">סגירת תוכנה</string>
+    <string name="closing_message">האם אתם בטוחים שברצונכם לסגור את גראפי?</string>
 </resources>
