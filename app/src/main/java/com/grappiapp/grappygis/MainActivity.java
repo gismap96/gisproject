@@ -1159,12 +1159,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     public void onBackPressed() {
         new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle(getString(R.string.closing_app)).setMessage(R.string.closing_message)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
+                .setPositiveButton(R.string.yes, (dialog, which) -> finish())
                 .setNegativeButton(R.string.no, null)
                 .show();
     }
