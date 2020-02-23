@@ -5,7 +5,7 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.Color
 import android.net.Uri
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.util.Log
 import android.widget.Toast
 import com.esri.arcgisruntime.data.Feature

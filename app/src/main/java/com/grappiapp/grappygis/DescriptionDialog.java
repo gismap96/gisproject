@@ -3,12 +3,13 @@ package com.grappiapp.grappygis;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+
+import androidx.annotation.NonNull;
 
 public class DescriptionDialog extends Dialog implements
     android.view.View.OnClickListener {

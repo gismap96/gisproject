@@ -1,18 +1,17 @@
 package com.grappiapp.grappygis.LegendSidebar
 
 import android.content.Context
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.grappiapp.grappygis.MapLayerAdapter
 import com.grappiapp.grappygis.R
 import com.esri.arcgisruntime.layers.Layer
 import kotlinx.android.synthetic.main.legend_sidebar_group_overlay.view.*
-
 
 class LegendSidebarAdapter(var context: Context, val interactionListener: MapLayerAdapter.OnLegendItemInteraction, val layers: List<LegendGroup>, val recyclerView: RecyclerView): RecyclerView.Adapter<LegendSidebarAdapter.LegendSidebarViewHolder>(){
 

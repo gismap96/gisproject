@@ -1,11 +1,10 @@
 package com.grappiapp.grappygis.SearchController
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.esri.arcgisruntime.data.QueryParameters
+import androidx.recyclerview.widget.RecyclerView
 import com.esri.arcgisruntime.geometry.Envelope
 import com.grappiapp.grappygis.R
 import kotlinx.android.synthetic.main.row_for_search_dialog_result.view.*

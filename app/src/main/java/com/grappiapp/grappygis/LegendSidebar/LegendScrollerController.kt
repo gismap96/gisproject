@@ -1,8 +1,8 @@
 package com.grappiapp.grappygis.LegendSidebar
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
 
 object LegendScrollerController {
 

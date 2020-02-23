@@ -5,21 +5,21 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.grappiapp.grappygis.R
 import kotlinx.android.synthetic.main.fragment_dialog_layer_details.*
-import android.support.v7.widget.DividerItemDecoration
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import android.util.Log
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.grappiapp.grappygis.ClientLayerPhotoController.ClientPhotoController
 import com.grappiapp.grappygis.LayerCalloutControl.FeatureLayerController
 import com.grappiapp.grappygis.ProjectRelated.UserPoints
@@ -33,7 +33,7 @@ import com.grappiapp.grappygis.ProjectRelated.UserPolygon
 import java.util.concurrent.ExecutionException
 
 
-class DialogLayerDetailsFragment(val mMap: MapView,var activity: Activity, internal var adapter: RecyclerView.Adapter<*>, var headline: String, val identifiedLayer: IdentifyLayerResult, val context: Activity, val callback: OnEditSelectedListener): Dialog(activity), View.OnClickListener {
+class DialogLayerDetailsFragment(val mMap: MapView, var activity: Activity, internal var adapter: RecyclerView.Adapter<*>, var headline: String, val identifiedLayer: IdentifyLayerResult, val context: Activity, val callback: OnEditSelectedListener): Dialog(activity), View.OnClickListener {
 
     val TAG = "DialogDetails"
     override fun onStart() {

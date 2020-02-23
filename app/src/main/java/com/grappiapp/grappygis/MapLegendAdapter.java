@@ -3,7 +3,6 @@ package com.grappiapp.grappygis;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -19,6 +18,8 @@ import com.esri.arcgisruntime.symbology.Symbol;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MapLegendAdapter extends RecyclerView.Adapter<MapLegendAdapter.MapLegendViewHodler> {
 

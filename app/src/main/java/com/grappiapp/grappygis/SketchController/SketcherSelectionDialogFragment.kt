@@ -5,15 +5,15 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.grappiapp.grappygis.R
 import kotlinx.android.synthetic.main.fragment_dialog_sketch_mode_selection.*
 
-class SketcherSelectionDialogFragment(var activity: Activity,  var adapter: RecyclerView.Adapter<*>, val callback: SketcherSelectionDialogAdapter.OnSketchSelectionClickListener): Dialog(activity), View.OnClickListener{
+class SketcherSelectionDialogFragment(var activity: Activity, var adapter: RecyclerView.Adapter<*>, val callback: SketcherSelectionDialogAdapter.OnSketchSelectionClickListener): Dialog(activity), View.OnClickListener{
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

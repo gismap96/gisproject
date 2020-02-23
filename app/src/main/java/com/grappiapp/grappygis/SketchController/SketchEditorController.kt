@@ -2,8 +2,8 @@ package com.grappiapp.grappygis.SketchController
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
-import android.support.constraint.ConstraintLayout
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.mapping.view.*
