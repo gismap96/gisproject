@@ -226,14 +226,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         zift2 = findViewById(R.id.zift2);
-        zift2.setVisibility(View.GONE);
+//        zift2.setVisibility(View.GONE);
 //
         zift2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                FeatureSearchController.INSTANCE.turnLayerLabelOn(mMapView);
-                Utils.openLanguageDialog(MainActivity.this, mPrefs.edit());
-
+//                Utils.openLanguageDialog(MainActivity.this, mPrefs.edit());
             }
         });
         saveShapeTV = findViewById(R.id.saveShapeTV);
@@ -470,7 +469,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                 }
                                 initializingProgressDialog.show();
                                 rotateMap(0);
+//                                initLegendSidebar();
                                 ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
+
                             }
                         }
                     }, 200);
@@ -483,6 +484,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         });
     }
 
+    private void initLegendSidebar(){
+        List<LegendGroup> legendGroups = LegendLayerDisplayController.INSTANCE.generateLegendSidebar(mMapView);
+        legendAdapter = new LegendSidebarAdapter(this, this, legendGroups, mLayerRecyclerView);
+        mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mLayerRecyclerView.setAdapter(legendAdapter);
+        toggleMenuBtn.setVisibility(View.VISIBLE);
+        RecyclerView.ItemAnimator animator = mLayerRecyclerView.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator){
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
+    }
     private void checkForRaster(){
         File rasterFolderFile = new File(getRasterFolderPath());
         if (!rasterFolderFile.exists()) {
@@ -674,12 +686,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
         mobileMapPackage.loadAsync();
         mobileMapPackage.addDoneLoadingListener(() -> {
-            if (mobileMapPackage.getLoadStatus() == LoadStatus.LOADED) {
+            if (mobileMapPackage.getLoadStatus() == LoadStatus.LOADED && !mobileMapPackage.getMaps().isEmpty()) {
                 System.out.println("Number of maps = " + mobileMapPackage.getMaps().size());
                 // In this case the first map in the array is obtained
                 ArcGISMap mobileMap = mobileMapPackage.getMaps().get(0);
                 mMapView.setMap(mobileMap);
                 LegendLayerDisplayController.INSTANCE.makeLayersInvisible(mMapView);
+                LegendLayerDisplayController.INSTANCE.makeAllGroupLayersVisible(mMapView);
                 GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
                 Handler h = new Handler();
                 h.postDelayed(new Runnable() {
@@ -1006,16 +1019,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     @Override
     public void successListener() {
-        List<LegendGroup> legendGroups = LegendLayerDisplayController.INSTANCE.generateLegendGroupList(mMapView);
-        legendAdapter = new LegendSidebarAdapter(this, this, legendGroups, mLayerRecyclerView);
-        mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mLayerRecyclerView.setAdapter(legendAdapter);
-        toggleMenuBtn.setVisibility(View.VISIBLE);
-        RecyclerView.ItemAnimator animator = mLayerRecyclerView.getItemAnimator();
-        if (animator instanceof SimpleItemAnimator){
-            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
-        }
-        initializingProgressDialog.dismiss();
+        initLegendSidebar();
+//        List<LegendGroup> legendGroups = LegendLayerDisplayController.INSTANCE.generateLegendSidebar(mMapView);
+//        legendAdapter = new LegendSidebarAdapter(this, this, legendGroups, mLayerRecyclerView);
+//        mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        mLayerRecyclerView.setAdapter(legendAdapter);
+//        toggleMenuBtn.setVisibility(View.VISIBLE);
+//        RecyclerView.ItemAnimator animator = mLayerRecyclerView.getItemAnimator();
+//        if (animator instanceof SimpleItemAnimator){
+//            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+//        }
+//        initializingProgressDialog.dismiss();
     }
 
     @Override
@@ -1143,12 +1157,16 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     public void onClientPolygonJSONDownloaded(@NotNull JSONObject json) {
         UserPolygon.INSTANCE.setUserPolygon(new ClientPolygonFeatureCollection(this, json));
         mMapView.getMap().getOperationalLayers().add(UserPolygon.INSTANCE.getUserPolygon().getLayer());
-        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+        initLegendSidebar();
+//        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+        initializingProgressDialog.dismiss();
     }
 
     @Override
     public void onEmptyClientPolygon() {
-        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+//        LegendLayerDisplayController.INSTANCE.fetchMMap(mProjectId, MainActivity.this);
+        initLegendSidebar();
+        initializingProgressDialog.dismiss();
     }
 
     @Override

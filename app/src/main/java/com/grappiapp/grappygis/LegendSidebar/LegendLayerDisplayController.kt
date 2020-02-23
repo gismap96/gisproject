@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.esri.arcgisruntime.layers.GroupLayer
 import com.grappiapp.grappygis.R
 import com.esri.arcgisruntime.layers.Layer
 import com.esri.arcgisruntime.mapping.view.MapView
@@ -26,6 +27,7 @@ object LegendLayerDisplayController{
     var legendGroups = mutableListOf<LegendGroup>()
 
 
+
     fun fetchMMap(projectID: String, layerListener: LayerGroupsListener){
         val storageReference = storage.reference
         val storageRef = storageReference.child("settlements/$projectID/mmap/data.json")
@@ -42,7 +44,11 @@ object LegendLayerDisplayController{
     fun makeLayersInvisible(mMap: MapView){
         val layers = mMap.map.operationalLayers
         layers.forEach {
-            if (!it.name.contains(".jpg") && !it.name.contains(".tif") && !it.name.contains(".ecw")){
+            if (it is GroupLayer){
+                it.layers.forEach { layer->
+                    layer.isVisible = false
+                }
+            } else if (!it.name.contains(".jpg") && !it.name.contains(".tif") && !it.name.contains(".ecw")){
                 it.isVisible = false
             }
         }
@@ -149,34 +155,37 @@ object LegendLayerDisplayController{
             }
         }
     }
+    fun makeAllGroupLayersVisible(mMapView: MapView){
+        val layers = mMapView.map.operationalLayers
+        layers.forEach {
+            if (it is GroupLayer){
+                it.isVisible = true
+            }
+        }
+    }
 
-    fun generateLegendGroupList(map: MapView): List<LegendGroup>{
+    fun generateLegendSidebar(map: MapView): List<LegendGroup>{
         var orthophotoName = map.context.getString(R.string.orthophoto)
         val otherName = map.context.getString(R.string.other)
         val myLayers = map.context.getString(R.string.my_layers)
         val layers = map.map.operationalLayers
         var legendGroupMap = mutableMapOf<String, MutableList<Layer>>()
+        var legendGroupList = mutableListOf<LegendGroup>()
         legendGroupMap[myLayers] = mutableListOf()
         legendGroupMap[otherName] = mutableListOf()
         legendGroupMap[orthophotoName] = mutableListOf()
-        groupNames.forEach {
-            legendGroupMap[it] = mutableListOf()
-        }
-
-        Log.d(TAG, legendIds.toString())
         layers.forEach {
-            var layerName = it.name
-            val layerid = it.id
-            if (layerName.contains(".jpg") || layerName.contains(".tif") || layerName.contains(".ecw")){
-                legendGroupMap[orthophotoName]?.add(it)
-            }
-            else if (legendIds.containsKey(layerid)){
-                val layerGroupName = legendIds[layerid]
-                legendGroupMap[layerGroupName]?.add(it)
-            } else if(layerName.contains("$$##")){
-                legendGroupMap[myLayers]?.add(it)
-            } else if (layerName.trim().isNotEmpty()){
-                legendGroupMap[otherName]?.add(it)
+            if (it is GroupLayer){
+                legendGroupMap[it.name] = it.layers
+            } else {
+                val layerName = it.name
+                if (layerName.contains(".jpg") || layerName.contains(".tif") || layerName.contains(".ecw")){
+                    legendGroupMap[orthophotoName]?.add(it)
+                } else if(layerName.contains("$$##")){
+                    legendGroupMap[myLayers]?.add(it)
+                } else if (layerName.trim().isNotEmpty()){
+                    legendGroupMap[otherName]?.add(it)
+                }
             }
         }
         legendGroupMap[otherName]?.let{
@@ -185,7 +194,6 @@ object LegendLayerDisplayController{
         legendGroupMap[myLayers]?.let{
             if (it.count() == 0) legendGroupMap.remove(myLayers)
         }
-        var legendGroupList = mutableListOf<LegendGroup>()
         legendGroupMap.forEach{
             legendGroupList.add(LegendGroup(it.key, it.value))
         }
@@ -196,6 +204,53 @@ object LegendLayerDisplayController{
         this.legendGroups = legendGroupList
         return legendGroupList
     }
+//    fun generateLegendGroupList(map: MapView): List<LegendGroup>{
+//        return generateGroups(map)
+//        var orthophotoName = map.context.getString(R.string.orthophoto)
+//        val otherName = map.context.getString(R.string.other)
+//        val myLayers = map.context.getString(R.string.my_layers)
+//        val layers = map.map.operationalLayers
+//        var legendGroupMap = mutableMapOf<String, MutableList<Layer>>()
+//        legendGroupMap[myLayers] = mutableListOf()
+//        legendGroupMap[otherName] = mutableListOf()
+//        legendGroupMap[orthophotoName] = mutableListOf()
+//        groupNames.forEach {
+//            legendGroupMap[it] = mutableListOf()
+//        }
+//
+//        Log.d(TAG, legendIds.toString())
+//        layers.forEach {
+//            var layerName = it.name
+//            val layerid = it.id
+//            if (layerName.contains(".jpg") || layerName.contains(".tif") || layerName.contains(".ecw")){
+//                legendGroupMap[orthophotoName]?.add(it)
+//            }
+//            else if (legendIds.containsKey(layerid)){
+//                val layerGroupName = legendIds[layerid]
+//                legendGroupMap[layerGroupName]?.add(it)
+//            } else if(layerName.contains("$$##")){
+//                legendGroupMap[myLayers]?.add(it)
+//            } else if (layerName.trim().isNotEmpty()){
+//                legendGroupMap[otherName]?.add(it)
+//            }
+//        }
+//        legendGroupMap[otherName]?.let{
+//            if (it.count() == 0) legendGroupMap.remove(otherName)
+//        }
+//        legendGroupMap[myLayers]?.let{
+//            if (it.count() == 0) legendGroupMap.remove(myLayers)
+//        }
+//        var legendGroupList = mutableListOf<LegendGroup>()
+//        legendGroupMap.forEach{
+//            legendGroupList.add(LegendGroup(it.key, it.value))
+//        }
+//        legendGroupList.reverse()
+//        legendGroupList.forEach {
+//            it.layers = it.layers.reversed()
+//        }
+//        this.legendGroups = legendGroupList
+//        return legendGroupList
+//    }
 
     fun openSubArrowEffect(view: ImageView){
         ObjectAnimator.ofFloat(view, View.ROTATION, 0.0f, -90.0f).apply {
