@@ -44,6 +44,7 @@ import com.grappiapp.grappygis.ProjectRelated.ProjectId;
 import com.grappiapp.grappygis.ProjectRelated.UserPoints;
 import com.grappiapp.grappygis.ProjectRelated.UserPolygon;
 import com.grappiapp.grappygis.ProjectRelated.UserPolyline;
+import com.grappiapp.grappygis.Scene3DController.SceneActivity;
 import com.grappiapp.grappygis.SearchController.FeatureSearchController;
 import com.grappiapp.grappygis.SearchController.SearchDialogFragment;
 import com.grappiapp.grappygis.SearchController.SearchResultsAdapter;
@@ -220,13 +221,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         zift2 = findViewById(R.id.zift2);
-//        zift2.setVisibility(View.GONE);
+        zift2.setVisibility(View.GONE);
 //
         zift2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                FeatureSearchController.INSTANCE.turnLayerLabelOn(mMapView);
-//                Utils.openLanguageDialog(MainActivity.this, mPrefs.edit());
+                Intent intent = new Intent(getApplicationContext(), SceneActivity.class);
+                startActivity(intent);
             }
         });
         saveShapeTV = findViewById(R.id.saveShapeTV);
