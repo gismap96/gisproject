@@ -11,31 +11,30 @@
 
     <application
         android:allowBackup="true"
-        android:resizeableActivity="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Scene3DController.SceneActivity"></activity>
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="9d3aebc373bc17a83cb17a59ec156f76606a8763"
-            />
+            android:value="9d3aebc373bc17a83cb17a59ec156f76606a8763" />
+
         <activity
-            android:name="com.grappiapp.grappygis.LoginActivity"
+            android:name=".LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.grappiapp.grappygis.MainActivity"
-            android:screenOrientation="portrait"
-            >
-
-        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

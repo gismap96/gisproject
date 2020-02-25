@@ -117,24 +117,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ProgressBar mapProgress;
     LocationDisplay locationDisplay;
     private boolean isAutoPan;
-    private PointCollection mPolylinePoints;
-    private static final int TAKE_PICTURE = 1;
     private static final int TAKE_PHOTO_FOR_LAYER = 2;
     private static final int EDIT_PHOTO_FOR_LAYER = 3;
-//    private Uri imageUri;
     FirebaseStorage storage;
     StorageReference storageReference;
     SharedPreferences mPrefs;
     private ImageView toggleMenuBtn;
     private ImageView sketchEditorStartIV;
-    private ImageView addPoint;
     private ImageView toggleAutoPanBtn;
-//    private ImageView deletePointIV;
     private ImageView undoSkecherIV;
     private ImageView zift2;
     private String mProjectId;
     private ConstraintLayout legendDetailsConstraintsLayout;
-    private boolean activityAlive;
     private DialogLayerSelectionFragment dialogLayerSelectionFragment;
     private SketcherSelectionDialogFragment sketcherSelectionDialogFragment;
     private android.graphics.Point screenPoint;
@@ -698,9 +692,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 h.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-//                        setRaster();
                         checkForRaster();
-                        //setClientPoints();
                         setMapListener(mobileMap);
                         Envelope myExtents = mobileMap.getOperationalLayers().get(0).getFullExtent();
                         myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
@@ -709,11 +701,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
                     }
                 },500);
-//                final List<Layer> layerList = mobileMap.getOperationalLayers();
-////                mContentAdapter.setLayerList(layerList);
-
-
-
 
             } else {
                 Log.e("MainActivity", "some error");
@@ -903,13 +890,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     @Override
     protected void onStart() {
         super.onStart();
-        activityAlive = true;
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        activityAlive = false;
     }
 
     @Override
