@@ -101,4 +101,10 @@
     <string name="empty_polygon">צורה ריקה, אנא ציירו פוליגון</string>
     <string name="closing_app">סגירת תוכנה</string>
     <string name="closing_message">האם אתם בטוחים שברצונכם לסגור את גראפי?</string>
+    <string name="add_layer">הוספת שכבה חדשה</string>
+    <string name="system_name_english">שם שכבה במערכת [אנגלית בלבד]</string>
+    <string name="add_layer_alias">כינוי לשכבה [כך תוצג]</string>
+    <string name="layer_type">סוג שכבה</string>
+    <string name="symbol_fill_color_headline">סימבולוגיה[בחירת צבע לשכבה]</string>
+    <string name="next">הבא</string>
 </resources>

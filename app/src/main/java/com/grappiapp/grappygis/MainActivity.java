@@ -39,12 +39,12 @@ import com.grappiapp.grappygis.LayerDetailsDialog.DialogLayerDetailsFragment;
 import com.grappiapp.grappygis.LegendSidebar.LegendGroup;
 import com.grappiapp.grappygis.LegendSidebar.LegendLayerDisplayController;
 import com.grappiapp.grappygis.LegendSidebar.LegendSidebarAdapter;
+import com.grappiapp.grappygis.OfflineMode.OfflineModeController;
 import com.grappiapp.grappygis.ProjectRelated.MapProperties;
 import com.grappiapp.grappygis.ProjectRelated.ProjectId;
 import com.grappiapp.grappygis.ProjectRelated.UserPoints;
 import com.grappiapp.grappygis.ProjectRelated.UserPolygon;
 import com.grappiapp.grappygis.ProjectRelated.UserPolyline;
-import com.grappiapp.grappygis.Scene3DController.SceneActivity;
 import com.grappiapp.grappygis.SearchController.FeatureSearchController;
 import com.grappiapp.grappygis.SearchController.SearchDialogFragment;
 import com.grappiapp.grappygis.SearchController.SearchResultsAdapter;
@@ -57,7 +57,6 @@ import com.esri.arcgisruntime.concurrent.ListenableFuture;
 import com.esri.arcgisruntime.geometry.Envelope;
 import com.esri.arcgisruntime.geometry.Geometry;
 import com.esri.arcgisruntime.geometry.GeometryEngine;
-import com.esri.arcgisruntime.geometry.PointCollection;
 import com.esri.arcgisruntime.layers.Layer;
 import com.esri.arcgisruntime.layers.RasterLayer;
 import com.esri.arcgisruntime.loadable.LoadStatus;
@@ -135,7 +134,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private android.graphics.Point screenPoint;
     private ConstraintLayout bottomSketchBarContainer;
     private ImageView closeSketcherIV;
-    private ImageView zift;
+    private ImageView offlineModeIV;
     private Viewpoint mViewPoint;
     private LegendSidebarAdapter legendAdapter;
     private TextView calculatePolygonAreaTV;
@@ -221,13 +220,22 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         zift2 = findViewById(R.id.zift2);
-        zift2.setVisibility(View.GONE);
+//        zift2.setVisibility(View.GONE);
 //
         zift2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), SceneActivity.class);
-                startActivity(intent);
+//                DialogAddFlexibleLayerNameTypeFragment fragment = new DialogAddFlexibleLayerNameTypeFragment(MainActivity.this);
+//                fragment.show();
+                OfflineModeController offlineController = OfflineModeController.INSTANCE;
+
+                if (offlineController.isOfflineMode()){
+//                    offlineController.uploadOfflineJSON(MainActivity);
+                }else {
+                    offlineController.saveJSONLocally(MainActivity.this,"polyline",UserPolyline.INSTANCE.getUserPolyline().generateARCGISJSON());
+                    offlineController.setOfflineMode(true);
+                }
+
             }
         });
         saveShapeTV = findViewById(R.id.saveShapeTV);
@@ -236,7 +244,6 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             SketcherEditorTypes type = SketchEditorController.INSTANCE.getSketcherEditorTypes();
             GeoViewController.INSTANCE.setNewSavedViewPoint(mMapView);
             switch (type){
-
                 case POINT:
                     if (SketchEditorController.INSTANCE.getGeometry() != null && !SketchEditorController.INSTANCE.getGeometry().isEmpty()){
                         if (SketchEditorController.INSTANCE.isEditMode()){
@@ -386,10 +393,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         });
         bottomSketchBarContainer = findViewById(R.id.bottomSketcherControllerBarContainer);
         SketchEditorController.INSTANCE.initSketchBarContainer(bottomSketchBarContainer);
-        zift = findViewById(R.id.toggleZift);
-        zift.setVisibility(View.GONE);
-        zift.setOnClickListener(v -> {
-
+        offlineModeIV = findViewById(R.id.offlineModeIV);
+//        offlineModeIV.setVisibility(View.GONE);
+        offlineModeIV.setOnClickListener(v -> {
+            OfflineModeController.INSTANCE.setOfflineMode(true);
+            offlineModeIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
         });
         makeLegendGreatAgainTV.setOnClickListener(v -> {
             FeatureLayerController.INSTANCE.makeAllLayersInvisible(mMapView, legendAdapter);

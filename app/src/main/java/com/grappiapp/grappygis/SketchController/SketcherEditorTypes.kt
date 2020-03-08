@@ -23,4 +23,11 @@ enum class SketcherEditorTypes(val title: Int){
             }
         }
     }
+    fun getImageAddress(): Int{
+        return when (this){
+            POINT -> R.drawable.ic_hollow_plus_star
+            POLYLINE ->  R.drawable.ic_polyline_soft_red
+            POLYGON ->  R.drawable.ic_polygon_area_measurement
+        }
+    }
 }

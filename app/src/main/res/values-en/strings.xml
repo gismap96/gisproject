@@ -102,4 +102,10 @@
     <string name="empty_polygon">Empty Polygon</string>
     <string name="closing_app">Closing App</string>
     <string name="closing_message">Are you sure you want to close GrAppi?</string>
+    <string name="add_layer">Add New Layer</string>
+    <string name="system_name_english">System Layer Name[English Only]</string>
+    <string name="add_layer_alias">Alias[Layer Display Name]</string>
+    <string name="layer_type">Layer Type</string>
+    <string name="symbol_fill_color_headline">Symbology[Choose a later color]</string>
+    <string name="next">Next</string>
 </resources>
