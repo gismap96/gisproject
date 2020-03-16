@@ -149,56 +149,6 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
         attributes.put("number", number)
         attributes.put("isUpdated", isUpdated)
         attributes.put("imageURL", "")
-        if (OfflineModeController.isOfflineMode){
-            val geometry = SketchEditorController.getGeometry()
-            geometry?.let{
-                when (type){
-                    SketcherEditorTypes.POINT -> {
-                        if (UserPoints.userPoints == null){
-                            UserPoints.userPoints = ClientPointFeatureCollection(context, context.resources.getString(R.string.my_points),UUID.randomUUID().toString(),
-                                    UserPoints.grappiFields, MapProperties.spatialReference!!)
-                            mMapView.map.operationalLayers.add(UserPoints.userPoints!!.layer)
-                            layerListener?.successListener()
-                        }
-                        SketchEditorController.startSketching(SketcherEditorTypes.POINT, mMapView)
-                        UserPoints.userPoints!!.layer.isVisible = true
-                        UserPoints.userPoints!!.createFeature(attributes,geometry){
-
-                        }
-                    }
-                    SketcherEditorTypes.POLYLINE ->{
-                        if (UserPolyline.userPolyline == null){
-                            UserPolyline.userPolyline = ClientFeatureCollectionLayer(context.resources.getString(R.string.my_polyline), UUID.randomUUID().toString(),
-                                    UserPolyline.grappiFields, MapProperties.spatialReference!!)
-                            mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
-                            layerListener?.successListener()
-                        } else if (UserPolyline.userPolyline!!.features.size == 0){
-                            UserPolyline.userPolyline = ClientFeatureCollectionLayer(context.resources.getString(R.string.my_polyline), UUID.randomUUID().toString(),
-                                    UserPolyline.grappiFields, MapProperties.spatialReference!!)
-                            mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
-                            layerListener?.successListener()
-                        }
-                        SketchEditorController.startSketching(SketcherEditorTypes.POLYLINE, mMapView)
-                        UserPolyline.userPolyline!!.layer.isVisible = true
-                        UserPolyline.userPolyline!!.createFeature(attributes, geometry)
-                    }
-                    SketcherEditorTypes.POLYGON -> {
-                        if (UserPolygon.userPolygon == null){
-                            UserPolygon.userPolygon = ClientPolygonFeatureCollection(context, context.resources.getString(R.string.my_polyline),UUID.randomUUID().toString(),
-                                    UserPolygon.grappiFields, MapProperties.spatialReference!!)
-                            mMapView.map.operationalLayers.add(UserPolygon.userPolygon!!.layer)
-                            layerListener?.successListener()
-                        }
-                        SketchEditorController.startSketching(SketcherEditorTypes.POLYGON, mMapView)
-                        UserPolygon.userPolygon!!.layer.isVisible = true
-                        UserPolygon.userPolygon!!.createFeature(attributes, geometry){}
-                    }
-                }
-            }
-            dismiss()
-            return
-        }
-//        GeoViewController.setSavedViewPoint(mMapView)
         if (isEditMode){
             val layerId = FeatureLayerController.layerId
             val type = FeatureLayerController.shapeType
@@ -217,6 +167,60 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
             dismiss()
             return
         }
+        if (OfflineModeController.isOfflineMode){
+            val geometry = SketchEditorController.getGeometry()
+            geometry?.let{
+                when (type){
+                    SketcherEditorTypes.POINT -> {
+                        if (UserPoints.userPoints == null){
+                            UserPoints.userPoints = ClientPointFeatureCollection(context, context.resources.getString(R.string.my_points),UUID.randomUUID().toString(),
+                                    UserPoints.grappiFields, MapProperties.spatialReference!!)
+                            mMapView.map.operationalLayers.add(UserPoints.userPoints!!.layer)
+                            layerListener?.successListener()
+                        }
+                        SketchEditorController.startSketching(SketcherEditorTypes.POINT, mMapView)
+                        UserPoints.userPoints!!.layer.isVisible = true
+                        UserPoints.userPoints!!.createFeature(attributes,geometry){
+                            OfflineModeController.saveJSONLocally(context, UserPoints.userPoints!!.generateARCGISJSON(), type)
+                        }
+                    }
+                    SketcherEditorTypes.POLYLINE ->{
+                        if (UserPolyline.userPolyline == null){
+                            UserPolyline.userPolyline = ClientFeatureCollectionLayer(context.resources.getString(R.string.my_polyline), UUID.randomUUID().toString(),
+                                    UserPolyline.grappiFields, MapProperties.spatialReference!!)
+                            mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
+                            layerListener?.successListener()
+                        } else if (UserPolyline.userPolyline!!.features.size == 0){
+                            UserPolyline.userPolyline = ClientFeatureCollectionLayer(context.resources.getString(R.string.my_polyline), UUID.randomUUID().toString(),
+                                    UserPolyline.grappiFields, MapProperties.spatialReference!!)
+                            mMapView.map.operationalLayers.add(UserPolyline.userPolyline!!.layer)
+                            layerListener?.successListener()
+                        }
+                        SketchEditorController.startSketching(SketcherEditorTypes.POLYLINE, mMapView)
+                        UserPolyline.userPolyline!!.layer.isVisible = true
+                        UserPolyline.userPolyline!!.createFeature(attributes, geometry)
+                        OfflineModeController.saveJSONLocally(context, UserPolyline.userPolyline!!.generateARCGISJSON(), type)
+                    }
+                    SketcherEditorTypes.POLYGON -> {
+                        if (UserPolygon.userPolygon == null){
+                            UserPolygon.userPolygon = ClientPolygonFeatureCollection(context, context.resources.getString(R.string.my_polyline),UUID.randomUUID().toString(),
+                                    UserPolygon.grappiFields, MapProperties.spatialReference!!)
+                            mMapView.map.operationalLayers.add(UserPolygon.userPolygon!!.layer)
+                            layerListener?.successListener()
+                        }
+                        SketchEditorController.startSketching(SketcherEditorTypes.POLYGON, mMapView)
+                        UserPolygon.userPolygon!!.layer.isVisible = true
+                        UserPolygon.userPolygon!!.createFeature(attributes, geometry){
+                            OfflineModeController.saveJSONLocally(context, UserPolygon.userPolygon!!.generateARCGISJSON(), type)
+                        }
+                    }
+                }
+            }
+            dismiss()
+            return
+        }
+//        GeoViewController.setSavedViewPoint(mMapView)
+
         val geometry = SketchEditorController.getGeometry()
         if (geometry == null){
             val toast = Toast.makeText(context, "צורה ריקה", Toast.LENGTH_SHORT)

@@ -1,14 +1,15 @@
 package com.grappiapp.grappygis.OfflineMode
 
+import android.app.ProgressDialog
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Environment
 import android.util.Log
-import com.esri.arcgisruntime.mapping.view.SceneView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.grappiapp.grappygis.Consts
 import com.grappiapp.grappygis.ProjectRelated.ProjectId
+import com.grappiapp.grappygis.R
+import com.grappiapp.grappygis.SketchController.SketcherEditorTypes
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
@@ -19,7 +20,12 @@ object OfflineModeController{
     val JSON_EXTENSION = ".txt"
     var isOfflineMode = false
 
-    fun saveJSONLocally(context: Context,fileName: String ,jsonObject: JSONObject){
+    fun saveJSONLocally(context: Context,jsonObject: JSONObject, type: SketcherEditorTypes){
+        val fileName = when (type){
+            SketcherEditorTypes.POINT -> "point"
+            SketcherEditorTypes.POLYLINE -> "polyline"
+            SketcherEditorTypes.POLYGON -> "polygon"
+        }
         val path = jsonPath(fileName)
         var jsonFile = File(path)
         var success = true
@@ -34,14 +40,96 @@ object OfflineModeController{
             } catch (e: Exception){
                 e.printStackTrace()
             }
+            var reference = type.getOfflineReference()
             val editor = context.getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE).edit()
             editor.putBoolean(Consts.DOES_OFFLINE_DATA_EXIST, true)
-            editor.putBoolean(fileName, true)
+            editor.putBoolean(reference, true)
             editor.apply()
         }
     }
 
-    fun uploadOfflineJSON(fileName: String, callback: (Boolean)->Unit){
+    fun startOfflineMode(context: Context){
+        isOfflineMode = true
+        resetSharedPreferences(context)
+    }
+
+    private fun resetSharedPreferences(context: Context) {
+        val editor = context.getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE).edit()
+        editor.putBoolean(Consts.DOES_OFFLINE_POINT_DATA_EXIST, false)
+        editor.putBoolean(Consts.DOES_OFFLINE_POLYGON_DATA_EXIST, false)
+        editor.putBoolean(Consts.DOES_OFFLINE_POLYLINE_DATA_EXIST, false)
+        editor.putBoolean(Consts.DOES_OFFLINE_DATA_EXIST, false)
+        editor.apply()
+    }
+
+    fun exitOfflineMode(context: Context){
+        uploadOfflineJSON(context)
+        isOfflineMode = false
+    }
+    fun uploadOfflineJSON(context: Context){
+        val sharedPrefs = context.getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE)
+        if (!sharedPrefs.getBoolean(Consts.DOES_OFFLINE_DATA_EXIST, false)){
+            return
+        }
+        var config = mutableListOf<SketcherEditorTypes>()
+        if (sharedPrefs.getBoolean(Consts.DOES_OFFLINE_POINT_DATA_EXIST, false)){
+            config.add(SketcherEditorTypes.POINT)
+
+        }
+        if (sharedPrefs.getBoolean(Consts.DOES_OFFLINE_POLYLINE_DATA_EXIST, false)){
+            config.add(SketcherEditorTypes.POLYLINE)
+        }
+        if (sharedPrefs.getBoolean(Consts.DOES_OFFLINE_POLYGON_DATA_EXIST, false)){
+            config.add(SketcherEditorTypes.POLYGON)
+        }
+
+        if (config.size == 0){
+            return
+        }
+
+        val progressDialog = ProgressDialog(context)
+        progressDialog.setTitle(context.getString(R.string.updating_layer))
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+        recursiveUpload(config, 0){
+            resetSharedPreferences(context)
+            progressDialog.dismiss()
+        }
+
+    }
+
+    private fun recursiveUpload(config: MutableList<SketcherEditorTypes>, iterator: Int, callback: () -> Unit){
+        uploadOfflineJSON(config[iterator]){
+            val newIterator = iterator + 1
+            if (newIterator == config.size){
+                callback()
+            } else {
+                recursiveUpload(config, newIterator, callback)
+            }
+        }
+    }
+
+    fun getOfflineJSON(type: SketcherEditorTypes): JSONObject?{
+        val fileName = when (type){
+            SketcherEditorTypes.POINT -> "point"
+            SketcherEditorTypes.POLYLINE -> "polyline"
+            SketcherEditorTypes.POLYGON -> "polygon"
+        }
+        val path = jsonPath(fileName)
+        val jsonFile = File(path)
+        if (jsonFile.exists()) {
+            val dest = File(jsonFile.absolutePath, fileName + JSON_EXTENSION)
+            val inputString = FileInputStream(dest).bufferedReader().use { it.readText() }
+            return JSONObject(inputString)
+        }
+        return null
+    }
+    private fun uploadOfflineJSON(type: SketcherEditorTypes, callback: (Boolean)->Unit){
+        val fileName = when (type){
+            SketcherEditorTypes.POINT -> "point"
+            SketcherEditorTypes.POLYLINE -> "polyline"
+            SketcherEditorTypes.POLYGON -> "polygon"
+        }
         val path = jsonPath(fileName)
         val jsonFile = File(path)
         if (jsonFile.exists()){

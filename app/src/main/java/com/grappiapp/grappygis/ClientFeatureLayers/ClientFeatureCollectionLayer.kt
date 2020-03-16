@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.grappiapp.grappygis.OfflineMode.OfflineModeController
 import com.grappiapp.grappygis.SketchController.SketchEditorController
 import com.squareup.picasso.Picasso
 import org.json.JSONArray
@@ -310,6 +311,11 @@ class ClientFeatureCollectionLayer () {
             Toast.makeText(context, "failed to update layer", Toast.LENGTH_LONG).show()
         }
         featureCollectionTable.deleteFeatureAsync(features[objectID]).addDoneListener{
+            if (OfflineModeController.isOfflineMode){
+                OfflineModeController.saveJSONLocally(context, generateARCGISJSON(), SketcherEditorTypes.POLYLINE)
+                progressDialog.dismiss()
+                return@addDoneListener
+            }
             val url = features[objectID].attributes["imageURL"] as String
             val storage = FirebaseStorage.getInstance()
             if (url.count() > 5) {
@@ -359,6 +365,11 @@ class ClientFeatureCollectionLayer () {
         features.add(newFeature)
         featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
             featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
+                if (OfflineModeController.isOfflineMode){
+                    OfflineModeController.saveJSONLocally(context, generateARCGISJSON(), SketcherEditorTypes.POLYLINE)
+                    progressDialog.dismiss()
+                    return@addDoneListener
+                }
                 uploadJSON(object: OnPolylineUploadFinish{
                     override fun onPolylineUploadFinish() {
                         progressDialog.dismiss()
@@ -392,6 +403,11 @@ class ClientFeatureCollectionLayer () {
         features.removeAt(featureNum)
         featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
             featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
+                if (OfflineModeController.isOfflineMode){
+                    OfflineModeController.saveJSONLocally(context, generateARCGISJSON(), SketcherEditorTypes.POLYLINE)
+                    progressDialog.dismiss()
+                    return@addDoneListener
+                }
                 uploadJSON(object: OnPolylineUploadFinish{
                     override fun onPolylineUploadFinish() {
                         progressDialog.dismiss()

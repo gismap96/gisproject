@@ -67,7 +67,7 @@
     <string name="uploading_layer">Uploading layer, please do not turn off</string>
     <string name="image_upload_failed">Image upload failed</string>
     <string name="coming_soon">Coming Soon...</string>
-    <string name="no_support">Right now we do not support this feature, but we promise you were working hard to add it ASAP</string>
+    <string name="no_support">Feature not supported</string>
     <string name="understood">Understood</string>
     <string name="empty_polyline">Please draw a polyline</string>
     <string name="failed_to_download_image">failed to download preview image</string>
@@ -108,4 +108,12 @@
     <string name="layer_type">Layer Type</string>
     <string name="symbol_fill_color_headline">Symbology[Choose a layer color]</string>
     <string name="next">Next</string>
+    <string name="exiting_offline_headline">Updating server data</string>
+    <string name="exiting_offline_message">Do not close app</string>
+    <string name="offline_image_no_support">Offline doesn\'t support images (yet)</string>
+    <string name="finalising_download">Finalising download, this might take a few more minutes</string>
+    <string name="email_update_message">Please update my input</string>
+    <string name="email_update_headline">Grappi Update for </string>
+    <string name="email_update">Send Email</string>
+    <string name="serial_number">serial number: </string>
 </resources>

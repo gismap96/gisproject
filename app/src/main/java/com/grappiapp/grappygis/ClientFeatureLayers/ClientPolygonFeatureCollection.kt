@@ -26,6 +26,7 @@ import com.google.gson.reflect.TypeToken
 import com.grappiapp.grappygis.ClientLayerPhotoController.ClientPhotoController
 import com.grappiapp.grappygis.ClientLayersHandler.ClientLayersController
 import com.grappiapp.grappygis.GeoViewController.GeoViewController
+import com.grappiapp.grappygis.OfflineMode.OfflineModeController
 import com.grappiapp.grappygis.ProjectRelated.MapProperties
 import com.grappiapp.grappygis.ProjectRelated.ProjectId
 import com.grappiapp.grappygis.R
@@ -292,10 +293,16 @@ class ClientPolygonFeatureCollection(context: Context){
         features.add(newFeature)
         featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
             featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
-                uploadJSON{
+                if (OfflineModeController.isOfflineMode){
+                    OfflineModeController.saveJSONLocally(context, generateARCGISJSON(), SketcherEditorTypes.POLYGON)
                     progressDialog.dismiss()
-                    Toast.makeText(context, context.resources.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                } else {
+                    uploadJSON{
+                        progressDialog.dismiss()
+                        Toast.makeText(context, context.resources.getString(R.string.layer_updated), Toast.LENGTH_SHORT).show()
+                    }
                 }
+
             }
         }
     }
@@ -317,9 +324,15 @@ class ClientPolygonFeatureCollection(context: Context){
         features.removeAt(featureNum)
         featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
             featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
-                uploadJSON {
+                if (OfflineModeController.isOfflineMode){
+                    OfflineModeController.saveJSONLocally(context, generateARCGISJSON(), SketcherEditorTypes.POLYGON)
                     progressDialog.dismiss()
+                } else {
+                    uploadJSON {
+                        progressDialog.dismiss()
+                    }
                 }
+
             }
         }
     }
@@ -342,6 +355,11 @@ class ClientPolygonFeatureCollection(context: Context){
             Toast.makeText(context, "failed to update layer", Toast.LENGTH_LONG).show()
         }
         featureCollectionTable.deleteFeatureAsync(features[objectID]).addDoneListener{
+            if (OfflineModeController.isOfflineMode){
+                OfflineModeController.saveJSONLocally(context, generateARCGISJSON(), SketcherEditorTypes.POLYGON)
+                progressDialog.dismiss()
+                return@addDoneListener
+            }
             val url = features[objectID].attributes["imageURL"] as String
             val storage = FirebaseStorage.getInstance()
             if (url.count() > 5) {

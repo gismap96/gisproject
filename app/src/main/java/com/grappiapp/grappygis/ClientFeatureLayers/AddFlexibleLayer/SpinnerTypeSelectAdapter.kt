@@ -25,7 +25,6 @@ class SpinnerTypeSelectAdapter (context:Context, resource: Int, items: Array<Ske
 
     fun createView(position: Int, parent: ViewGroup): View{
         var convertedView = LayoutInflater.from(context).inflate(R.layout.row_for_sketcher_selection_dialog, parent, false)
-
         val item = getItem(position)
         val typeIconIV = convertedView!!.findViewById<ImageView>(R.id.sketcherIconSelectionIV)
         val typeNameTV = convertedView!!.findViewById<TextView>(R.id.sketcherNameSelectionTV)

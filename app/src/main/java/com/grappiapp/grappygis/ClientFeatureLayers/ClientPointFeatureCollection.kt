@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.grappiapp.grappygis.OfflineMode.OfflineModeController
 import com.squareup.picasso.Picasso
 import org.json.JSONArray
 import org.json.JSONObject
@@ -46,7 +47,6 @@ class ClientPointFeatureCollection(val context: Context) {
     private var fieldsArray = mutableListOf<Field>()
     private lateinit var featureCollectionTable: FeatureCollectionTable
     val pinBlueStarDrawable = BitmapDrawable(context.resources, getBitmapFromVectorDrawable(R.drawable.ic_star_blue))
-//    val pinBlackStarDrawable = BitmapDrawable(context.resources, getBitmapFromVectorDrawable(R.drawable.ic_star_black))
     var pictureMarkerSymbol = PictureMarkerSymbol(pinBlueStarDrawable)
     var renderer = SimpleRenderer(pictureMarkerSymbol)
     var WIDTH = 20f
@@ -308,6 +308,11 @@ class ClientPointFeatureCollection(val context: Context) {
         features.add(newFeature)
         featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
             featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
+                if (OfflineModeController.isOfflineMode){
+                    OfflineModeController.saveJSONLocally(context, generateARCGISJSON(), SketcherEditorTypes.POINT)
+                    progressDialog.dismiss()
+                    return@addDoneListener
+                }
                 uploadJSON(object: OnPointsUploaded{
                     override fun onPointsUploadFinished() {
                         progressDialog.dismiss()
@@ -336,6 +341,11 @@ class ClientPointFeatureCollection(val context: Context) {
         features.removeAt(featureNum)
         featureCollectionTable.deleteFeatureAsync(editFeature).addDoneListener {
             featureCollectionTable.addFeatureAsync(newFeature).addDoneListener {
+                if (OfflineModeController.isOfflineMode){
+                    OfflineModeController.saveJSONLocally(context, generateARCGISJSON(), SketcherEditorTypes.POINT)
+                    progressDialog.dismiss()
+                    return@addDoneListener
+                }
                 uploadJSON(object: OnPointsUploaded{
                     override fun onPointsUploadFinished() {
                         progressDialog.dismiss()
@@ -404,6 +414,11 @@ class ClientPointFeatureCollection(val context: Context) {
             Toast.makeText(context, "failed to update layer", Toast.LENGTH_LONG).show()
         }
         featureCollectionTable.deleteFeatureAsync(features[objectID]).addDoneListener{
+            if (OfflineModeController.isOfflineMode){
+                OfflineModeController.saveJSONLocally(context, generateARCGISJSON(), SketcherEditorTypes.POINT)
+                progressDialog.dismiss()
+                return@addDoneListener
+            }
             val url = features[objectID].attributes["imageURL"] as String
             val storage = FirebaseStorage.getInstance()
             if (url.count() > 5) {

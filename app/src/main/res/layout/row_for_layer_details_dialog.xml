@@ -47,7 +47,7 @@
     <ImageView
         android:id="@+id/rowDetailsPreviewImageView"
         android:layout_width="0dp"
-        android:layout_height="250dp"
+        android:layout_height="300dp"
         android:background="#CC010b1f"
         android:scaleType="fitCenter"
         android:visibility="gone"

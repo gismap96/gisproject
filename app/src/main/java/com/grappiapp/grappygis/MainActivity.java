@@ -25,11 +25,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.esri.arcgisruntime.mapping.Basemap;
+import com.grappiapp.grappygis.Basemap.BasemapController;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPointFeatureCollection;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPolygonFeatureCollection;
 import com.grappiapp.grappygis.ClientLayerPhotoController.ClientPhotoController;
 import com.grappiapp.grappygis.ClientLayersHandler.ClientLayersController;
+import com.grappiapp.grappygis.EmailUpdate.EmailUpdateController;
 import com.grappiapp.grappygis.GeoViewController.GeoViewController;
 import com.grappiapp.grappygis.LayerCalloutControl.FeatureLayerController;
 import com.grappiapp.grappygis.LayerCalloutDialog.DialogLayerAdapter;
@@ -227,15 +230,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             public void onClick(View v) {
 //                DialogAddFlexibleLayerNameTypeFragment fragment = new DialogAddFlexibleLayerNameTypeFragment(MainActivity.this);
 //                fragment.show();
-                OfflineModeController offlineController = OfflineModeController.INSTANCE;
-
-                if (offlineController.isOfflineMode()){
-//                    offlineController.uploadOfflineJSON(MainActivity);
-                }else {
-                    offlineController.saveJSONLocally(MainActivity.this,"polyline",UserPolyline.INSTANCE.getUserPolyline().generateARCGISJSON());
-                    offlineController.setOfflineMode(true);
-                }
-
+//                EmailUpdateController.INSTANCE.sendUpdateMail(MainActivity.this);
+                BasemapController.INSTANCE.inserBasemap(mMapView);
             }
         });
         saveShapeTV = findViewById(R.id.saveShapeTV);
@@ -340,6 +336,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         mDistanceOverlay = new GraphicsOverlay();
         mMapView.getGraphicsOverlays().add(mDistanceOverlay);
         locationDisplay = mMapView.getLocationDisplay();
+
 //        mMapView.addNavigationChangedListener(navigationChangedEvent -> GeoViewController.INSTANCE.calculateAndSetCurrentLocation(mMapView));
 
 //        ArcGISMap map = new ArcGISMap(Basemap.Type.TOPOGRAPHIC, 34.056295, -117.195800, 16);
@@ -396,8 +393,15 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         offlineModeIV = findViewById(R.id.offlineModeIV);
 //        offlineModeIV.setVisibility(View.GONE);
         offlineModeIV.setOnClickListener(v -> {
-            OfflineModeController.INSTANCE.setOfflineMode(true);
-            offlineModeIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+            OfflineModeController controller = OfflineModeController.INSTANCE;
+            if (controller.isOfflineMode()){
+                offlineModeIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+                controller.exitOfflineMode(this);
+            }else {
+                offlineModeIV.setColorFilter(getResources().getColor(R.color.colorAccent), PorterDuff.Mode.SRC_ATOP);
+                controller.startOfflineMode(this);
+            }
+
         });
         makeLegendGreatAgainTV.setOnClickListener(v -> {
             FeatureLayerController.INSTANCE.makeAllLayersInvisible(mMapView, legendAdapter);
@@ -473,7 +477,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                                 initializingProgressDialog.show();
                                 rotateMap(0);
 //                                initLegendSidebar();
-                                ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this);
+                                ClientLayersController.INSTANCE.fetchClientPolyline(MainActivity.this,MainActivity.this);
+
 
                             }
                         }
@@ -557,9 +562,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             public void onProgress(FileDownloadTask.TaskSnapshot taskSnapshot) {
                 double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
                         .getTotalByteCount());
-                if(progress >= 0) {
+                if(progress >= 0 && progress <= 97) {
                     String msg1 = getString(R.string.please_wait) + "\n";
                     progressDialog.setMessage(msg1+ (int) progress + "%");
+                } else if (progress >= 98){
+                    String msg = getString(R.string.finalising_download);
+                    progressDialog.setMessage(msg);
                 }
             }
         });

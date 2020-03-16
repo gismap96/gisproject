@@ -1,5 +1,7 @@
 package com.grappiapp.grappygis.ClientLayersHandler
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import com.grappiapp.grappygis.ClientFeatureLayers.GrappiField
 import com.grappiapp.grappygis.ProjectRelated.ProjectId
@@ -11,6 +13,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.grappiapp.grappygis.Consts
+import com.grappiapp.grappygis.OfflineMode.OfflineModeController
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
@@ -21,8 +25,22 @@ object ClientLayersController {
     var localClientPolylineFile = File.createTempFile("polyline", "json")
     var localPointsFile = File.createTempFile("points", "json")
     var localPolygonFile = File.createTempFile("polygon", "json")
+    lateinit var sharedPreferences: SharedPreferences
 
-    fun fetchClientPolyline(callback: OnClientLayersJSONDownloaded){
+    fun fetchClientPolyline(context: Context, callback: OnClientLayersJSONDownloaded){
+        sharedPreferences = context.getSharedPreferences("PREF_NAME", Context.MODE_PRIVATE)
+        if (sharedPreferences.getBoolean(Consts.DOES_OFFLINE_POLYLINE_DATA_EXIST, false)){
+            val editor = sharedPreferences.edit()
+            editor.putBoolean(Consts.DOES_OFFLINE_POLYLINE_DATA_EXIST, false)
+            editor.apply()
+            val json = OfflineModeController.getOfflineJSON(SketcherEditorTypes.POLYLINE)
+            json?.let {
+                callback.onClientPolylineJSONDownloaded(it)
+                return
+            }
+            callback.onEmptyClientPolylineJSON()
+            return
+        }
         val mProjectId = ProjectId.projectId
         val firebaseStorage = FirebaseStorage.getInstance()
         val storageRef = firebaseStorage.reference
@@ -31,12 +49,23 @@ object ClientLayersController {
         childRef.getFile(localClientPolylineFile).addOnSuccessListener {
             val json = JSONObject(generateJson(localClientPolylineFile))
             callback.onClientPolylineJSONDownloaded(json)
-
         }.addOnFailureListener{
             callback.onEmptyClientPolylineJSON()
         }
     }
     fun fetchClientPoints(callback: OnClientLayersJSONDownloaded){
+        if (sharedPreferences.getBoolean(Consts.DOES_OFFLINE_POINT_DATA_EXIST, false)){
+            val editor = sharedPreferences.edit()
+            editor.putBoolean(Consts.DOES_OFFLINE_POINT_DATA_EXIST, false)
+            editor.apply()
+            val json = OfflineModeController.getOfflineJSON(SketcherEditorTypes.POINT)
+            json?.let {
+                callback.onClientPointsJSONDownloaded(it)
+                return
+            }
+            callback.onEmptyClientPointsJSON()
+            return
+        }
         val mProjectId = ProjectId.projectId
         val firebaseStorage = FirebaseStorage.getInstance()
         val storageRef = firebaseStorage.reference
@@ -51,6 +80,18 @@ object ClientLayersController {
     }
 
     fun fetchClientPolygon(callback: OnClientLayersJSONDownloaded){
+        if (sharedPreferences.getBoolean(Consts.DOES_OFFLINE_POLYGON_DATA_EXIST, false)){
+            val editor = sharedPreferences.edit()
+            editor.putBoolean(Consts.DOES_OFFLINE_POLYGON_DATA_EXIST, false)
+            editor.apply()
+            val json = OfflineModeController.getOfflineJSON(SketcherEditorTypes.POLYGON)
+            json?.let {
+                callback.onClientPolygonJSONDownloaded(it)
+                return
+            }
+            callback.onEmptyClientPolygon()
+            return
+        }
         val mProjectId = ProjectId.projectId
         val firebaseStorage = FirebaseStorage.getInstance()
         val storageRef = firebaseStorage.reference

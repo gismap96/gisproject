@@ -29,6 +29,7 @@ import com.grappiapp.grappygis.SketchController.SketcherSaveDialogFragment
 import com.esri.arcgisruntime.mapping.view.IdentifyLayerResult
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.grappiapp.grappygis.GeoViewController.GeoViewController
+import com.grappiapp.grappygis.OfflineMode.OfflineModeController
 import com.grappiapp.grappygis.ProjectRelated.UserPolygon
 import java.util.concurrent.ExecutionException
 
@@ -168,6 +169,12 @@ class DialogLayerDetailsFragment(val mMap: MapView, var activity: Activity, inte
                 saveDialog.show()
             }
             R.id.editFeatureImageIV->{
+                if (OfflineModeController.isOfflineMode){
+                    AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert)
+                            .setTitle(context.getString(R.string.no_support)).setMessage(R.string.offline_image_no_support)
+                            .setPositiveButton(R.string.yes, null)
+                    return
+                }
                 dismiss()
                 GeoViewController.setNewSavedViewPoint(mMap)
                 ClientPhotoController.editPhoto(context)

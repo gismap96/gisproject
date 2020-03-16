@@ -66,7 +66,7 @@
     <string name="uploading_layer">מעלה שכבה, נא לא לכבות את המכשיר</string>
     <string name="image_upload_failed">העלאת התמונה נכשלה</string>
     <string name="coming_soon">יתווסף בקרוב</string>
-    <string name="no_support">כרגע אין תמיכה בפועלה זו, אנחנו עובדים עליה והיא תתווסף בקרוב</string>
+    <string name="no_support">אין תמיכה בפועלה זו</string>
     <string name="understood">הבנתי</string>
     <string name="empty_polyline">יש לצייר קו</string>
     <string name="failed_to_download_image">הורדת תמונה מקדימה נכשל</string>
@@ -107,4 +107,12 @@
     <string name="layer_type">סוג שכבה</string>
     <string name="symbol_fill_color_headline">סימבולוגיה[בחירת צבע לשכבה]</string>
     <string name="next">הבא</string>
+    <string name="exiting_offline_headline">מעדכן שכבות בשרת</string>
+    <string name="exiting_offline_message">נא לא לסגור את האפליקציה</string>
+    <string name="offline_image_no_support">מצב אופליין אינו תומך בעדכון תמונות (בנתיים)</string>
+    <string name="finalising_download">מסיים הורדה, זה עלול לקחת מספר רגעים</string>
+    <string name="email_update_message">אנא עדכנו את השכבות שלי </string>
+    <string name="email_update_headline">עדכון גאפי עבור </string>
+    <string name="email_update">שליחת דואר</string>
+    <string name="serial_number">מספר סידורי: </string>
 </resources>
