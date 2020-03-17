@@ -130,6 +130,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private ImageView toggleAutoPanBtn;
     private ImageView undoSkecherIV;
     private ImageView zift2;
+    private ImageView updateEmailIV;
     private String mProjectId;
     private ConstraintLayout legendDetailsConstraintsLayout;
     private DialogLayerSelectionFragment dialogLayerSelectionFragment;
@@ -221,6 +222,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             public void onClick(View view) {
                 toggleLayerList();
             }
+        });
+        updateEmailIV = findViewById(R.id.updateEmailIV);
+        updateEmailIV.setOnClickListener(v -> {
+            EmailUpdateController.INSTANCE.sendUpdateMail(MainActivity.this);
         });
         zift2 = findViewById(R.id.zift2);
 //        zift2.setVisibility(View.GONE);
