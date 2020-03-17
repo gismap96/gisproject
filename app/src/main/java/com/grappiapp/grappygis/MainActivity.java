@@ -231,7 +231,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                DialogAddFlexibleLayerNameTypeFragment fragment = new DialogAddFlexibleLayerNameTypeFragment(MainActivity.this);
 //                fragment.show();
 //                EmailUpdateController.INSTANCE.sendUpdateMail(MainActivity.this);
-                BasemapController.INSTANCE.inserBasemap(mMapView);
+//                BasemapController.INSTANCE.inserBasemap(mMapView);
             }
         });
         saveShapeTV = findViewById(R.id.saveShapeTV);
