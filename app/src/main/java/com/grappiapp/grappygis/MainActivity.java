@@ -228,7 +228,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             EmailUpdateController.INSTANCE.sendUpdateMail(MainActivity.this);
         });
         zift2 = findViewById(R.id.zift2);
-//        zift2.setVisibility(View.GONE);
+        zift2.setVisibility(View.GONE);
 //
         zift2.setOnClickListener(new View.OnClickListener() {
             @Override
