@@ -2,6 +2,7 @@ package com.grappiapp.grappygis.SketchController
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.esri.arcgisruntime.geometry.*
@@ -148,7 +149,9 @@ object SketchEditorController {
         val pointsCollection = PointCollection(lastSection)
         val partToCalculate = Part(pointsCollection)
         val newPolyline = Polyline(partToCalculate)
-        var length = GeometryEngine.length(newPolyline)
+        val linearUnit = LinearUnit(LinearUnitId.METERS)
+        var length = GeometryEngine.lengthGeodetic(newPolyline.extent, linearUnit, GeodeticCurveType.NORMAL_SECTION)
+//        var length = GeometryEngine.length(newPolyline)
         val decimalFormat = DecimalFormat("#.00")
         if (unit == "mi"){
             length *= 1609.344
@@ -158,26 +161,34 @@ object SketchEditorController {
     }
     fun polygonArea(mMapView: MapView): String{
         val geometry = sketchEditor.geometry
-        val envelope = geometry.extent
-        area = GeometryEngine.area(envelope)
         val unit = mMapView.spatialReference.unit.abbreviation
+        var areaUnit = AreaUnit(AreaUnitId.SQUARE_METERS)
         if (unit == "mi"){
-            area *= 1609.344
+            areaUnit = AreaUnit(AreaUnitId.ACRES)
         }
+        area = GeometryEngine.areaGeodetic(geometry, areaUnit, GeodeticCurveType.GEODESIC)
+//        area = GeometryEngine.area(geometry as Polygon)
+        Log.d(TAG, area.toString())
         val decimalFormat = DecimalFormat("#.00")
 //        dunam = area / 1000.0
 //        formatDunam = decimalFormat.format(dunam).toString()
       //  if (formatDunam == ".00" || formatDunam == ".00m") formatDunam = "0.00m"
         var areaFormat = decimalFormat.format(area).toString()
         if (areaFormat == ".00m" || areaFormat == ".00") areaFormat = "0.00"
-        areaFormat += "m²"
+        if (unit == "mi"){
+            areaFormat += "acre"
+        }else {
+            areaFormat += "m²"
+        }
         return areaFormat
     }
 
     fun polylineDistance(mMapView: MapView): String{
         val geometry = sketchEditor.geometry
         val line = geometry as Polyline
-        distance = GeometryEngine.length(line)
+//        distance = GeometryEngine.length(line)
+        val linearUnit = LinearUnit(LinearUnitId.METERS)
+        distance = GeometryEngine.lengthGeodetic(geometry, linearUnit, GeodeticCurveType.NORMAL_SECTION)
         val decimalFormat = DecimalFormat("#.00")
         val unit = mMapView.spatialReference.unit.abbreviation
         if (unit == "mi"){

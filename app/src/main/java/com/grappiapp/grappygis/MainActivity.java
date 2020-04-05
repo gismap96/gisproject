@@ -224,6 +224,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             }
         });
         updateEmailIV = findViewById(R.id.updateEmailIV);
+        updateEmailIV.setVisibility(View.GONE);
         updateEmailIV.setOnClickListener(v -> {
             EmailUpdateController.INSTANCE.sendUpdateMail(MainActivity.this);
         });
@@ -236,7 +237,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //                DialogAddFlexibleLayerNameTypeFragment fragment = new DialogAddFlexibleLayerNameTypeFragment(MainActivity.this);
 //                fragment.show();
 //                EmailUpdateController.INSTANCE.sendUpdateMail(MainActivity.this);
-//                BasemapController.INSTANCE.inserBasemap(mMapView);
+                BasemapController.INSTANCE.inserBasemap(mMapView);
             }
         });
         saveShapeTV = findViewById(R.id.saveShapeTV);
@@ -707,6 +708,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 // In this case the first map in the array is obtained
                 ArcGISMap mobileMap = mobileMapPackage.getMaps().get(0);
                 mMapView.setMap(mobileMap);
+                BasemapController.INSTANCE.inserBasemap(mMapView);
                 LegendLayerDisplayController.INSTANCE.makeLayersInvisible(mMapView);
                 LegendLayerDisplayController.INSTANCE.makeAllGroupLayersVisible(mMapView);
                 GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
