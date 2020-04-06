@@ -4,8 +4,12 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -15,6 +19,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientFeatureCollectionLayer
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPointFeatureCollection
 import com.grappiapp.grappygis.ProjectRelated.ProjectId
@@ -59,6 +64,7 @@ object ClientPhotoController {
         val bottomSheet = BottomSheetDialog(activity)
         bottomSheet.setCancelable(false)
         val view = LayoutInflater.from(activity).inflate(R.layout.fragment_image_source_selection_bottom_sheet, null)
+        bottomSheet.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         bottomSheet.setContentView(view)
         bottomSheet.show()
         view.cameraImageResourceTV.setOnClickListener {
