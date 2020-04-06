@@ -245,7 +245,8 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                 }
                 SketchEditorController.startSketching(SketcherEditorTypes.POLYLINE, mMapView)
                 UserPolyline.userPolyline!!.layer.isVisible = true
-                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
+//                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
+                ClientPhotoController.openBottomSheet(context,attributes,geometry,callback!!, progressDialog!!)
             }
             SketcherEditorTypes.POLYGON -> {
                 if (UserPolygon.userPolygon == null){
@@ -256,8 +257,8 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                 }
                 SketchEditorController.startSketching(SketcherEditorTypes.POLYGON, mMapView)
                 UserPolygon.userPolygon!!.layer.isVisible = true
-                ClientPhotoController.showPhotoQuestionDialog(context, attributes, geometry, callback!!, progressDialog!!)
-
+//                ClientPhotoController.showPhotoQuestionDialog(context, attributes, geometry, callback!!, progressDialog!!)
+                ClientPhotoController.openBottomSheet(context,attributes,geometry,callback!!, progressDialog!!)
             }
             SketcherEditorTypes.POINT -> {
                 if (UserPoints.userPoints == null){
@@ -268,8 +269,10 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                 }
                 SketchEditorController.startSketching(SketcherEditorTypes.POINT, mMapView)
                 UserPoints.userPoints!!.layer.isVisible = true
-                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
+//                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
+                ClientPhotoController.openBottomSheet(context,attributes,geometry,callback!!, progressDialog!!)
             }
+
         }
         dismiss()
     }

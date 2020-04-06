@@ -116,4 +116,8 @@
     <string name="email_update_headline">Grappi Update for </string>
     <string name="email_update">Send Email</string>
     <string name="serial_number">serial number: </string>
+    <string name="select_image_source">Please select image source</string>
+    <string name="camera">Camera</string>
+    <string name="image_gallery">Image Gallery</string>
+    <string name="no_image">Without an image</string>
 </resources>

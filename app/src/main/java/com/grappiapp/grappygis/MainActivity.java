@@ -94,7 +94,9 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -122,6 +124,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private boolean isAutoPan;
     private static final int TAKE_PHOTO_FOR_LAYER = 2;
     private static final int EDIT_PHOTO_FOR_LAYER = 3;
+    private static final int TAKE_PHOTO_FOR_GALLERY = 4;
     FirebaseStorage storage;
     StorageReference storageReference;
     SharedPreferences mPrefs;
@@ -832,6 +835,10 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
 
 
+    public static boolean isImageFile(String path) {
+        String mimeType = URLConnection.guessContentTypeFromName(path);
+        return mimeType != null && mimeType.startsWith("image");
+    }
 
 
     @Override
@@ -864,27 +871,50 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     Uri uri = ClientPhotoController.INSTANCE.getImageURI();
                     ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this, MainActivity.this, MainActivity.this, mMapView);
                 } else {
-                    GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
-                    switch (ClientPhotoController.INSTANCE.getType()){
-                        case POINT:
-                            this.progressDialog.show();
-                            UserPoints.INSTANCE.getUserPoints().uploadJSON(this);
-                            break;
-                        case ENVELOPE:
-                            break;
-                        case POLYLINE:
-                            UserPolyline.INSTANCE.getUserPolyline().uploadJSON(this);
-                            break;
-                        case POLYGON:
-                            UserPolygon.INSTANCE.getUserPolygon().uploadJSON(this);
-                            break;
-                        case MULTIPOINT:
-                            break;
-                        case UNKNOWN:
-                            break;
-                    }
+                    UploadFeatureWithoutImage();
 
                 }
+                break;
+            case TAKE_PHOTO_FOR_GALLERY:
+                if (resultCode == Activity.RESULT_OK){
+                    this.progressDialog.show();
+                    Uri uri = data.getData();
+                    if (isImageFile(uri.getPath())){
+                        ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this, MainActivity.this, MainActivity.this, mMapView);
+                    } else {
+                        UploadFeatureWithoutImage();
+                    }
+                } else {
+                    UploadFeatureWithoutImage();
+                }
+
+                break;
+        }
+    }
+
+    private void UploadFeatureWithoutImage() {
+        GeoViewController.INSTANCE.setCurrentViewPointForMap(mMapView);
+        Geometry geometry = ClientPhotoController.INSTANCE.getGeometry();
+        HashMap attributes = ClientPhotoController.INSTANCE.getAttributes();
+        switch (ClientPhotoController.INSTANCE.getType()){
+            case POINT:
+                this.progressDialog.show();
+                UserPoints.INSTANCE.getUserPoints().createFeature(attributes, geometry, null);
+                UserPoints.INSTANCE.getUserPoints().uploadJSON(this);
+                break;
+            case ENVELOPE:
+                break;
+            case POLYLINE:
+                UserPolyline.INSTANCE.getUserPolyline().createFeature(attributes, geometry);
+                UserPolyline.INSTANCE.getUserPolyline().uploadJSON(this);
+                break;
+            case POLYGON:
+                UserPolygon.INSTANCE.getUserPolygon().createFeature(attributes,geometry);
+                UserPolygon.INSTANCE.getUserPolygon().uploadJSON(this);
+                break;
+            case MULTIPOINT:
+                break;
+            case UNKNOWN:
                 break;
         }
     }

@@ -115,4 +115,8 @@
     <string name="email_update_headline">עדכון גאפי עבור </string>
     <string name="email_update">שליחת דואר</string>
     <string name="serial_number">מספר סידורי: </string>
+    <string name="select_image_source">בחרו מקור לתמונה</string>
+    <string name="camera">מצלמה</string>
+    <string name="image_gallery">גלריית התמונות</string>
+    <string name="no_image">ללא תמונה</string>
 </resources>
