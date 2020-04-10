@@ -879,11 +879,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 if (resultCode == Activity.RESULT_OK){
                     this.progressDialog.show();
                     Uri uri = data.getData();
-                    if (isImageFile(uri.getPath())){
-                        ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this, MainActivity.this, MainActivity.this, mMapView);
-                    } else {
-                        UploadFeatureWithoutImage();
-                    }
+                    ClientPhotoController.INSTANCE.uploadImage(uri,MainActivity.this,MainActivity.this, MainActivity.this, MainActivity.this, mMapView);
+
                 } else {
                     UploadFeatureWithoutImage();
                 }
