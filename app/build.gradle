@@ -13,11 +13,14 @@ android {
         applicationId "com.grappiapp.grappygis"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1
+        versionCode 5
         def locales = ["en", "iw"]
         buildConfigField "String[]", "TRANSLATION_ARRAY", "new String[]{\"" + locales.join("\",\"") + "\"}"
         resConfigs locales
-        versionName "0.1"
+        versionName "0.2.0"
+        ndk {
+            abiFilters 'armeabi-v7a','arm64-v8a','x86','x86_64'
+        }
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
