@@ -149,9 +149,9 @@ object SketchEditorController {
         val pointsCollection = PointCollection(lastSection)
         val partToCalculate = Part(pointsCollection)
         val newPolyline = Polyline(partToCalculate)
-        val linearUnit = LinearUnit(LinearUnitId.METERS)
-        var length = GeometryEngine.lengthGeodetic(newPolyline.extent, linearUnit, GeodeticCurveType.NORMAL_SECTION)
-//        var length = GeometryEngine.length(newPolyline)
+//        val linearUnit = LinearUnit(LinearUnitId.METERS)
+//        var length = GeometryEngine.lengthGeodetic(newPolyline.extent, linearUnit, GeodeticCurveType.NORMAL_SECTION)
+        var length = GeometryEngine.length(newPolyline)
         val decimalFormat = DecimalFormat("#.00")
         if (unit == "mi"){
             length *= 1609.344
@@ -186,9 +186,9 @@ object SketchEditorController {
     fun polylineDistance(mMapView: MapView): String{
         val geometry = sketchEditor.geometry
         val line = geometry as Polyline
-//        distance = GeometryEngine.length(line)
-        val linearUnit = LinearUnit(LinearUnitId.METERS)
-        distance = GeometryEngine.lengthGeodetic(geometry, linearUnit, GeodeticCurveType.NORMAL_SECTION)
+        distance = GeometryEngine.length(line)
+//        val linearUnit = LinearUnit(LinearUnitId.METERS)
+//        distance = GeometryEngine.lengthGeodetic(geometry, linearUnit, GeodeticCurveType.NORMAL_SECTION)
         val decimalFormat = DecimalFormat("#.00")
         val unit = mMapView.spatialReference.unit.abbreviation
         if (unit == "mi"){
