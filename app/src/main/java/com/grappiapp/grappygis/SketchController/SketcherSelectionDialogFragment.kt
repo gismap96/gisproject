@@ -20,8 +20,8 @@ class SketcherSelectionDialogFragment(var activity: Activity, var adapter: Recyc
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(com.grappiapp.grappygis.R.layout.fragment_dialog_sketch_mode_selection)
-        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         var recycler = sketcherModeSelectionRecyclerView
         var layoutManager = LinearLayoutManager(activity)
         recycler.layoutManager = layoutManager

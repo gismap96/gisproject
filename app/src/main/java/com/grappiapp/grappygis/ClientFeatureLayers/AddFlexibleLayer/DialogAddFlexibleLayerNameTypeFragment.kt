@@ -15,8 +15,8 @@ class DialogAddFlexibleLayerNameTypeFragment(context: Context): Dialog(context){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_dialog_add_flexible_layer_name_type)
-        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         val sketcherTypes = enumValues<SketcherEditorTypes>()
         SpinnerTypeSelectAdapter(context, R.layout.row_for_sketcher_selection_dialog,sketcherTypes).also{
             adapter-> layerTypeSelectionSpinner.adapter = adapter

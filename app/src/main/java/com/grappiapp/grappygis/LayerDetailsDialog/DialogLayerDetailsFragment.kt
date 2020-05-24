@@ -39,7 +39,7 @@ class DialogLayerDetailsFragment(val mMap: MapView, var activity: Activity, inte
     val TAG = "DialogDetails"
     override fun onStart() {
         super.onStart()
-        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,7 +94,7 @@ class DialogLayerDetailsFragment(val mMap: MapView, var activity: Activity, inte
         }
         fragmentDialogLayerDetailsHeadline.text = finalHeadline
         fragmentDialogLayerDetailsClose.setOnClickListener(this)
-        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
 

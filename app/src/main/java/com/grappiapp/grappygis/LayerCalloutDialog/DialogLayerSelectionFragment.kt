@@ -21,14 +21,14 @@ class DialogLayerSelectionFragment(var activity: Activity, internal var adapter:
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.fragment_dialog_layer_selection)
-        window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         var recycler = layerCalloutDialogRecyclerview
         var layoutManager = LinearLayoutManager(activity)
 
-        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         recycler.layoutManager = layoutManager
         recycler.adapter = adapter
-        window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        window?.decorView?.layoutDirection = View.LAYOUT_DIRECTION_LTR
 
 
 
