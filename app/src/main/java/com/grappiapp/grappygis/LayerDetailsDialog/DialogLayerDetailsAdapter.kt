@@ -136,30 +136,31 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                 valueTextView.visibility = View.GONE
                 keyTextView.visibility = View.GONE
                 previewImage.visibility = View.VISIBLE
-                Picasso.get().isLoggingEnabled = true
-                target = object: Target{
-                    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-                        previewImage.setImageDrawable(placeHolderDrawable)
-                    }
+                if (value.isNotEmpty()){
+                    Picasso.get().isLoggingEnabled = true
+                    target = object: Target{
+                        override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                            previewImage.setImageDrawable(placeHolderDrawable)
+                        }
 
-                    override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-                        Toast.makeText(context, context.getText(R.string.failed_to_download_image), Toast.LENGTH_LONG).show()
-                    }
+                        override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
+                            Toast.makeText(context, context.getText(R.string.failed_to_download_image), Toast.LENGTH_LONG).show()
+                        }
 
-                    override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
 
-                        bitmap?.let{
-                            previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
-                            previewImage.setImageBitmap(it)
+                            bitmap?.let{
+                                previewImage.scaleType = ImageView.ScaleType.CENTER_CROP
+                                previewImage.setImageBitmap(it)
+                            }
                         }
                     }
-                }
-
-                Picasso.get().load(value).placeholder(R.drawable.ic_placeholder).into(target)
-                previewImage.setOnClickListener {
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = (Uri.parse(value))
-                    context.startActivity(intent)
+                    Picasso.get().load(value).placeholder(R.drawable.ic_placeholder).into(target)
+                    previewImage.setOnClickListener {
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = (Uri.parse(value))
+                        context.startActivity(intent)
+                    }
                 }
 
             }
