@@ -40,14 +40,19 @@ object FeatureLayerController {
     fun layerClicked(point: android.graphics.Point, mMap: MapView, onLayerClickListener: OnLayerClickListener){
         this.point = point
         identifyClickedLayerResults(point,mMap) { res ->
-
             if (res.size > 0) {
                 var layerNames = ArrayList<String>()
                 res.forEach {
                     val mLayerName = it.layerContent.name
-                    layerNames.add(mLayerName)
+                    if (!(mLayerName.contains(".jpg") || mLayerName.contains(".ecw") || mLayerName.contains(".tif"))){
+                        layerNames.add(mLayerName)
+                    }
+
                 }
-                onLayerClickListener.onLayerClickListener(layerNames, res)
+                if (layerNames.size > 0){
+                    onLayerClickListener.onLayerClickListener(layerNames, res)
+                }
+
             }
         }
     }
