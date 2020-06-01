@@ -136,7 +136,7 @@ class DialogLayerDetailsAdapter(val context: Context,val displayLayers: ArrayLis
                 valueTextView.visibility = View.GONE
                 keyTextView.visibility = View.GONE
                 previewImage.visibility = View.VISIBLE
-                if (value.trim().isNotEmpty()){
+                if (value.trim().isNotEmpty() && value.trim().length > 4){
                     Picasso.get().isLoggingEnabled = true
                     target = object: Target{
                         override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
