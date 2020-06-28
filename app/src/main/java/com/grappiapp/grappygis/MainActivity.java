@@ -356,12 +356,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         mLayerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 //        mContentAdapter = new MapLayerAdapter(this);
 //        mLayerRecyclerView.setAdapter(mContentAdapter);
-        extStorDir = Environment.getExternalStorageDirectory();
-        Dexter.withActivity(this).withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION)
+
+        Dexter.withActivity(this).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new BaseMultiplePermissionsListener(){
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         super.onPermissionsChecked(report);
+                        extStorDir = Environment.getExternalStorageDirectory();
                         if (report.areAllPermissionsGranted()){
                             isAllGranted = true;
                             locationDisplay.setAutoPanMode(LocationDisplay.AutoPanMode.NAVIGATION);
@@ -604,10 +605,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             public void onSuccess(StorageMetadata storageMetadata) {
                 long timeModified = storageMetadata.getUpdatedTimeMillis();
                 long lastDownloadTime = mPrefs.getLong(Consts.DOWNLOAD_TIME_KEY, Long.MIN_VALUE);
-
+                lastDownloadTime = Long.MIN_VALUE;
                 if (timeModified > lastDownloadTime){
 //                    mmpkFile.delete();
-
                     if (lastDownloadTime != Long.MIN_VALUE){
 //                        deleteMMPKFolderData();
                         deleteMMPKFolderData();

@@ -52,7 +52,6 @@ object FeatureLayerController {
                 if (layerNames.size > 0){
                     onLayerClickListener.onLayerClickListener(layerNames, res)
                 }
-
             }
         }
     }
