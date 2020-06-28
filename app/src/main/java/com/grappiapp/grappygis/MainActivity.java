@@ -605,7 +605,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             public void onSuccess(StorageMetadata storageMetadata) {
                 long timeModified = storageMetadata.getUpdatedTimeMillis();
                 long lastDownloadTime = mPrefs.getLong(Consts.DOWNLOAD_TIME_KEY, Long.MIN_VALUE);
-                lastDownloadTime = Long.MIN_VALUE;
+//                lastDownloadTime = Long.MIN_VALUE;
                 if (timeModified > lastDownloadTime){
 //                    mmpkFile.delete();
                     if (lastDownloadTime != Long.MIN_VALUE){
