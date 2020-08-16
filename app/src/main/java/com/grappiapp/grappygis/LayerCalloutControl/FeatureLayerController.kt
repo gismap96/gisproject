@@ -103,18 +103,20 @@ object FeatureLayerController {
                         }
                     }
                     mArcGISFeature?.attributes?.forEach {
-                        if (!it.value.toString().isEmpty() && !it.key.toString().isEmpty()
-                                && !it.key.toString().contains(".FID")){
-                            val alias = mAliasesMap[it.key]
-                            val attribute = it
-                            if (alias == null){
-                                mTempMap[it.key] = attribute.value.toString()
-                            }
-                            alias?.let{
-                                mTempMap[alias] = attribute.value.toString()
-                            }
+                        if (it.key != null && it.value != null) {
+                            if (!it.value.toString().isEmpty() && !it.key.toString().isEmpty()
+                                    && !it.key.toString().contains(".FID")) {
+                                val alias = mAliasesMap[it.key]
+                                val attribute = it
+                                if (alias == null) {
+                                    mTempMap[it.key] = attribute.value.toString()
+                                }
+                                alias?.let {
+                                    mTempMap[alias] = attribute.value.toString()
+                                }
 
 
+                            }
                         }
 
                     }

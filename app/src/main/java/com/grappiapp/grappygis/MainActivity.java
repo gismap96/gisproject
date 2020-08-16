@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import com.grappiapp.grappygis.ClientFeatureLayers.ClientPointFeatureCollection;
 import com.grappiapp.grappygis.ClientFeatureLayers.ClientPolygonFeatureCollection;
 import com.grappiapp.grappygis.ClientLayerPhotoController.ClientPhotoController;
 import com.grappiapp.grappygis.ClientLayersHandler.ClientLayersController;
+import com.grappiapp.grappygis.DownloadController.DownloadController;
 import com.grappiapp.grappygis.EmailUpdate.EmailUpdateController;
 import com.grappiapp.grappygis.GeoViewController.GeoViewController;
 import com.grappiapp.grappygis.LayerCalloutControl.FeatureLayerController;
@@ -111,7 +113,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
         , LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish,
         DialogLayerDetailsFragment.OnEditSelectedListener, MapLayerAdapter.OnLegendItemInteraction, SearchResultsAdapter.OnSearchResultClicked
-        , ClientPointFeatureCollection.OnPointsUploaded, ClientPolygonFeatureCollection.OnClientPolygonUploadFinished{
+        , ClientPointFeatureCollection.OnPointsUploaded, ClientPolygonFeatureCollection.OnClientPolygonUploadFinished, DownloadController.OnFinishedDownloadListener{
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
@@ -554,13 +556,13 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 try {
                     File zipFile = new File(getRasterFolderPath() + File.separator + "raster_data.zip");
                     Utils.unzip(zipFile, new File(getRasterFolderPath()));
-                    setRaster(getRasterFolderPath());
+                    DownloadController.INSTANCE.downloadMultiple(MainActivity.this, storageReference, getRasterFolderPath(), mProjectId, progressDialog,
+                            2,MainActivity.this);
+                    //setRaster(getRasterFolderPath());
                 } catch (Exception e) {
                     e.printStackTrace();
 
                 }
-
-                progressDialog.dismiss();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -1217,5 +1219,11 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 .setPositiveButton(R.string.yes, (dialog, which) -> finish())
                 .setNegativeButton(R.string.no, null)
                 .show();
+    }
+
+    @Override
+    public void onFinishedDownloadListener(@NotNull ProgressDialog progressDialog) {
+        progressDialog.dismiss();
+        setRaster(getRasterFolderPath());
     }
 }

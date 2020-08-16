@@ -120,4 +120,5 @@
     <string name="camera">Camera</string>
     <string name="image_gallery">Image Gallery</string>
     <string name="no_image">Without an image</string>
+    <string name="please_wait_file_number">Please wait… File number:</string>
 </resources>
