@@ -120,4 +120,6 @@
     <string name="image_gallery">גלריית התמונות</string>
     <string name="no_image">ללא תמונה</string>
     <string name="please_wait_file_number">נא להמתין... קובץ </string>
+    <string name="subscription_ends_header">זמן המנוי פג בקרוב</string>
+    <string name="subscription_ends_msg">יש ליצור קשר על מנת לחדש או לרכוש מנוי</string>
 </resources>

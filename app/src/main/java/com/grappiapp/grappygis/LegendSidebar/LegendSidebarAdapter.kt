@@ -62,6 +62,7 @@ class LegendSidebarAdapter(var context: Context, val interactionListener: MapLay
 //        var legendGroupsCheckBox = v.legendGroupsCheckBox
         var legendDetailsRecyclerView = v.legendDetailsRecyclerView
         var legendIconIV = v.legendIconIV
+        var legendOpenAllLayers = v.legendOpenAllLayers
         fun bind(adapter: MapLayerAdapter, group: LegendGroup, context: Context){
             legendGroupNameTV.text = group.title
             adapter.setLayerList(group.layers)
@@ -69,6 +70,13 @@ class LegendSidebarAdapter(var context: Context, val interactionListener: MapLay
             legendDetailsRecyclerView.layoutManager = layoutManager
             legendDetailsRecyclerView.adapter = adapter
             legendDetailsRecyclerView.visibility = View.GONE
+            legendOpenAllLayers.setOnClickListener {
+                group.layers.forEach{
+                    it.isVisible = true
+                }
+                adapter.notifyDataSetChanged()
+            }
+
 //            legendGroupsCheckBox.visibility = View.GONE
 //            legendGroupsCheckBox.setOnClickListener {
 //                legendDetailsRecyclerView.visibility = View.GONE

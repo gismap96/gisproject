@@ -10,15 +10,15 @@
     <TextView
         android:id="@+id/legendGroupNameTV"
         android:layout_width="0dp"
-        android:textColor="@color/black"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:gravity="center|start"
         android:text="קבוצה"
+        android:textColor="@color/black"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/legendOpenAllLayers"
         app:layout_constraintStart_toEndOf="@+id/legendIconIV"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,5 +43,15 @@
         app:layout_constraintBottom_toBottomOf="@+id/legendGroupNameTV"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/legendGroupNameTV" />
+
+    <ImageView
+        android:id="@+id/legendOpenAllLayers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/legendGroupNameTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/legendGroupNameTV"
+        android:src="@android:drawable/ic_menu_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

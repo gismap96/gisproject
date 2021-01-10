@@ -3,7 +3,9 @@ package com.grappiapp.grappygis;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -74,6 +76,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
+
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -190,9 +193,33 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         editor.putString(Consts.PROJECT_ID_KEY, value);
                         editor.putString(Consts.UUID, mAuth.getCurrentUser().getUid());
                         editor.apply();
-//                        FileMemoryController.INSTANCE.checkupUpdate(LoginActivity.this,LoginActivity.this);
-                        startApp();
 
+//                        FileMemoryController.INSTANCE.checkupUpdate(LoginActivity.this,LoginActivity.this);
+                        mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("endOfService").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                boolean value = (boolean) dataSnapshot.getValue();
+                                if (value){
+                                    new AlertDialog.Builder(LoginActivity.this).setTitle(getResources().getString(R.string.subscription_ends_header))
+                                            .setMessage(getResources().getString(R.string.subscription_ends_msg)).setPositiveButton(getResources().getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            startApp();
+                                        }
+                                    })
+                                            .setIcon(android.R.drawable.ic_dialog_alert).show();
+
+                                }else{
+                                    startApp();
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                     else{
                         Log.d("Login", "is NOT Subscribed");
