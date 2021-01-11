@@ -198,20 +198,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         mDatabase.child("users").child(mAuth.getCurrentUser().getUid()).child("endOfService").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                boolean value = (boolean) dataSnapshot.getValue();
-                                if (value){
-                                    new AlertDialog.Builder(LoginActivity.this).setTitle(getResources().getString(R.string.subscription_ends_header))
-                                            .setMessage(getResources().getString(R.string.subscription_ends_msg)).setPositiveButton(getResources().getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            startApp();
-                                        }
-                                    })
-                                            .setIcon(android.R.drawable.ic_dialog_alert).show();
+                                if (dataSnapshot.getValue() != null){
+                                    boolean value = (boolean) dataSnapshot.getValue();
+                                    if (value){
+                                        new AlertDialog.Builder(LoginActivity.this).setTitle(getResources().getString(R.string.subscription_ends_header))
+                                                .setMessage(getResources().getString(R.string.subscription_ends_msg)).setPositiveButton(getResources().getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                startApp();
+                                            }
+                                        })
+                                                .setIcon(android.R.drawable.ic_dialog_alert).show();
 
-                                }else{
+                                    }else{
+                                        startApp();
+                                    }
+                                } else {
                                     startApp();
                                 }
+
 
                             }
 
