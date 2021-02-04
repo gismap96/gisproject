@@ -122,5 +122,11 @@
     <string name="no_image">Without an image</string>
     <string name="please_wait_file_number">Please wait… File number:</string>
     <string name="subscription_ends_header">Subscription ends soon</string>
-    <string name="subscription_ends_msg">Please contact us to renew or purchase a subscriptionי</string>
+    <string name="subscription_ends_msg">Please contact us to renew or purchase a subscription</string>
+    <string name="multipoint_layer">Multipoint Layer</string>
+    <string name="hydrants">Hydrants</string>
+    <string name="two_zol">2"</string>
+    <string name="three_zol">3"</string>
+    <string name="type_of_hydrant">Hydrant Type:</string>
+    <string name="hydrant_heads">Number of exits:</string>
 </resources>

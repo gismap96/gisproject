@@ -9,7 +9,8 @@ enum class SketcherEditorTypes(val title: Int){
 //    DISTANCE("מרחק בין 2 נקודות"),
     POINT(R.string.point_layer),
     POLYLINE(R.string.polyline_layer),
-    POLYGON(R.string.polygon_layer);
+    POLYGON(R.string.polygon_layer),
+    MULTIPOINTS(R.string.multipoint_layer);
 
     fun getARCGISGeometryType(): GeometryType{
         return when (this){
@@ -22,6 +23,9 @@ enum class SketcherEditorTypes(val title: Int){
             POLYGON -> {
                 GeometryType.POLYGON
             }
+            MULTIPOINTS -> {
+                GeometryType.MULTIPOINT
+            }
         }
     }
     fun getImageAddress(): Int{
@@ -29,6 +33,7 @@ enum class SketcherEditorTypes(val title: Int){
             POINT -> R.drawable.ic_hollow_plus_star
             POLYLINE ->  R.drawable.ic_polyline_soft_red
             POLYGON ->  R.drawable.ic_polygon_area_measurement
+            MULTIPOINTS -> R.drawable.ic_settings
         }
     }
     fun getOfflineReference():String{
@@ -36,6 +41,7 @@ enum class SketcherEditorTypes(val title: Int){
             POINT -> Consts.DOES_OFFLINE_POINT_DATA_EXIST
             POLYLINE -> Consts.DOES_OFFLINE_POLYLINE_DATA_EXIST
             POLYGON -> Consts.DOES_OFFLINE_POLYGON_DATA_EXIST
+            MULTIPOINTS -> Consts.DOES_OFFLINE_POINT_DATA_EXIST
         }
     }
 }

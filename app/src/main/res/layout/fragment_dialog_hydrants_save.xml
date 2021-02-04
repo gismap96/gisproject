@@ -1,6 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_blue_transparent" >
+
+
+    <ImageView
+        android:id="@+id/hydrantSymbolDialogHydrantsSaveIV"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_hydrant"
+        app:layout_constraintBottom_toBottomOf="@+id/saveHydrantsHeadlineTV"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/saveHydrantsHeadlineTV" />
+
+    <TextView
+        android:id="@+id/saveHydrantsHeadlineTV"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/add_data"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/hydrantSymbolDialogHydrantsSaveIV"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/saveHydrantsShapeTypeTV"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="@string/hydrants"
+        android:textColor="@color/soft_red"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/saveHydrantsHeadlineTV"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/saveHydrantTypeTV"
+        app:layout_constraintStart_toEndOf="@+id/saveHydrantTypeTV"
+        app:layout_constraintTop_toTopOf="@+id/saveHydrantTypeTV">
+
+        <RadioButton
+            android:id="@+id/hydrantTwoZolRB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/soft_red"
+            android:checked="true"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/white_90"
+            android:text="@string/two_zol" />
+
+        <RadioButton
+            android:id="@+id/hydrantThreeZolRB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/soft_red"
+            android:layout_marginStart="16dp"
+            android:checked="false"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/white_90"
+            android:text="@string/three_zol" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/saveHydrantTypeTV"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/type_of_hydrant"
+        android:textColor="@color/white_90"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saveHydrantsHeadlineTV" />
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@+id/saveHydrantHeadsTV"
+        app:layout_constraintStart_toEndOf="@+id/saveHydrantHeadsTV"
+        app:layout_constraintTop_toTopOf="@+id/saveHydrantHeadsTV">
+
+        <RadioButton
+            android:id="@+id/headsOneRB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:buttonTint="@color/soft_red"
+            android:textColor="@color/white_90"
+            android:text="1" />
+
+        <RadioButton
+            android:id="@+id/headsTwoRB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:checked="false"
+            android:textSize="20sp"
+            android:buttonTint="@color/soft_red"
+            android:textStyle="bold"
+            android:textColor="@color/white_90"
+            android:text="2" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/saveHydrantHeadsTV"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="@string/hydrant_heads"
+        android:textColor="@color/white_90"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saveHydrantTypeTV" />
+    <TextView
+        android:id="@+id/cancelHydrantsSaveTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/cancel"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saveHydrantHeadsTV" />
+
+
+    <TextView
+        android:id="@+id/saveHydrantsHeadsTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/save"
+        android:textColor="@color/light_blue"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/saveHydrantHeadsTV" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

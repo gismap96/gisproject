@@ -111,7 +111,8 @@ object ClientPhotoController {
                         }
                     }
                 }
-                GeometryType.MULTIPOINT -> {}
+                GeometryType.MULTIPOINT -> {
+                }
                 GeometryType.UNKNOWN -> {}
             }
             bottomSheet.dismiss()

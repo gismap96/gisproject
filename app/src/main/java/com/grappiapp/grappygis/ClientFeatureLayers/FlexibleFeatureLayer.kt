@@ -79,6 +79,7 @@ class FlexibleFeatureLayer (val context: Context){
                 SketcherEditorTypes.POLYGON -> {
                     newAttributes["area"] = calculatedAtt
                 }
+                SketcherEditorTypes.MULTIPOINTS -> {}
             }
 
 
@@ -101,6 +102,7 @@ class FlexibleFeatureLayer (val context: Context){
             SketcherEditorTypes.POLYGON -> {
                 calculateArea(geometry)
             }
+            SketcherEditorTypes.MULTIPOINTS -> {""}
         }
     }
     private fun calculateLength(geometry: Geometry): String {

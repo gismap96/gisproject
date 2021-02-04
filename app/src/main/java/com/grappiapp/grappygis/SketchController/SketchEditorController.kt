@@ -28,26 +28,29 @@ object SketchEditorController {
     var isEditMode = false
 
 
-    fun getGeometryLastPoint(): Point{
-        val geometry = sketchEditor.geometry
-        when (sketcherEditorTypes){
-            SketcherEditorTypes.POINT -> {
-                return geometry as Point
-            }
-            SketcherEditorTypes.POLYLINE -> {
-                val polyline = geometry as Polyline
-                return getGeometryLastPoint(polyline)
-            }
-            SketcherEditorTypes.POLYGON -> {
-                val polygon = geometry as Polygon
-                return getGeometryLastPoint(polygon.toPolyline())
-            }
-        }
-    }
-    fun getGeometryLastPoint(polyline: Polyline): Point{
-        val points = polyline.parts.partsAsPoints
-        return points.last()
-    }
+//    fun getGeometryLastPoint(): Point{
+//        val geometry = sketchEditor.geometry
+//        when (sketcherEditorTypes){
+//            SketcherEditorTypes.POINT -> {
+//                return geometry as Point
+//            }
+//            SketcherEditorTypes.POLYLINE -> {
+//                val polyline = geometry as Polyline
+//                return getGeometryLastPoint(polyline)
+//            }
+//            SketcherEditorTypes.POLYGON -> {
+//                val polygon = geometry as Polygon
+//                return getGeometryLastPoint(polygon.toPolyline())
+//            }
+//            SketcherEditorTypes.MULTIPOINTS -> {
+//                val
+//            }
+//        }
+//    }
+//    fun getGeometryLastPoint(polyline: Polyline): Point{
+//        val points = polyline.parts.partsAsPoints
+//        return points.last()
+//    }
 
     fun getGeometry():Geometry?{
         return sketchEditor.geometry
@@ -92,6 +95,9 @@ object SketchEditorController {
     fun pointMode(){
         sketchEditor.start(SketchCreationMode.POINT)
     }
+    fun multiPointMode(){
+        sketchEditor.start(SketchCreationMode.MULTIPOINT)
+    }
     fun savePoint(){
         val geometry = sketchEditor.geometry
         sketchEditor.stop()
@@ -108,6 +114,9 @@ object SketchEditorController {
     }
     fun pointMode(geometry: Geometry){
         sketchEditor.start(geometry, SketchCreationMode.POINT)
+    }
+    fun multiPointMode(geometry: Geometry){
+        sketchEditor.start(geometry, SketchCreationMode.MULTIPOINT)
     }
     fun polylineMode(geometry: Geometry){
         distance = 0.0
@@ -251,6 +260,9 @@ object SketchEditorController {
             SketcherEditorTypes.POINT -> {
                 pointMode()
             }
+            SketcherEditorTypes.MULTIPOINTS -> {
+                multiPointMode()
+            }
         }
     }
 
@@ -270,6 +282,9 @@ object SketchEditorController {
             }
             SketcherEditorTypes.POINT ->{
                 pointMode(geometry)
+            }
+            SketcherEditorTypes.MULTIPOINTS -> {
+                multiPointMode(geometry)
             }
         }
     }

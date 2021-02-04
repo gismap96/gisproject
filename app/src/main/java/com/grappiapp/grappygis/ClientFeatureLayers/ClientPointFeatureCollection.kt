@@ -30,10 +30,12 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.grappiapp.grappygis.OfflineMode.OfflineModeController
+import com.grappiapp.grappygis.SketchController.SketchEditorController
 import com.squareup.picasso.Picasso
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
+import kotlin.collections.HashMap
 
 class ClientPointFeatureCollection(val context: Context) {
     val TAG = "PointCollection"
@@ -110,6 +112,27 @@ class ClientPointFeatureCollection(val context: Context) {
         features.add(feature)
     }
 
+    fun addFeatureFromMultipoints(geometry: Geometry, attributes: HashMap<String, Any>, callback: (() -> Unit)?){
+        if (geometry.geometryType == GeometryType.MULTIPOINT){
+            val newAttributes = attributes.toMutableMap()
+
+            val multipoint = geometry as Multipoint
+            val points = multipoint.points
+            val addedPoints = mutableListOf<Feature>()
+            for (point in points){
+                newAttributes["Id"] = UUID.randomUUID().toString()
+                val pointFeature = featureCollectionTable.createFeature(newAttributes, point)
+                features.add(pointFeature)
+                addedPoints.add(pointFeature)
+            }
+            featureCollectionTable.addFeaturesAsync(addedPoints).addDoneListener {
+                callback?.let{
+                    it()
+                }
+            }
+
+        }
+    }
     fun createFeature(attributes: HashMap<String, Any>,geometry: Geometry, callback: (()-> Unit)?){
         val newAttributes = attributes.toMutableMap()
         newAttributes["Id"] = UUID.randomUUID().toString()

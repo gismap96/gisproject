@@ -13,6 +13,7 @@ import android.graphics.PorterDuff;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Bundle;
@@ -56,6 +57,7 @@ import com.grappiapp.grappygis.SearchController.SearchResultsAdapter;
 import com.grappiapp.grappygis.SketchController.SketchEditorController;
 import com.grappiapp.grappygis.SketchController.SketcherEditorTypes;
 import com.grappiapp.grappygis.SketchController.SketcherSaveDialogFragment;
+import com.grappiapp.grappygis.SketchController.SketcherSaveHydrantsDialogFragment;
 import com.grappiapp.grappygis.SketchController.SketcherSelectionDialogAdapter;
 import com.grappiapp.grappygis.SketchController.SketcherSelectionDialogFragment;
 import com.esri.arcgisruntime.concurrent.ListenableFuture;
@@ -159,6 +161,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private TextView makeLegendGreatAgainTV;
     private ProgressDialog progressDialog;
     private TextView saveShapeTV;
+    private boolean isDownloadingRaster = false;
     private ProgressDialog initializingProgressDialog;
 
     @Override
@@ -251,6 +254,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             SketcherEditorTypes type = SketchEditorController.INSTANCE.getSketcherEditorTypes();
             GeoViewController.INSTANCE.setNewSavedViewPoint(mMapView);
             switch (type){
+                case MULTIPOINTS:
+                    if (SketchEditorController.INSTANCE.getGeometry() != null && !SketchEditorController.INSTANCE.getGeometry().isEmpty()){
+                        SketcherSaveHydrantsDialogFragment layerSave = new SketcherSaveHydrantsDialogFragment(MainActivity.this, mMapView);
+                        layerSave.show();
+                    }else {
+                        Toast toast = Toast.makeText(MainActivity.this, R.string.empty_Point, Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.CENTER,0,0);
+                        toast.show();
+                        return;
+                    }
+                    break;
                 case POINT:
                     if (SketchEditorController.INSTANCE.getGeometry() != null && !SketchEditorController.INSTANCE.getGeometry().isEmpty()){
                         if (SketchEditorController.INSTANCE.isEditMode()){
@@ -318,6 +332,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         toast.show();
                         return;
                     }
+                    break;
+
             }
 
         });
@@ -530,8 +546,18 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                     downloadRaster();
                 }
                 else{
+                    File rasterFolderFile = new File(getRasterFolderPath() + File.separator + "raster_data.zip");
+                    if (!rasterFolderFile.exists()) {
+                        downloadRaster();
+                        return;
+                    }
                     setRaster(getRasterFolderPath());
                 }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Main", "failed to find raster data");
             }
         });
     }
@@ -543,6 +569,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
     private void downloadRaster(){
         deleteRasterFolder();
+        isDownloadingRaster = true;
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setTitle(getString(R.string.initial_download_message));
@@ -554,6 +581,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             @Override
             public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                 try {
+                    isDownloadingRaster = false;
                     File zipFile = new File(getRasterFolderPath() + File.separator + "raster_data.zip");
                     Utils.unzip(zipFile, new File(getRasterFolderPath()));
                     DownloadController.INSTANCE.downloadMultiple(MainActivity.this, storageReference, getRasterFolderPath(), mProjectId, progressDialog,
@@ -724,9 +752,17 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         checkForRaster();
                         setMapListener(mobileMap);
                         Envelope myExtents = mobileMap.getOperationalLayers().get(0).getFullExtent();
-                        myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
+                        if ((myExtents == null)) {
+                            if (!isDownloadingRaster){
+                                checkForRaster();
+                                loadMmpk(mobileMapPackage);
+                            }
+                        } else {
+                            myExtents = (Envelope) GeometryEngine.project(myExtents, mMapView.getSpatialReference());
+                            mMapView.setViewpoint(new Viewpoint(myExtents));
+                        }
 //                mMapView.setMaxExtent(myExtents);
-                        mMapView.setViewpoint(new Viewpoint(myExtents));
+
 
                     }
                 },500);
@@ -1028,6 +1064,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //        deletePointIV.setEnabled(false);
         switch (sketcher){
             case POINT:
+            case MULTIPOINTS:
                 measurementConstraintLayout.setVisibility(View.INVISIBLE);
                 break;
             case POLYGON:
@@ -1044,7 +1081,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
         mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
         setMeasurementsDisplay(sketcher);
-        if (sketcher != SketcherEditorTypes.POINT){
+        if (sketcher != SketcherEditorTypes.POINT && sketcher != SketcherEditorTypes.MULTIPOINTS){
             measurementConstraintLayout.setVisibility(View.VISIBLE);
             mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
                 @Override

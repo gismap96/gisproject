@@ -47,7 +47,6 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
         setCanceledOnTouchOutside(false)
         closeSketcherSaveTV.setOnClickListener(this)
         cancelSketcherSaveTV.setOnClickListener(this)
-
     }
 
     override fun onStart() {
@@ -272,7 +271,17 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
 //                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
                 ClientPhotoController.openBottomSheet(context,attributes,geometry,callback!!, progressDialog!!)
             }
-
+            SketcherEditorTypes.MULTIPOINTS -> {
+                if (UserPoints.userPoints == null){
+                    UserPoints.userPoints = ClientPointFeatureCollection(context, context.resources.getString(R.string.my_points),UUID.randomUUID().toString(),
+                            UserPoints.grappiFields, MapProperties.spatialReference!!)
+                    mMapView.map.operationalLayers.add(UserPoints.userPoints!!.layer)
+                    layerListener?.successListener()
+                }
+                UserPoints.userPoints!!.layer.isVisible = true
+//                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
+                ClientPhotoController.openBottomSheet(context,attributes,geometry,callback!!, progressDialog!!)
+            }
         }
         dismiss()
     }

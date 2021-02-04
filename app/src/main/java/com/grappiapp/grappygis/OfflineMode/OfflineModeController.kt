@@ -25,6 +25,7 @@ object OfflineModeController{
             SketcherEditorTypes.POINT -> "point"
             SketcherEditorTypes.POLYLINE -> "polyline"
             SketcherEditorTypes.POLYGON -> "polygon"
+            SketcherEditorTypes.MULTIPOINTS -> ""
         }
         val path = jsonPath(fileName)
         var jsonFile = File(path)
@@ -114,6 +115,7 @@ object OfflineModeController{
             SketcherEditorTypes.POINT -> "point"
             SketcherEditorTypes.POLYLINE -> "polyline"
             SketcherEditorTypes.POLYGON -> "polygon"
+            else -> ""
         }
         val path = jsonPath(fileName)
         val jsonFile = File(path)
@@ -129,6 +131,7 @@ object OfflineModeController{
             SketcherEditorTypes.POINT -> "point"
             SketcherEditorTypes.POLYLINE -> "polyline"
             SketcherEditorTypes.POLYGON -> "polygon"
+            else -> ""
         }
         val path = jsonPath(fileName)
         val jsonFile = File(path)
