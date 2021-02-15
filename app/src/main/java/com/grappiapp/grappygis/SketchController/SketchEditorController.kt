@@ -260,7 +260,7 @@ object SketchEditorController {
             SketcherEditorTypes.POINT -> {
                 pointMode()
             }
-            SketcherEditorTypes.MULTIPOINTS -> {
+            SketcherEditorTypes.MULTIPOINTS, SketcherEditorTypes.HYDRANTS -> {
                 multiPointMode()
             }
         }
@@ -283,7 +283,7 @@ object SketchEditorController {
             SketcherEditorTypes.POINT ->{
                 pointMode(geometry)
             }
-            SketcherEditorTypes.MULTIPOINTS -> {
+            SketcherEditorTypes.MULTIPOINTS, SketcherEditorTypes.HYDRANTS -> {
                 multiPointMode(geometry)
             }
         }

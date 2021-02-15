@@ -39,8 +39,11 @@ class SketcherSelectionDialogAdapter(var context: Context,var sketchSelectionCli
                     sketcherIconSelectionIV.background = ContextCompat.getDrawable(context, R.drawable.ic_polyline_soft_red)
                 SketcherEditorTypes.POLYGON ->
                     sketcherIconSelectionIV.background = ContextCompat.getDrawable(context, R.drawable.ic_polygon_area_measurement)
-                SketcherEditorTypes.MULTIPOINTS -> {
+                SketcherEditorTypes.HYDRANTS -> {
                     sketcherIconSelectionIV.background = ContextCompat.getDrawable(context, R.drawable.ic_hydrant)
+                }
+                SketcherEditorTypes.MULTIPOINTS -> {
+                    sketcherIconSelectionIV.background = ContextCompat.getDrawable(context, R.drawable.ic_setting)
                 }
             }
             itemView.setOnClickListener {

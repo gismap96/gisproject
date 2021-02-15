@@ -254,7 +254,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             SketcherEditorTypes type = SketchEditorController.INSTANCE.getSketcherEditorTypes();
             GeoViewController.INSTANCE.setNewSavedViewPoint(mMapView);
             switch (type){
-                case MULTIPOINTS:
+                case HYDRANTS:
                     if (SketchEditorController.INSTANCE.getGeometry() != null && !SketchEditorController.INSTANCE.getGeometry().isEmpty()){
                         SketcherSaveHydrantsDialogFragment layerSave = new SketcherSaveHydrantsDialogFragment(MainActivity.this, mMapView);
                         layerSave.show();
@@ -265,6 +265,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                         return;
                     }
                     break;
+                case MULTIPOINTS:
                 case POINT:
                     if (SketchEditorController.INSTANCE.getGeometry() != null && !SketchEditorController.INSTANCE.getGeometry().isEmpty()){
                         if (SketchEditorController.INSTANCE.isEditMode()){
@@ -568,6 +569,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void downloadRaster(){
+        if (isDownloadingRaster){
+            return;
+        }
         deleteRasterFolder();
         isDownloadingRaster = true;
         final ProgressDialog progressDialog = new ProgressDialog(this);
@@ -1064,6 +1068,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 //        deletePointIV.setEnabled(false);
         switch (sketcher){
             case POINT:
+            case HYDRANTS:
             case MULTIPOINTS:
                 measurementConstraintLayout.setVisibility(View.INVISIBLE);
                 break;
@@ -1078,10 +1083,9 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         }
         SketchEditorController.INSTANCE.startSketching(sketcher, mMapView);
         SketchEditorController.INSTANCE.openSketcherBarContainer(bottomSketchBarContainer);
-
         mSketcher = SketchEditorController.INSTANCE.getSketchEditor();
         setMeasurementsDisplay(sketcher);
-        if (sketcher != SketcherEditorTypes.POINT && sketcher != SketcherEditorTypes.MULTIPOINTS){
+        if (sketcher != SketcherEditorTypes.POINT && sketcher != SketcherEditorTypes.MULTIPOINTS && sketcher != SketcherEditorTypes.HYDRANTS){
             measurementConstraintLayout.setVisibility(View.VISIBLE);
             mSketcher.addGeometryChangedListener(new SketchGeometryChangedListener() {
                 @Override

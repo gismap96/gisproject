@@ -128,6 +128,13 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                 val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_polygon_area_measurement)
                 shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
             }
+            SketcherEditorTypes.MULTIPOINTS,
+            SketcherEditorTypes.HYDRANTS -> {
+                shapeTypeSketcherSaveTV.text = context.resources.getString(R.string.multipoint_layer)
+                shapeTypeSketcherSaveTV.setTextColor(ContextCompat.getColor(context, R.color.yellow))
+                val bitmap = getBitmapFromVectorDrawable(R.drawable.ic_setting)
+                shapeSymbolForSketcherSaveIV.setImageBitmap(bitmap)
+            }
         }
         shapeTypeSketcherSaveTV.text
     }
@@ -213,6 +220,19 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                             OfflineModeController.saveJSONLocally(context, UserPolygon.userPolygon!!.generateARCGISJSON(), type)
                         }
                     }
+                    SketcherEditorTypes.HYDRANTS, SketcherEditorTypes.MULTIPOINTS -> {
+                        if (UserPoints.userPoints == null){
+                            UserPoints.userPoints = ClientPointFeatureCollection(context, context.resources.getString(R.string.my_points),UUID.randomUUID().toString(),
+                                    UserPoints.grappiFields, MapProperties.spatialReference!!)
+                            mMapView.map.operationalLayers.add(UserPoints.userPoints!!.layer)
+                            layerListener?.successListener()
+                        }
+                        SketchEditorController.startSketching(SketcherEditorTypes.POINT, mMapView)
+                        UserPoints.userPoints!!.layer.isVisible = true
+                        UserPoints.userPoints!!.addFeatureFromMultipoints(geometry, attributes){
+                            OfflineModeController.saveJSONLocally(context, UserPoints.userPoints!!.generateARCGISJSON(), type)
+                        }
+                    }
                 }
             }
             dismiss()
@@ -271,7 +291,7 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
 //                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
                 ClientPhotoController.openBottomSheet(context,attributes,geometry,callback!!, progressDialog!!)
             }
-            SketcherEditorTypes.MULTIPOINTS -> {
+            SketcherEditorTypes.MULTIPOINTS, SketcherEditorTypes.HYDRANTS -> {
                 if (UserPoints.userPoints == null){
                     UserPoints.userPoints = ClientPointFeatureCollection(context, context.resources.getString(R.string.my_points),UUID.randomUUID().toString(),
                             UserPoints.grappiFields, MapProperties.spatialReference!!)
@@ -280,7 +300,20 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                 }
                 UserPoints.userPoints!!.layer.isVisible = true
 //                ClientPhotoController.showPhotoQuestionDialog(context,attributes,geometry,callback!!, progressDialog!!)
-                ClientPhotoController.openBottomSheet(context,attributes,geometry,callback!!, progressDialog!!)
+                val progressDialog = ProgressDialog(context)
+                progressDialog.setTitle(context.getString(R.string.updating_layer))
+                progressDialog.setCancelable(false)
+                progressDialog.show()
+
+                UserPoints.userPoints!!.addFeatureFromMultipoints(geometry!!,attributes){
+                    UserPoints.userPoints!!.uploadJSON(object: ClientPointFeatureCollection.OnPointsUploaded{
+                        override fun onPointsUploadFinished() {
+                            SketchEditorController.clean()
+                            progressDialog.dismiss()
+                            dismiss()
+                        }
+                    })
+                }
             }
         }
         dismiss()

@@ -112,6 +112,19 @@ object ClientPhotoController {
                     }
                 }
                 GeometryType.MULTIPOINT -> {
+                    val progressDialog = ProgressDialog(activity)
+                    progressDialog.setTitle(activity.getString(R.string.updating_layer))
+                    progressDialog.setCancelable(false)
+                    progressDialog.show()
+                    UserPoints.userPoints!!.addFeatureFromMultipoints(geometry, attributes){
+                        UserPoints.userPoints!!.uploadJSON(object: ClientPointFeatureCollection.OnPointsUploaded{
+                            override fun onPointsUploadFinished() {
+                                progressDialog.dismiss()
+                                Toast.makeText(activity, activity.resources.getString(R.string.point_saved),Toast.LENGTH_SHORT).show()
+                            }
+
+                        })
+                    }
                 }
                 GeometryType.UNKNOWN -> {}
             }

@@ -102,7 +102,8 @@ class FlexibleFeatureLayer (val context: Context){
             SketcherEditorTypes.POLYGON -> {
                 calculateArea(geometry)
             }
-            SketcherEditorTypes.MULTIPOINTS -> {""}
+            SketcherEditorTypes.MULTIPOINTS, SketcherEditorTypes.HYDRANTS -> {""}
+
         }
     }
     private fun calculateLength(geometry: Geometry): String {
