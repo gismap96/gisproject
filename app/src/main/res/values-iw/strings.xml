@@ -128,4 +128,5 @@
     <string name="three_zol">"3</string>
     <string name="type_of_hydrant">סיווג הדרנט:</string>
     <string name="hydrant_heads">מספר ראשים:</string>
+    <string name="atmospheric">לחץ אטמוספרי</string>
 </resources>

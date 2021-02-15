@@ -129,4 +129,5 @@
     <string name="three_zol">3"</string>
     <string name="type_of_hydrant">Hydrant Type:</string>
     <string name="hydrant_heads">Number of exits:</string>
+    <string name="atmospheric">Atmospheric Pressure:</string>
 </resources>

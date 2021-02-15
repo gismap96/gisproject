@@ -38,15 +38,21 @@ open class SketcherSaveHydrantsDialogFragment (val context: Activity, val mMapVi
         if (hydrantThreeZolRB.isChecked){
             hydrantClass = "3\""
         }
+        hydrantClass = context.getString(R.string.hydrant_heads) + " $hydrantClass"
         var hydrantHeads = context.getString(R.string.hydrant_heads) + " "
         hydrantHeads += if (headsOneRB.isChecked){
             "1"
         } else {
             "2"
         }
+        var atmosphericPressure = saveHydrantsAtmosphericTV.text.toString()
+        if (atmosphericPressure.length > 0){
+            attributes["number"] = atmosphericPressure
+        } else {
+            attributes["number"] = " "
+        }
         attributes["category"] = hydrantClass
         attributes["description"] = hydrantHeads
-        attributes["number"] = " "
         attributes["isUpdated"] = "yes"
         attributes["imageURL"] = ""
         return attributes

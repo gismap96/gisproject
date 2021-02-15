@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/dark_blue_transparent" >
+    android:background="@color/dark_blue_transparent">
 
 
     <ImageView
@@ -60,22 +59,22 @@
             android:layout_height="wrap_content"
             android:buttonTint="@color/soft_red"
             android:checked="true"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:text="@string/two_zol"
             android:textColor="@color/white_90"
-            android:text="@string/two_zol" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <RadioButton
             android:id="@+id/hydrantThreeZolRB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/soft_red"
             android:layout_marginStart="16dp"
+            android:buttonTint="@color/soft_red"
             android:checked="false"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:text="@string/three_zol"
             android:textColor="@color/white_90"
-            android:text="@string/three_zol" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </RadioGroup>
 
     <TextView
@@ -87,12 +86,13 @@
         android:gravity="center"
         android:text="@string/type_of_hydrant"
         android:textColor="@color/white_90"
-        android:textStyle="bold"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saveHydrantsHeadlineTV" />
 
     <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -105,24 +105,24 @@
             android:id="@+id/headsOneRB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:buttonTint="@color/soft_red"
+            android:checked="true"
+            android:text="1"
             android:textColor="@color/white_90"
-            android:text="1" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <RadioButton
             android:id="@+id/headsTwoRB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:checked="false"
-            android:textSize="20sp"
             android:buttonTint="@color/soft_red"
-            android:textStyle="bold"
+            android:checked="false"
+            android:text="2"
             android:textColor="@color/white_90"
-            android:text="2" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </RadioGroup>
 
     <TextView
@@ -134,37 +134,53 @@
         android:gravity="center"
         android:text="@string/hydrant_heads"
         android:textColor="@color/white_90"
-        android:textStyle="bold"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saveHydrantTypeTV" />
+
+
+    <EditText
+        android:id="@+id/saveHydrantsAtmosphericTV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/white"
+        android:hint="@string/atmospheric"
+        android:inputType="text"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white_transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/saveHydrantHeadsTV"
+        app:layout_constraintTop_toBottomOf="@+id/saveHydrantHeadsTV" />
+
     <TextView
         android:id="@+id/cancelHydrantsSaveTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:padding="16dp"
         android:text="@string/cancel"
         android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/saveHydrantHeadsTV" />
-
+        app:layout_constraintTop_toBottomOf="@+id/saveHydrantsAtmosphericTV" />
 
     <TextView
         android:id="@+id/saveHydrantsHeadsTV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="68dp"
         android:gravity="center"
         android:padding="16dp"
         android:text="@string/save"
         android:textColor="@color/light_blue"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/saveHydrantHeadsTV" />
+        app:layout_constraintTop_toBottomOf="@+id/saveHydrantsAtmosphericTV" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

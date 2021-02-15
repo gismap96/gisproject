@@ -304,7 +304,6 @@ open class SketcherSaveDialogFragment(val context: Activity, val mMapView: MapVi
                 progressDialog.setTitle(context.getString(R.string.updating_layer))
                 progressDialog.setCancelable(false)
                 progressDialog.show()
-
                 UserPoints.userPoints!!.addFeatureFromMultipoints(geometry!!,attributes){
                     UserPoints.userPoints!!.uploadJSON(object: ClientPointFeatureCollection.OnPointsUploaded{
                         override fun onPointsUploadFinished() {
