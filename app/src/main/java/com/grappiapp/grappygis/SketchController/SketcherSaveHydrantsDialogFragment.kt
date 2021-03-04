@@ -38,7 +38,7 @@ open class SketcherSaveHydrantsDialogFragment (val context: Activity, val mMapVi
         if (hydrantThreeZolRB.isChecked){
             hydrantClass = "3\""
         }
-        hydrantClass = context.getString(R.string.hydrant_heads) + " $hydrantClass"
+        hydrantClass = context.getString(R.string.type_of_hydrant) + " $hydrantClass"
         var hydrantHeads = context.getString(R.string.hydrant_heads) + " "
         hydrantHeads += if (headsOneRB.isChecked){
             "1"

@@ -22,11 +22,11 @@ object OfflineModeController{
 
     fun saveJSONLocally(context: Context,jsonObject: JSONObject, type: SketcherEditorTypes){
         val fileName = when (type){
-            SketcherEditorTypes.POINT -> "point"
+            SketcherEditorTypes.POINT -> "points"
             SketcherEditorTypes.POLYLINE -> "polyline"
             SketcherEditorTypes.POLYGON -> "polygon"
-            SketcherEditorTypes.MULTIPOINTS -> "point"
-            SketcherEditorTypes.HYDRANTS -> "point"
+            SketcherEditorTypes.MULTIPOINTS -> "points"
+            SketcherEditorTypes.HYDRANTS -> "points"
         }
         val path = jsonPath(fileName)
         var jsonFile = File(path)
@@ -113,7 +113,7 @@ object OfflineModeController{
 
     fun getOfflineJSON(type: SketcherEditorTypes): JSONObject?{
         val fileName = when (type){
-            SketcherEditorTypes.POINT -> "point"
+            SketcherEditorTypes.POINT -> "points"
             SketcherEditorTypes.POLYLINE -> "polyline"
             SketcherEditorTypes.POLYGON -> "polygon"
             else -> ""
@@ -129,7 +129,7 @@ object OfflineModeController{
     }
     private fun uploadOfflineJSON(type: SketcherEditorTypes, callback: (Boolean)->Unit){
         val fileName = when (type){
-            SketcherEditorTypes.POINT -> "point"
+            SketcherEditorTypes.POINT -> "points"
             SketcherEditorTypes.POLYLINE -> "polyline"
             SketcherEditorTypes.POLYGON -> "polygon"
             else -> ""

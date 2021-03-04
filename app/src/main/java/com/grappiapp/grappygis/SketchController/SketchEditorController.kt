@@ -6,10 +6,9 @@ import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.esri.arcgisruntime.geometry.*
-import com.esri.arcgisruntime.layers.FeatureCollectionLayer
 import com.esri.arcgisruntime.mapping.view.*
-import com.grappiapp.grappygis.LayerCalloutControl.FeatureLayerController
 import java.text.DecimalFormat
+import java.util.*
 
 
 object SketchEditorController {
@@ -27,7 +26,9 @@ object SketchEditorController {
     var isWorking = false
     var isEditMode = false
 
-
+    var trackerPoints = mutableListOf<Point>()
+    var trackingTimer = Timer()
+    var isTracking = false
 //    fun getGeometryLastPoint(): Point{
 //        val geometry = sketchEditor.geometry
 //        when (sketcherEditorTypes){
@@ -241,6 +242,57 @@ object SketchEditorController {
 
             }
         })
+    }
+
+    fun playTracker(mapView: MapView){
+        if (isTracking){
+            trackingTimer.cancel()
+        }else {
+            startTracking(mapView)
+        }
+        isTracking = !isTracking
+    }
+    fun startTracking(mapView: MapView){
+        val time = 2000
+        sketchEditor.stop()
+        sketchEditor = SketchEditor()
+        mapView.sketchEditor = sketchEditor
+        sketchEditor.start(SketchCreationMode.POLYLINE)
+        trackingTimer = Timer()
+        trackingTimer.scheduleAtFixedRate(object : TimerTask(){
+            override fun run() {
+                if (mapView.locationDisplay != null){
+                    if (mapView.locationDisplay.location != null){
+                        val currentLocation = mapView.locationDisplay.location.position
+                        mapView.setViewpointCenterAsync(currentLocation, mapView.mapScale)
+                        if (trackerPoints.size > 1){
+                            val lastPoint = trackerPoints.last()
+                            val vertexList = mutableListOf<Point>()
+                            vertexList.add(lastPoint)
+                            vertexList.add(currentLocation)
+                            val pointsCollection = PointCollection(vertexList)
+                            val polyline = Polyline(pointsCollection)
+                            val linearUnit = LinearUnit(LinearUnitId.METERS)
+                            val length = GeometryEngine.lengthGeodetic(polyline, linearUnit, GeodeticCurveType.NORMAL_SECTION)
+                            Log.d(TAG, "length: $length")
+                            if (length > 1.0){
+                                trackerPoints.add(currentLocation)
+                                drawTracker()
+                            }
+                        }else {
+                            trackerPoints.add(currentLocation)
+                            drawTracker()
+                        }
+
+                    }
+                }
+            }
+
+        },0.toLong(),time.toLong())
+    }
+
+    private fun drawTracker() {
+        sketchEditor.replaceGeometry(Polyline(PointCollection(trackerPoints)))
     }
 
     fun startSketching(sketcherEditorTypes: SketcherEditorTypes, mMapView: MapView) {
