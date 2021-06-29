@@ -25,7 +25,6 @@
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="198dp" >
 
-
     </com.esri.arcgisruntime.mapping.view.MapView>
 
     <androidx.constraintlayout.widget.Guideline
@@ -63,7 +62,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:src="@drawable/ic_star_black"
+            android:src="@drawable/ic_location_tracker"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/upperBar73GL"
             app:layout_constraintTop_toTopOf="parent" />
@@ -250,7 +249,17 @@
             app:layout_constraintEnd_toStartOf="@+id/midofBottomBarGL"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/saveHorizonalGL" />
-
+        <ImageView
+            android:id="@+id/startTrackingIV"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="15dp"
+            android:visibility="gone"
+            android:src="@android:drawable/ic_media_play"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/midofBottomBarGL"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/saveHorizonalGL" />
         <ImageView
             android:id="@+id/cleanSketcherIV"
             android:layout_width="0dp"
@@ -262,6 +271,17 @@
             app:layout_constraintStart_toStartOf="@+id/midofBottomBarGL"
             app:layout_constraintTop_toBottomOf="@+id/saveHorizonalGL" />
 
+        <ImageView
+            android:id="@+id/trackerModeIV"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="15dp"
+            android:src="@drawable/ic_line_measurement"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintStart_toStartOf="@+id/midofBottomBarGL"
+            app:layout_constraintTop_toBottomOf="@+id/saveHorizonalGL" />
         <ImageView
             android:id="@+id/closeSketcherIV"
             android:layout_width="0dp"

@@ -2,11 +2,15 @@ package com.grappiapp.grappygis.SketchController
 
 import android.animation.Animator
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.esri.arcgisruntime.geometry.*
 import com.esri.arcgisruntime.mapping.view.*
+import com.grappiapp.grappygis.R
 import java.text.DecimalFormat
 import java.util.*
 
@@ -19,16 +23,29 @@ object SketchEditorController {
     val TAG = "sketcherController"
     var distance = 0.0
     var area = 0.0
-    var dunam = 0.0
-    var formatArea = ""
-    var formatDunam = ""
-    var formatDistance = ""
     var isWorking = false
     var isEditMode = false
-
     var trackerPoints = mutableListOf<Point>()
     var trackingTimer = Timer()
     var isTracking = false
+    var isTrackerPolygon = false
+
+    fun toggleTrackerMode(bottomContainer: ConstraintLayout, context: Context, mMapView: MapView, onShapeChangeTrackerListener: OnShapeChangeTrackerListener){
+        val modeButton = bottomContainer.findViewById<ImageView>(R.id.trackerModeIV)
+        if (isTrackerPolygon){
+            modeButton.setImageDrawable(context.resources.getDrawable(R.drawable.ic_line_measurement))
+        } else{
+            modeButton.setImageDrawable(context.resources.getDrawable(R.drawable.ic_polygon_area_measurement))
+        }
+        isTrackerPolygon = !isTrackerPolygon
+        if (isTrackerPolygon){
+            sketcherEditorTypes = SketcherEditorTypes.POLYGON
+        } else {
+            sketcherEditorTypes = SketcherEditorTypes.POLYLINE
+        }
+        setTrackerSketcher(mMapView, onShapeChangeTrackerListener)
+
+    }
 //    fun getGeometryLastPoint(): Point{
 //        val geometry = sketchEditor.geometry
 //        when (sketcherEditorTypes){
@@ -53,6 +70,9 @@ object SketchEditorController {
 //        return points.last()
 //    }
 
+    fun isTrackingMode(): Boolean{
+        return isTracking
+    }
     fun getGeometry():Geometry?{
         return sketchEditor.geometry
     }
@@ -135,7 +155,7 @@ object SketchEditorController {
 
     fun wertexOriginal(unit: String):String{
         val geometry = sketchEditor.geometry
-        if (geometry.isEmpty) return "0.00m"
+        if (geometry.isEmpty || geometry == null) return "0.00m"
         val lastSection = mutableListOf<Point>()
         if (geometry.geometryType == GeometryType.POLYLINE) {
             val polyline = geometry as Polyline
@@ -244,20 +264,41 @@ object SketchEditorController {
         })
     }
 
-    fun playTracker(mapView: MapView){
+    fun trackerSketcherMode(bottomContainer: ConstraintLayout, context: Context){
+        openSketcherBarContainer(bottomContainer)
+        val undoBtn = bottomContainer.findViewById<ImageView>(R.id.undoSkecherIV)
+        undoBtn.visibility = View.GONE
+        val cleanBtn = bottomContainer.findViewById<ImageView>(R.id.cleanSketcherIV)
+        cleanBtn.visibility = View.GONE
+        val playBtn = bottomContainer.findViewById<ImageView>(R.id.startTrackingIV)
+        playBtn.setImageDrawable(context.resources.getDrawable(android.R.drawable.ic_media_play))
+        playBtn.visibility = View.VISIBLE
+        val modeButton = bottomContainer.findViewById<ImageView>(R.id.trackerModeIV)
+        modeButton.setImageDrawable(context.resources.getDrawable(R.drawable.ic_line_measurement))
+        modeButton.visibility = View.VISIBLE
+        sketcherEditorTypes = SketcherEditorTypes.POLYLINE
+    }
+    fun setTrackerFalse(){
+        isTracking = false
+        trackingTimer.cancel()
+        trackerPoints= mutableListOf()
+    }
+    fun playTracker(mapView: MapView, bottomContainer: ConstraintLayout, onShapeChangeTrackerListener: OnShapeChangeTrackerListener){
+        val playBtn = bottomContainer.findViewById<ImageView>(R.id.startTrackingIV)
+
         if (isTracking){
+            playBtn.setImageDrawable(mapView.context.resources.getDrawable(android.R.drawable.ic_media_play))
             trackingTimer.cancel()
         }else {
-            startTracking(mapView)
+            playBtn.setImageDrawable(mapView.context.resources.getDrawable(android.R.drawable.ic_media_pause))
+            startTracking(mapView, onShapeChangeTrackerListener)
         }
         isTracking = !isTracking
     }
-    fun startTracking(mapView: MapView){
+    fun startTracking(mapView: MapView, onShapeChangeTrackerListener: OnShapeChangeTrackerListener){
         val time = 2000
-        sketchEditor.stop()
-        sketchEditor = SketchEditor()
-        mapView.sketchEditor = sketchEditor
-        sketchEditor.start(SketchCreationMode.POLYLINE)
+        setTrackerSketcher(mapView, onShapeChangeTrackerListener)
+
         trackingTimer = Timer()
         trackingTimer.scheduleAtFixedRate(object : TimerTask(){
             override fun run() {
@@ -277,11 +318,11 @@ object SketchEditorController {
                             Log.d(TAG, "length: $length")
                             if (length > 1.0){
                                 trackerPoints.add(currentLocation)
-                                drawTracker()
+                                drawTracker(mapView,onShapeChangeTrackerListener)
                             }
                         }else {
                             trackerPoints.add(currentLocation)
-                            drawTracker()
+                            drawTracker(mapView, onShapeChangeTrackerListener)
                         }
 
                     }
@@ -291,13 +332,41 @@ object SketchEditorController {
         },0.toLong(),time.toLong())
     }
 
-    private fun drawTracker() {
-        sketchEditor.replaceGeometry(Polyline(PointCollection(trackerPoints)))
+    private fun setTrackerSketcher(mapView: MapView, onShapeChangeTrackerListener: OnShapeChangeTrackerListener) {
+        sketchEditor.stop()
+        sketchEditor = SketchEditor()
+        mapView.sketchEditor = sketchEditor
+        if (isTrackerPolygon) {
+            sketchEditor.start(SketchCreationMode.POLYGON)
+        } else {
+            sketchEditor.start(SketchCreationMode.POLYLINE)
+        }
+        drawTracker(mapView, onShapeChangeTrackerListener)
+    }
+
+    private fun drawTracker(mapView: MapView,onShapeChangeTrackerListener: OnShapeChangeTrackerListener) {
+        if (trackerPoints.size == 0){
+            return
+        }
+        val vertex = wertexOriginal(mapView.spatialReference.unit.abbreviation)
+        if (isTrackerPolygon){
+            val polygon = Polygon(PointCollection(trackerPoints))
+            sketchEditor.replaceGeometry(polygon)
+            onShapeChangeTrackerListener.OnShapeChangeTrackerListener(polygonArea(mapView), vertex)
+        } else {
+            val polyline = Polyline(PointCollection(trackerPoints))
+            sketchEditor.replaceGeometry(polyline)
+            onShapeChangeTrackerListener.OnShapeChangeTrackerListener(polylineDistance(mapView), vertex)
+        }
+
     }
 
     fun startSketching(sketcherEditorTypes: SketcherEditorTypes, mMapView: MapView) {
         sketchEditor.stop()
         isEditMode = false
+        if (sketcherEditorTypes == SketcherEditorTypes.TRACKER){
+            return
+        }
         this.sketcherEditorTypes = sketcherEditorTypes
         this.sketchEditor = SketchEditor()
         sketchEditor = sketchEditor
@@ -315,7 +384,16 @@ object SketchEditorController {
             SketcherEditorTypes.MULTIPOINTS, SketcherEditorTypes.HYDRANTS -> {
                 multiPointMode()
             }
+            SketcherEditorTypes.TRACKER -> {}
         }
+    }
+
+    fun startSketchingFreehand(mMapView: MapView) {
+        sketchEditor.stop()
+        isEditMode = false
+        this.sketchEditor = SketchEditor()
+        mMapView.sketchEditor = sketchEditor
+        sketchEditor.start(SketchCreationMode.FREEHAND_LINE)
     }
 
     fun startSketching(sketcherEditorTypes: SketcherEditorTypes, mMapView: MapView, geometry: Geometry) {
@@ -342,5 +420,8 @@ object SketchEditorController {
     }
     fun undo(){
         sketchEditor.undo()
+    }
+    interface OnShapeChangeTrackerListener{
+        fun OnShapeChangeTrackerListener(totalArea: String, vertex: String)
     }
 }

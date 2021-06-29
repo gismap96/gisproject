@@ -130,4 +130,5 @@
     <string name="type_of_hydrant">Hydrant Type:</string>
     <string name="hydrant_heads">Number of exits:</string>
     <string name="atmospheric">Atmospheric Pressure:</string>
+    <string name="tracker_mode">Tracker Mode</string>
 </resources>

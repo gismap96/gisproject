@@ -45,6 +45,9 @@ class SketcherSelectionDialogAdapter(var context: Context,var sketchSelectionCli
                 SketcherEditorTypes.MULTIPOINTS -> {
                     sketcherIconSelectionIV.background = ContextCompat.getDrawable(context, R.drawable.ic_setting)
                 }
+                SketcherEditorTypes.TRACKER->{
+                    sketcherIconSelectionIV.background = ContextCompat.getDrawable(context, R.drawable.ic_location_tracker)
+                }
             }
             itemView.setOnClickListener {
                 clickListener.onSketchSelectionListener(type)

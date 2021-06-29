@@ -129,4 +129,5 @@
     <string name="type_of_hydrant">סיווג הדרנט:</string>
     <string name="hydrant_heads">מספר ראשים:</string>
     <string name="atmospheric">לחץ אטמוספרי</string>
+    <string name="tracker_mode">מסלול (טראקר)</string>
 </resources>

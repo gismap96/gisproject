@@ -115,7 +115,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 public class MainActivity extends FragmentActivity implements LocationListener, DialogLayerAdapter.OnRowClickListener, FeatureLayerController.OnLayerClickListener, SketcherSelectionDialogAdapter.OnSketchSelectionClickListener
         , LegendLayerDisplayController.LayerGroupsListener, ClientLayersController.OnClientLayersJSONDownloaded, ClientFeatureCollectionLayer.OnPolylineUploadFinish,
         DialogLayerDetailsFragment.OnEditSelectedListener, MapLayerAdapter.OnLegendItemInteraction, SearchResultsAdapter.OnSearchResultClicked
-        , ClientPointFeatureCollection.OnPointsUploaded, ClientPolygonFeatureCollection.OnClientPolygonUploadFinished, DownloadController.OnFinishedDownloadListener{
+        , ClientPointFeatureCollection.OnPointsUploaded, ClientPolygonFeatureCollection.OnClientPolygonUploadFinished, DownloadController.OnFinishedDownloadListener, SketchEditorController.OnShapeChangeTrackerListener{
     private MapView mMapView;
     private static final String FILE_EXTENSION = ".mmpk";
     private static File extStorDir;
@@ -155,6 +155,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     private SketchEditor mSketcher;
     private ImageView cleanSketcherIV;
     private ImageView searchFeatureIV;
+    private ImageView startTrackingIV;
+    private ImageView trackerModeIV;
     private TextView displaySectionForShapeTV;
     private TextView overallSizeHeadlineTV;
     private TextView lengthSectionHeadlineTV;
@@ -239,17 +241,19 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
         zift2 = findViewById(R.id.zift2);
 //        zift2.setVisibility(View.GONE);
 //
-        zift2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        zift2.setOnClickListener(v -> {
 //                DialogAddFlexibleLayerNameTypeFragment fragment = new DialogAddFlexibleLayerNameTypeFragment(MainActivity.this);
 //                fragment.show();
 //                EmailUpdateController.INSTANCE.sendUpdateMail(MainActivity.this);
 //                BasemapController.INSTANCE.inserBasemap(mMapView);
-                SketchEditorController.INSTANCE.playTracker(mMapView);
-            }
+            SketchEditorController.INSTANCE.trackerSketcherMode(bottomSketchBarContainer, MainActivity.this);
+//            SketchEditorController.INSTANCE.startSketchingFreehand(mMapView);
         });
         saveShapeTV = findViewById(R.id.saveShapeTV);
+        startTrackingIV = findViewById(R.id.startTrackingIV);
+        startTrackingIV.setOnClickListener(v -> {
+            SketchEditorController.INSTANCE.playTracker(mMapView, bottomSketchBarContainer,this);
+        });
         saveShapeTV.setOnClickListener(v->{
             mViewPoint = mMapView.getCurrentViewpoint(Viewpoint.Type.CENTER_AND_SCALE);
             SketcherEditorTypes type = SketchEditorController.INSTANCE.getSketcherEditorTypes();
@@ -447,19 +451,32 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
 
         calculatePolygonAreaTV = findViewById(R.id.displayOverallForShapeTV);
         calculatePolygonAreaTV.setOnClickListener(v -> FeatureLayerController.INSTANCE.setColor());
-
+        trackerModeIV = findViewById(R.id.trackerModeIV);
+        trackerModeIV.setOnClickListener(v -> {
+            SketchEditorController.INSTANCE.toggleTrackerMode(bottomSketchBarContainer, this, mMapView, this);
+            if (SketchEditorController.INSTANCE.isTrackerPolygon()){
+                overallSizeHeadlineTV.setText(R.string.area);
+            } else {
+                overallSizeHeadlineTV.setText(R.string.length);
+            }
+        });
     }
 
 
 
     private void resetMenuFunctions(){
+        trackerModeIV.setVisibility(View.GONE);
+        SketchEditorController.INSTANCE.setTrackerFalse();
         mDistanceOverlay.getGraphics().clear();
         SketchEditorController.INSTANCE.stopSketcher(bottomSketchBarContainer);
         sketchEditorStartIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         sketchEditorStartIV.setEnabled(true);
         searchFeatureIV.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
+        startTrackingIV.setVisibility(View.GONE);
+        undoSkecherIV.setVisibility(View.VISIBLE);
+        cleanSketcherIV.setVisibility(View.VISIBLE);
+        overallSizeHeadlineTV.setText(R.string.length);
         MainUpperMenu.INSTANCE.resetMenu();
-
     }
 
 
@@ -1061,7 +1078,12 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
             resetMenuFunctions();
             return;
         }
-        sketcherStart(sketcher);
+        if (sketcher == SketcherEditorTypes.TRACKER){
+            SketchEditorController.INSTANCE.trackerSketcherMode(bottomSketchBarContainer, MainActivity.this);
+        } else{
+            sketcherStart(sketcher);
+        }
+
     }
 
     private void sketcherStart(SketcherEditorTypes sketcher) {
@@ -1078,6 +1100,7 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
                 lengthSectionHeadlineTV.setText(R.string.section);
                 break;
             case POLYLINE:
+            case TRACKER:
                 overallSizeHeadlineTV.setText(R.string.length);
                 lengthSectionHeadlineTV.setText(R.string.section);
                 break;
@@ -1185,7 +1208,8 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     }
 
     private void setMeasurementsDisplay(@NotNull SketcherEditorTypes type) {
-        if (type == SketcherEditorTypes.POINT) {
+        if (type == SketcherEditorTypes.POINT || type == SketcherEditorTypes.TRACKER) {
+
             return;
         }
         String unit = mMapView.getSpatialReference().getUnit().getAbbreviation();
@@ -1267,5 +1291,14 @@ public class MainActivity extends FragmentActivity implements LocationListener, 
     public void onFinishedDownloadListener(@NotNull ProgressDialog progressDialog) {
         progressDialog.dismiss();
         setRaster(getRasterFolderPath());
+    }
+
+
+    @Override
+    public void OnShapeChangeTrackerListener(@NotNull String totalArea, @NotNull String vertex) {
+        runOnUiThread(() ->
+                calculatePolygonAreaTV.setText(totalArea));
+        runOnUiThread(()->
+                displaySectionForShapeTV.setText(vertex));
     }
 }

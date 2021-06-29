@@ -102,7 +102,7 @@ class FlexibleFeatureLayer (val context: Context){
             SketcherEditorTypes.POLYGON -> {
                 calculateArea(geometry)
             }
-            SketcherEditorTypes.MULTIPOINTS, SketcherEditorTypes.HYDRANTS -> {""}
+            SketcherEditorTypes.MULTIPOINTS, SketcherEditorTypes.HYDRANTS, SketcherEditorTypes.TRACKER -> {""}
 
         }
     }

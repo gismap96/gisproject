@@ -11,7 +11,8 @@ enum class SketcherEditorTypes(val title: Int){
     POLYLINE(R.string.polyline_layer),
     POLYGON(R.string.polygon_layer),
     MULTIPOINTS(R.string.multipoint_layer),
-    HYDRANTS(R.string.hydrants);
+    HYDRANTS(R.string.hydrants),
+    TRACKER(R.string.tracker_mode);
 
     fun getARCGISGeometryType(): GeometryType{
         return when (this){
@@ -27,6 +28,9 @@ enum class SketcherEditorTypes(val title: Int){
             MULTIPOINTS, HYDRANTS -> {
                 GeometryType.MULTIPOINT
             }
+            TRACKER -> {
+                GeometryType.POLYLINE
+            }
         }
     }
     fun getImageAddress(): Int{
@@ -36,6 +40,7 @@ enum class SketcherEditorTypes(val title: Int){
             POLYGON ->  R.drawable.ic_polygon_area_measurement
             MULTIPOINTS -> R.drawable.ic_setting
             HYDRANTS -> R.drawable.ic_hydrant
+            TRACKER -> R.drawable.ic_location_tracker
         }
     }
     fun getOfflineReference():String{
@@ -45,6 +50,7 @@ enum class SketcherEditorTypes(val title: Int){
             POLYGON -> Consts.DOES_OFFLINE_POLYGON_DATA_EXIST
             MULTIPOINTS -> Consts.DOES_OFFLINE_POINT_DATA_EXIST
             HYDRANTS -> Consts.DOES_OFFLINE_POINT_DATA_EXIST
+            TRACKER -> Consts.DOES_OFFLINE_POLYLINE_DATA_EXIST
         }
     }
 }
